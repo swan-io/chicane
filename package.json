@@ -37,13 +37,13 @@
     ]
   },
   "prettier": {
-    "printWidth": 100,
     "trailingComma": "all"
   },
   "peerDependencies": {
-    "react": ">=17.0.2"
+    "react": ">=16.8.0"
   },
   "dependencies": {
+    "history": "^5.0.1",
     "use-subscription": "^1.5.1"
   },
   "devDependencies": {

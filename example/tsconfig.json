@@ -4,7 +4,7 @@
     "module": "ESNext",
     "target": "ESNext",
     "jsx": "react-jsx",
-    "lib": ["DOM", "ESNext"],
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "moduleResolution": "Node",
     "outDir": "dist/",
 
@@ -23,6 +23,7 @@
     "noImplicitOverride": true,
     "noImplicitReturns": true,
     "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true
   }
