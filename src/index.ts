@@ -8,6 +8,7 @@ import {
   Arguments,
   ExtractRoutesParams,
   GetNestedRoutes,
+  Location,
   Matcher,
   PrependBasePath,
   Simplify,
@@ -78,10 +79,10 @@ export const createRouter = <
       return currentURL;
     },
 
-    goBack: (): void => history.back(),
-    goForward: (): void => history.forward(),
-
     subscribe,
+
+    goForward: (): void => history.forward(),
+    goBack: (): void => history.back(),
 
     navigate: <FiniteRouteName extends keyof FiniteRoutes>(
       routeName: FiniteRouteName,
@@ -115,6 +116,22 @@ export const createRouter = <
         getHistoryLocationFromMatcher(
           matchers[routeName as keyof Routes],
           first(args),
+        ),
+      ),
+
+    useLocation: (): Location =>
+      useSubscription(
+        React.useMemo(
+          () => ({ getCurrentValue: () => currentLocation, subscribe }),
+          [],
+        ),
+      ),
+
+    useURL: (): string =>
+      useSubscription(
+        React.useMemo(
+          () => ({ getCurrentValue: () => currentURL, subscribe }),
+          [],
         ),
       ),
 
