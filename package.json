@@ -1,0 +1,68 @@
+{
+  "name": "react-chicane",
+  "version": "0.1.0",
+  "license": "MIT",
+  "description": "A simple and safe router for React",
+  "author": "Mathieu Acthernoene <mathieu.acthernoene@swan.io>",
+  "homepage": "https://github.com/zoontek/react-chicane#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zoontek/react-chicane.git"
+  },
+  "source": "src/index.ts",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "hook",
+    "react",
+    "router",
+    "typescript"
+  ],
+  "scripts": {
+    "build": "yarn clean && microbundle -f cjs,es",
+    "clean": "rm -rf dist",
+    "dev": "microbundle watch",
+    "format": "prettier '**/*.{js,md,ts,tsx}' --write",
+    "test": "jest --passWithNoTests",
+    "test:watch": "jest --watch",
+    "tscheck": "tsc --noEmit",
+    "prepare": "yarn test && yarn build"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "setupFilesAfterEnv": [
+      "<rootDir>/jest-setup.ts"
+    ]
+  },
+  "prettier": {
+    "printWidth": 100,
+    "trailingComma": "all"
+  },
+  "peerDependencies": {
+    "react": ">=17.0.2"
+  },
+  "dependencies": {
+    "use-subscription": "^1.5.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.15.8",
+    "@babel/plugin-transform-react-jsx": "^7.14.9",
+    "@babel/preset-env": "^7.15.8",
+    "@babel/preset-typescript": "^7.15.0",
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^12.1.2",
+    "@types/jest": "^27.0.2",
+    "@types/react": "^17.0.31",
+    "@types/use-subscription": "^1.0.0",
+    "babel-jest": "^27.3.1",
+    "jest": "^27.3.1",
+    "microbundle": "^0.14.1",
+    "prettier": "2.4.1",
+    "prettier-plugin-organize-imports": "^2.3.4",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "typescript": "^4.4.4"
+  }
+}
