@@ -1,10 +1,5 @@
 import { createBrowserHistory, createPath, parsePath } from "history";
-import {
-  HTMLAttributeAnchorTarget,
-  MouseEvent,
-  useCallback,
-  useMemo,
-} from "react";
+import * as React from "react";
 import { useSubscription } from "use-subscription";
 import { first } from "./helpers";
 import { decodeLocation, encodeLocation } from "./location";
@@ -132,7 +127,7 @@ export const createRouter = <
       : never =>
       // @ts-expect-error
       useSubscription(
-        useMemo(() => {
+        React.useMemo(() => {
           const matchers = rankedMatchers.filter(({ name }) =>
             routeNames.includes(name as RouteName),
           );
@@ -152,10 +147,10 @@ export const createRouter = <
     }: {
       href: string;
       replace?: boolean | undefined;
-      target?: HTMLAttributeAnchorTarget | undefined;
+      target?: React.HTMLAttributeAnchorTarget | undefined;
     }) => {
       const { active, historyLocation } = useSubscription(
-        useMemo(
+        React.useMemo(
           () => ({
             getCurrentValue: () => {
               const {
@@ -180,8 +175,8 @@ export const createRouter = <
 
       return {
         active,
-        onClick: useCallback(
-          (event: MouseEvent) => {
+        onClick: React.useCallback(
+          (event: React.MouseEvent) => {
             if (
               shouldIgnoreTarget && // Let browser handle "target=_blank" etc.
               event.button === 0 && // Ignore everything but left clicks
