@@ -15,7 +15,7 @@ import {
 } from "./types";
 
 export { decodeSearch, encodeSearch } from "./search";
-export type { Search } from "./types";
+export type { Location, Search } from "./types";
 
 export const createRouter = <
   Routes extends Record<string, string>,
