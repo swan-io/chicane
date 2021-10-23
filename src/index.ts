@@ -140,7 +140,7 @@ export const createRouter = <
       ),
 
     // Kudos to https://github.com/remix-run/react-router/pull/7998
-    useLink: ({
+    useLinkHandler: ({
       href,
       replace = false,
       target,
