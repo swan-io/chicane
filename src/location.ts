@@ -3,12 +3,6 @@ import { isNonEmpty } from "./helpers";
 import { decodeSearch, encodeSearch } from "./search";
 import { Location } from "./types";
 
-export const encodeLocation = ({ path, search, hash }: Location): string =>
-  "/" +
-  path.map(encodeURIComponent).join("/") +
-  encodeSearch(search) +
-  (hash != null ? "#" + encodeURIComponent(hash) : "");
-
 export const decodeLocation = (
   { pathname, search, hash }: HistoryLocation,
   removeExtraSlashes: boolean,
@@ -29,3 +23,9 @@ export const decodeLocation = (
     }),
   };
 };
+
+export const encodeLocation = ({ path, search, hash }: Location): string =>
+  "/" +
+  path.map(encodeURIComponent).join("/") +
+  encodeSearch(search) +
+  (hash != null ? "#" + encodeURIComponent(hash) : "");

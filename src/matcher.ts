@@ -121,10 +121,7 @@ export const extractLocationParams = (
 
       if (typeof locationValue === "string") {
         params[key] = locationValue;
-        continue;
-      }
-
-      if (locationValue[0] != null) {
+      } else if (locationValue[0] != null) {
         params[key] = locationValue[0];
       }
     }
