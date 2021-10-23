@@ -144,6 +144,7 @@ export const createRouter = <
         }, [JSON.stringify(routeNames)]),
       ),
 
+    // Kudos to https://github.com/remix-run/react-router/pull/7998
     useLink: ({
       href,
       replace = false,
@@ -177,24 +178,30 @@ export const createRouter = <
       const shouldReplace = replace || active;
       const shouldIgnoreTarget = !target || target === "_self";
 
-      const onClick = useCallback(
-        (event: MouseEvent) => {
-          if (
-            shouldIgnoreTarget && // Let browser handle "target=_blank" etc.
-            event.button === 0 && // Ignore everything but left clicks
-            !(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey) // Ignore clicks with modifier keys
-          ) {
-            event.preventDefault();
+      return {
+        active,
+        onClick: useCallback(
+          (event: MouseEvent) => {
+            if (
+              shouldIgnoreTarget && // Let browser handle "target=_blank" etc.
+              event.button === 0 && // Ignore everything but left clicks
+              !(
+                event.metaKey ||
+                event.altKey ||
+                event.ctrlKey ||
+                event.shiftKey
+              ) // Ignore clicks with modifier keys
+            ) {
+              event.preventDefault();
 
-            shouldReplace
-              ? history.replace(historyLocation)
-              : history.push(historyLocation);
-          }
-        },
-        [shouldIgnoreTarget, shouldReplace, historyLocation],
-      );
-
-      return { active, onClick };
+              shouldReplace
+                ? history.replace(historyLocation)
+                : history.push(historyLocation);
+            }
+          },
+          [shouldIgnoreTarget, shouldReplace, historyLocation],
+        ),
+      };
     },
   };
 };
