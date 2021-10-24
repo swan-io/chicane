@@ -213,7 +213,7 @@ const App = () => {
   // The order isn't important, paths are ranked using https://reach.tech/router/ranking
   const route = Router.useRoute(["root", "users", "user"]);
 
-  match(route)
+  return match(route)
     .with({ name: "root" }, () => null)
     .with({ name: "users" }, () => null)
     .with({ name: "user" }, ({ params } /* { groupId: string } */) => null)
