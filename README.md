@@ -49,7 +49,7 @@ const App = () => {
     case "users":
       return <h1>Users</h1>;
     case "user":
-      // all path params are strongly typed
+      // params are strongly typed
       return <h1>User {route.params.userId}</h1>;
   }
 };
