@@ -16,8 +16,8 @@ yarn add react-chicane
 
 ```sh
 git clone git@github.com:zoontek/react-chicane.git
-cd ./react-chicane/example
-yarn install && yarn dev
+cd react-chicane/example
+yarn && yarn dev
 ```
 
 ## 📘 Usage
