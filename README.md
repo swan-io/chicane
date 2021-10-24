@@ -12,7 +12,7 @@ A simple and safe router for React and TypeScript.
 yarn add react-chicane
 ```
 
-## 👀 Usage
+## 📘 Usage
 
 ### Creating a router
 
