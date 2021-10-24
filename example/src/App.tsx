@@ -4,55 +4,113 @@ import { Link } from "./Link";
 import { createURL, useRoute } from "./router";
 
 export const App = () => {
-  const route = useRoute(["5", "7", "13", "19"]);
+  const route = useRoute(["root", "users", "user", "repositories*"]);
 
   return (
-    match(route)
-      .with({ name: "5" }, (params) => (
-        <div>
-          <h1>5</h1>
-          <div>{JSON.stringify(params)}</div>
-          <Link href={createURL("7")}>link</Link>
-        </div>
-      ))
-      .with({ name: "7" }, (params) => (
-        <div>
-          <h1>7</h1>
-          <div>{JSON.stringify(params)}</div>
-          <Link
-            href={createURL("13", {
-              groupId: "github",
-              foo: "foo",
-              bar: ["", "", ""],
-              baz: "baz",
-            })}
-          >
-            link
-          </Link>
-        </div>
-      ))
-      .with({ name: "13" }, (params) => (
-        <div>
-          <h1>13</h1>
-          <div>{JSON.stringify(params)}</div>
-          <Link href={createURL("20", { groupId: "github" })}>link</Link>
-        </div>
-      ))
-      .with({ name: "19" }, (params) => (
-        <div>
-          <h1>19</h1>
-          <div>{JSON.stringify(params)}</div>
-          <Link href={createURL("5")}>link</Link>
-        </div>
-      ))
-      // .with({ name: "20" }, (params) => (
-      //   <div>
-      //     <h1>20</h1>
-      //     <div>{JSON.stringify(params)}</div>
-      //     <Link href={createURL("5")}>link</Link>
-      //   </div>
-      // ))
-      .with(undefined, () => <div>404</div>)
-      .exhaustive()
+    <div style={{ display: "flex" }}>
+      <nav
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          padding: 20,
+          minWidth: 200,
+        }}
+      >
+        <Link href={createURL("root")}>Homepage</Link>
+        <Link href={createURL("users")}>Users</Link>
+      </nav>
+
+      <main style={{ display: "flex", flexDirection: "column" }}>
+        {match(route)
+          .with({ name: "root" }, () => <h1>Homepage</h1>)
+          .with({ name: "users" }, () => (
+            <>
+              <h1>Users</h1>
+
+              <Link href={createURL("user", { userId: "zoontek" })}>
+                @zoontek
+              </Link>
+
+              <Link href={createURL("user", { userId: "bloodyowl" })}>
+                @bloodyowl
+              </Link>
+
+              <Link href={createURL("user", { userId: "MoOx" })}>@MoOx</Link>
+            </>
+          ))
+          .with({ name: "user" }, ({ params: { userId } }) => (
+            <>
+              <h1>@{userId}</h1>
+              <p>{userId} homepage</p>
+
+              <Link href={createURL("repositories", { userId })}>
+                His repositories
+              </Link>
+            </>
+          ))
+          .with({ name: "repositories*" }, ({ params }) => (
+            <Repositories userId={params.userId} />
+          ))
+          .with(undefined, () => <div>404 - Page not found</div>)
+          .exhaustive()}
+      </main>
+    </div>
+  );
+};
+
+const EXAMPLE_DATA: Record<string, string[]> = {
+  zoontek: [
+    "react-chicane",
+    "react-ux-form",
+    "react-native-permissions",
+    "react-native-bootsplash",
+    "react-native-localize",
+  ],
+  bloodyowl: [
+    "rescript-recoil",
+    "reshowcase",
+    "rescript-react-starter-kit",
+    "rescript-future",
+    "rescript-asyncdata",
+  ],
+  MoOx: [
+    "rescript-react-native",
+    "phenomic",
+    "pjax",
+    "postcss-cssnext",
+    "react-multiversal",
+  ],
+};
+
+const Repositories = ({ userId }: { userId: string }) => {
+  const route = useRoute(["repositories", "repository"]);
+
+  return (
+    <>
+      <h1>@{userId} repositories</h1>
+
+      {match(route)
+        .with({ name: "repositories" }, () => (
+          <ul>
+            {EXAMPLE_DATA[userId]?.map((repositoryId) => (
+              <li>
+                <Link href={createURL("repository", { userId, repositoryId })}>
+                  {repositoryId}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ))
+        .with(
+          { name: "repository" },
+          ({ params: { userId, repositoryId } }) => (
+            <h2>
+              @{userId}/{repositoryId}
+            </h2>
+          ),
+        )
+        .with(undefined, () => <div>404 - Repository not found</div>)
+        .exhaustive()}
+    </>
   );
 };

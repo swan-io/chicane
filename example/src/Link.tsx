@@ -16,7 +16,15 @@ export const Link = ({
   const { active, onClick } = useLink({ href, replace, target });
 
   return (
-    <a href={href} target={target} onClick={onClick} {...props}>
+    <a
+      href={href}
+      target={target}
+      onClick={onClick}
+      {...props}
+      style={{
+        fontWeight: active ? 700 : 400,
+      }}
+    >
       {children}
     </a>
   );
