@@ -197,9 +197,9 @@ Router.goForward();
 Safely create internal URLs.
 
 ```tsx
-createURL("root"); // -> "/"
-createURL("users"); // -> "/users"
-createURL("user", { userId: "zoontek" }); // -> "/users/zoontek"
+Router.createURL("root"); // -> "/"
+Router.createURL("users"); // -> "/users"
+Router.createURL("user", { userId: "zoontek" }); // -> "/users/zoontek"
 ```
 
 #### Router.useRoute
