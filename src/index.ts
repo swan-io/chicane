@@ -108,7 +108,7 @@ export const createRouter = <
       );
     },
 
-    getURL: <FiniteRouteName extends keyof FiniteRoutes>(
+    createURL: <FiniteRouteName extends keyof FiniteRoutes>(
       routeName: FiniteRouteName,
       ...args: Arguments<FiniteRoutesParams[FiniteRouteName]>
     ): string =>
@@ -157,7 +157,7 @@ export const createRouter = <
       ),
 
     // Kudos to https://github.com/remix-run/react-router/pull/7998
-    useLinkHandler: ({
+    useLink: ({
       href,
       replace = false,
       target,
@@ -195,6 +195,7 @@ export const createRouter = <
         onClick: React.useCallback(
           (event: React.MouseEvent) => {
             if (
+              !event.defaultPrevented &&
               shouldIgnoreTarget && // Let browser handle "target=_blank" etc.
               event.button === 0 && // Ignore everything but left clicks
               !(
