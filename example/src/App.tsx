@@ -1,62 +1,6 @@
-import * as React from "react";
 import { match } from "ts-pattern";
 import { Link } from "./Link";
 import { createURL, useRoute } from "./router";
-
-export const App = () => {
-  const route = useRoute(["root", "users", "user", "repositories*"]);
-
-  return (
-    <div style={{ display: "flex" }}>
-      <nav
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          padding: 20,
-          minWidth: 200,
-        }}
-      >
-        <Link href={createURL("root")}>Homepage</Link>
-        <Link href={createURL("users")}>Users</Link>
-      </nav>
-
-      <main style={{ display: "flex", flexDirection: "column" }}>
-        {match(route)
-          .with({ name: "root" }, () => <h1>Homepage</h1>)
-          .with({ name: "users" }, () => (
-            <>
-              <h1>Users</h1>
-
-              <Link href={createURL("user", { userId: "zoontek" })}>
-                @zoontek
-              </Link>
-
-              <Link href={createURL("user", { userId: "bloodyowl" })}>
-                @bloodyowl
-              </Link>
-
-              <Link href={createURL("user", { userId: "MoOx" })}>@MoOx</Link>
-            </>
-          ))
-          .with({ name: "user" }, ({ params: { userId } }) => (
-            <>
-              <h1>@{userId}</h1>
-              <p>{userId} homepage</p>
-
-              <Link href={createURL("repositories", { userId })}>
-                His repositories
-              </Link>
-            </>
-          ))
-          .with({ name: "repositories*" }, ({ params }) => (
-            <Repositories userId={params.userId} />
-          ))
-          .with(undefined, () => <div>404 - Page not found</div>)
-          .exhaustive()}
-      </main>
-    </div>
-  );
-};
 
 const EXAMPLE_DATA: Record<string, string[]> = {
   zoontek: [
@@ -82,18 +26,69 @@ const EXAMPLE_DATA: Record<string, string[]> = {
   ],
 };
 
+export const App = () => {
+  const route = useRoute(["root", "users", "user", "repositories*"]);
+
+  return (
+    <div style={{ display: "flex" }}>
+      <nav
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          padding: 20,
+          minWidth: 200,
+        }}
+      >
+        <Link href={createURL("root")}>Homepage</Link>
+        <Link href={createURL("users")}>Users</Link>
+      </nav>
+
+      <main style={{ display: "flex", flexDirection: "column" }}>
+        {match(route)
+          .with({ name: "root" }, () => <h1>Homepage</h1>)
+          .with({ name: "users" }, () => (
+            <>
+              <h1>Users</h1>
+
+              {Object.keys(EXAMPLE_DATA).map((userId) => (
+                <Link key={userId} href={createURL("user", { userId })}>
+                  {userId}
+                </Link>
+              ))}
+            </>
+          ))
+          .with({ name: "user" }, ({ params: { userId } }) => (
+            <>
+              <h1>{userId}</h1>
+              <p>{userId} homepage</p>
+
+              <Link href={createURL("repositories", { userId })}>
+                His repositories
+              </Link>
+            </>
+          ))
+          .with({ name: "repositories*" }, ({ params }) => (
+            <Repositories userId={params.userId} />
+          ))
+          .with(undefined, () => <div>404 - Page not found</div>)
+          .exhaustive()}
+      </main>
+    </div>
+  );
+};
+
 const Repositories = ({ userId }: { userId: string }) => {
   const route = useRoute(["repositories", "repository"]);
 
   return (
     <>
-      <h1>@{userId} repositories</h1>
+      <h1>{userId} repositories</h1>
 
       {match(route)
         .with({ name: "repositories" }, () => (
           <ul>
             {EXAMPLE_DATA[userId]?.map((repositoryId) => (
-              <li>
+              <li key={repositoryId}>
                 <Link href={createURL("repository", { userId, repositoryId })}>
                   {repositoryId}
                 </Link>
@@ -105,7 +100,7 @@ const Repositories = ({ userId }: { userId: string }) => {
           { name: "repository" },
           ({ params: { userId, repositoryId } }) => (
             <h2>
-              @{userId}/{repositoryId}
+              {userId}/{repositoryId}
             </h2>
           ),
         )
