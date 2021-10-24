@@ -12,6 +12,14 @@ A simple and safe router for React and TypeScript.
 yarn add react-chicane
 ```
 
+## Run the example
+
+```sh
+git clone git@github.com:zoontek/react-chicane.git
+cd ./react-chicane/example
+yarn install && yarn dev
+```
+
 ## 📘 Usage
 
 ### Creating a router
@@ -301,6 +309,7 @@ const App = () => {
 
 - Improve documentation
 - Tests, tests, tests
+- Switch to `useMutableSource` (React 18+)
 - Add navigation blocker
 - Write a "focus reset" recipe
 - Find a cool logo
