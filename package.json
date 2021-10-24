@@ -2,7 +2,7 @@
   "name": "react-chicane",
   "version": "0.1.0",
   "license": "MIT",
-  "description": "A simple and safe router for React",
+  "description": "A simple and safe router for React and TypeScript",
   "author": "Mathieu Acthernoene <mathieu.acthernoene@swan.io>",
   "homepage": "https://github.com/zoontek/react-chicane#readme",
   "repository": {
