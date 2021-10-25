@@ -67,6 +67,7 @@ const App = () => {
 
 ```tsx
 import { createRouter } from "react-chicane";
+import { match } from "ts-pattern";
 
 export const { useRoute } = createRouter({
   groups: "/groups",
@@ -80,20 +81,14 @@ export const { useRoute } = createRouter({
 const App = () => {
   const route = useRoute(["groups", "group", "users", "user"]);
 
-  if (!route) {
-    return <h1>404</h1>;
-  }
+  match(route)
+    .with({ name: "groups" }, ({ params }) => console.log(params)) // {}
+    .with({ name: "group" }, ({ params }) => console.log(params)) // { groupId: string, foo?: string, bar?: string[], baz?: string }
+    .with({ name: "users" }, ({ params }) => console.log(params)) // { groupId: string }
+    .with({ name: "user" }, ({ params }) => console.log(params)) // { groupId: string, userId: string }
+    .otherwise(() => <h1>404</h1>);
 
-  switch (route.name) {
-    case "groups":
-      return route.params; // {}
-    case "group":
-      return route.params; // { groupId: string, foo?: string, bar?: string[], baz?: string }
-    case "users":
-      return route.params; // { groupId: string }
-    case "user":
-      return route.params; // { groupId: string, userId: string }
-  }
+  // …
 };
 ```
 
@@ -267,7 +262,7 @@ const App = () => {
     console.log("location changed", location);
   }, [location]);
 
-  /* … */
+  // …
 };
 ```
 
@@ -283,7 +278,7 @@ const App = () => {
     console.log("url changed", url);
   }, [url]);
 
-  /* … */
+  // …
 };
 ```
 
@@ -301,7 +296,7 @@ const App = () => {
     return unsubscribe;
   }, []);
 
-  /* … */
+  // …
 };
 ```
 
