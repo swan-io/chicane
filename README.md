@@ -214,9 +214,9 @@ const App = () => {
   const route = Router.useRoute(["root", "users", "user"]);
 
   return match(route)
-    .with({ name: "root" }, () => null)
-    .with({ name: "users" }, () => null)
-    .with({ name: "user" }, ({ params } /* { groupId: string } */) => null)
+    .with({ name: "root" }, () => <h1>root</h1>)
+    .with({ name: "users" }, () => <h1>users</h1>)
+    .with({ name: "user" }, ({ params: { groupId } }) => <h1>user</h1>)
     .otherwise(() => <h1>404</h1>);
 };
 ```
