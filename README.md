@@ -55,7 +55,7 @@ const App = () => {
 };
 ```
 
-#### 👉 Note: I strongly recommand using a pattern matching library, like the excellent [ts-pattern](https://github.com/gvergnaud/ts-pattern).
+#### 👉 Note: Even you can use classic type guards (if, switch, etc.) to check the result, I strongly recommand using a pattern matching library, like the excellent [ts-pattern](https://github.com/gvergnaud/ts-pattern) (all the following examples will).
 
 #### ✍️ Path syntax
 
