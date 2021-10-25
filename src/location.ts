@@ -9,23 +9,28 @@ export const decodeLocation = (
 ): Location => {
   const path = pathname.substring(1);
 
-  return {
-    path:
-      path !== ""
-        ? removeExtraSlashes
-          ? path.split("/").filter(isNonEmpty).map(decodeURIComponent)
-          : path.split("/").map(decodeURIComponent)
-        : [],
+  const outputPath =
+    path !== ""
+      ? removeExtraSlashes
+        ? path.split("/").filter(isNonEmpty).map(decodeURIComponent)
+        : path.split("/").map(decodeURIComponent)
+      : [];
 
-    search: search !== "" ? decodeSearch(search) : {},
-    ...(hash !== "" && {
-      hash: decodeURIComponent(hash.substring(1)),
+  const outputSearch = search !== "" ? decodeSearch(search) : {};
+  const outputHash = hash !== "" ? decodeURIComponent(hash.substring(1)) : null;
+
+  const url =
+    "/" +
+    outputPath.map(encodeURIComponent).join("/") +
+    encodeSearch(outputSearch) +
+    (outputHash != null ? "#" + encodeURIComponent(outputHash) : "");
+
+  return {
+    url,
+    path: outputPath,
+    search: outputSearch,
+    ...(outputHash !== null && {
+      hash: outputHash,
     }),
   };
 };
-
-export const encodeLocation = ({ path, search, hash }: Location): string =>
-  "/" +
-  path.map(encodeURIComponent).join("/") +
-  encodeSearch(search) +
-  (hash != null ? "#" + encodeURIComponent(hash) : "");

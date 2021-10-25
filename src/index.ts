@@ -2,7 +2,7 @@ import { createBrowserHistory, createPath, parsePath } from "history";
 import * as React from "react";
 import { useSubscription } from "use-subscription";
 import { first } from "./helpers";
-import { decodeLocation, encodeLocation } from "./location";
+import { decodeLocation } from "./location";
 import { getHistoryLocationFromMatcher, getMatcher, match } from "./matcher";
 import {
   Arguments,
@@ -51,15 +51,13 @@ export const createRouter = <
 
   const history = createBrowserHistory();
   let currentLocation = decodeLocation(history.location, true);
-  let currentURL = encodeLocation(currentLocation);
 
-  if (currentURL !== createPath(history.location)) {
-    history.replace(currentURL); // URL cleanup
+  if (currentLocation.url !== createPath(history.location)) {
+    history.replace(currentLocation.url); // URL cleanup
   }
 
   history.listen(({ location }) => {
     currentLocation = decodeLocation(location, false);
-    currentURL = encodeLocation(currentLocation);
     subscriptions.forEach((subscription) => subscription(currentLocation));
   });
 
@@ -74,9 +72,6 @@ export const createRouter = <
   return {
     get location() {
       return currentLocation;
-    },
-    get url() {
-      return currentURL;
     },
 
     subscribe,
@@ -127,14 +122,6 @@ export const createRouter = <
         ),
       ),
 
-    useURL: (): string =>
-      useSubscription(
-        React.useMemo(
-          () => ({ getCurrentValue: () => currentURL, subscribe }),
-          [],
-        ),
-      ),
-
     useRoute: <RouteName extends keyof FiniteRoutes | keyof NestedRoutes>(
       routeNames: ReadonlyArray<RouteName>,
     ): RouteName extends string
@@ -177,7 +164,7 @@ export const createRouter = <
               } = parsePath(href);
 
               return {
-                active: href === currentURL,
+                active: href === currentLocation.url,
                 historyLocation: { pathname, search, hash },
               };
             },

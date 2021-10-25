@@ -137,18 +137,13 @@ const Router = createRouter(
 
 ```tsx
 type Location = {
+  url: string;
   path: string[];
   search: Record<string, string | string[]>;
   hash?: string;
 };
 
 Router.location; // Location
-```
-
-#### Router.url
-
-```tsx
-Router.url; // string
 ```
 
 #### Router.navigate
@@ -266,22 +261,6 @@ const App = () => {
 };
 ```
 
-#### Router.useURL
-
-Listen and react on `Router.url` changes.
-
-```tsx
-const App = () => {
-  const url: string = Router.useURL();
-
-  React.useEffect(() => {
-    console.log("url changed", url);
-  }, [url]);
-
-  // …
-};
-```
-
 #### Router.subscribe
 
 Subscribe to location changes. Useful to reset keyboard focus.
@@ -289,7 +268,7 @@ Subscribe to location changes. Useful to reset keyboard focus.
 ```tsx
 const App = () => {
   React.useEffect(() => {
-    const unsubscribe = Router.subscribe((location) => {
+    const unsubscribe = Router.subscribe((location: Location) => {
       resetKeyboardFocusToContent();
     });
 

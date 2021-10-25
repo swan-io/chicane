@@ -17,6 +17,7 @@ export type Matcher = {
 };
 
 export type Location = {
+  url: string;
   path: string[];
   search: Search;
   hash?: string;
