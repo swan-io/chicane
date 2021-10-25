@@ -129,18 +129,22 @@ export const createRouter = <
           | { name: RouteName; params: Simplify<RoutesParams[RouteName]> }
           | undefined
       : never =>
-      // @ts-expect-error
-      useSubscription(
-        React.useMemo(() => {
-          const matchers = rankedMatchers.filter(({ name }) =>
-            routeNames.includes(name as RouteName),
-          );
+      // JSON.stringify / JSON.parse trick is used to prevent
+      // unnecessary re-renders, as params object is updated each time
+      JSON.parse(
+        useSubscription(
+          React.useMemo(() => {
+            const matchers = rankedMatchers.filter(({ name }) =>
+              routeNames.includes(name as RouteName),
+            );
 
-          return {
-            getCurrentValue: () => match(currentLocation, matchers),
-            subscribe,
-          };
-        }, [JSON.stringify(routeNames)]),
+            return {
+              getCurrentValue: () =>
+                JSON.stringify(match(currentLocation, matchers)),
+              subscribe,
+            };
+          }, [JSON.stringify(routeNames)]),
+        ),
       ),
 
     // Kudos to https://github.com/remix-run/react-router/pull/7998
