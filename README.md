@@ -96,7 +96,7 @@ const App = () => {
 
 ### 🔗 Creating URLs
 
-Because it's also nice to create safe internal URLs, `createRouter` also returns `createURL`.
+Because it's nice to create safe internal URLs, `createRouter` also returns `createURL`.
 
 ```tsx
 import { createRouter } from "react-chicane";
