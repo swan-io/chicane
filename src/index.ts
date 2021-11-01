@@ -1,7 +1,7 @@
 import { createBrowserHistory, createPath, parsePath } from "history";
 import * as React from "react";
 import { useSubscription } from "use-subscription";
-import { first } from "./helpers";
+import { first, useIsoLayoutEffect } from "./helpers";
 import { decodeLocation } from "./location";
 import { getMatcher, match, matchToHistoryPath } from "./matcher";
 import {
@@ -11,6 +11,7 @@ import {
   Matcher,
   ParamsArg,
   PrependBasePath,
+  RedirectProps,
   Simplify,
   Subscription,
 } from "./types";
@@ -67,6 +68,40 @@ export const createRouter = <
     return () => {
       subscriptions.delete(subscription);
     };
+  };
+
+  const Redirect = <RouteName extends keyof FiniteRoutes>(
+    props: RedirectProps<RouteName, FiniteRoutesParams[RouteName]>,
+  ): null => {
+    useIsoLayoutEffect(() => {
+      const { replace = false } = props;
+
+      if (props.external) {
+        const { href } = props;
+
+        if (replace) {
+          window.location.replace(href);
+        } else {
+          window.location.assign(href);
+        }
+      } else {
+        const {
+          // @ts-expect-error
+          params,
+          route,
+        } = props;
+
+        const to = matchToHistoryPath(matchers[route as keyof Routes], params);
+
+        if (replace) {
+          history.replace(to);
+        } else {
+          history.push(to);
+        }
+      }
+    }, []);
+
+    return null;
   };
 
   return {
@@ -196,5 +231,7 @@ export const createRouter = <
         ),
       };
     },
+
+    Redirect,
   };
 };
