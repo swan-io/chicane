@@ -79,25 +79,25 @@ export const createRouter = <
     goForward: (): void => history.forward(),
     goBack: (): void => history.back(),
 
-    navigate: <FiniteRouteName extends keyof FiniteRoutes>(
-      routeName: FiniteRouteName,
-      ...args: ParamsArg<FiniteRoutesParams[FiniteRouteName]>
+    navigate: <RouteName extends keyof FiniteRoutes>(
+      routeName: RouteName,
+      ...args: ParamsArg<FiniteRoutesParams[RouteName]>
     ): void =>
       history.push(
         matchToHistoryPath(matchers[routeName as keyof Routes], first(args)),
       ),
 
-    replace: <FiniteRouteName extends keyof FiniteRoutes>(
-      routeName: FiniteRouteName,
-      ...args: ParamsArg<FiniteRoutesParams[FiniteRouteName]>
+    replace: <RouteName extends keyof FiniteRoutes>(
+      routeName: RouteName,
+      ...args: ParamsArg<FiniteRoutesParams[RouteName]>
     ): void =>
       history.replace(
         matchToHistoryPath(matchers[routeName as keyof Routes], first(args)),
       ),
 
-    createURL: <FiniteRouteName extends keyof FiniteRoutes>(
-      routeName: FiniteRouteName,
-      ...args: ParamsArg<FiniteRoutesParams[FiniteRouteName]>
+    createURL: <RouteName extends keyof FiniteRoutes>(
+      routeName: RouteName,
+      ...args: ParamsArg<FiniteRoutesParams[RouteName]>
     ): string =>
       createPath(
         matchToHistoryPath(matchers[routeName as keyof Routes], first(args)),
