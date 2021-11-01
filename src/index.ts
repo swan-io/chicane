@@ -5,11 +5,11 @@ import { first } from "./helpers";
 import { decodeLocation } from "./location";
 import { getHistoryLocationFromMatcher, getMatcher, match } from "./matcher";
 import {
-  Arguments,
   ExtractRoutesParams,
   GetNestedRoutes,
   Location,
   Matcher,
+  ParamsArg,
   PrependBasePath,
   Simplify,
   Subscription,
@@ -81,7 +81,7 @@ export const createRouter = <
 
     navigate: <FiniteRouteName extends keyof FiniteRoutes>(
       routeName: FiniteRouteName,
-      ...args: Arguments<FiniteRoutesParams[FiniteRouteName]>
+      ...args: ParamsArg<FiniteRoutesParams[FiniteRouteName]>
     ): void => {
       history.push(
         getHistoryLocationFromMatcher(
@@ -93,7 +93,7 @@ export const createRouter = <
 
     replace: <FiniteRouteName extends keyof FiniteRoutes>(
       routeName: FiniteRouteName,
-      ...args: Arguments<FiniteRoutesParams[FiniteRouteName]>
+      ...args: ParamsArg<FiniteRoutesParams[FiniteRouteName]>
     ): void => {
       history.replace(
         getHistoryLocationFromMatcher(
@@ -105,7 +105,7 @@ export const createRouter = <
 
     createURL: <FiniteRouteName extends keyof FiniteRoutes>(
       routeName: FiniteRouteName,
-      ...args: Arguments<FiniteRoutesParams[FiniteRouteName]>
+      ...args: ParamsArg<FiniteRoutesParams[FiniteRouteName]>
     ): string =>
       createPath(
         getHistoryLocationFromMatcher(

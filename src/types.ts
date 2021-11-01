@@ -93,7 +93,7 @@ type NonOptionalProperties<T> = Exclude<
   undefined
 >;
 
-export type Arguments<Params> = Params extends EmptyRecord
+export type ParamsArg<Params> = Params extends EmptyRecord
   ? []
   : NonOptionalProperties<Params> extends never
   ? [params?: { [K in keyof Params]: Params[K] }]
