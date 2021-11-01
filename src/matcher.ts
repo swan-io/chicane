@@ -1,4 +1,4 @@
-import { parsePath, PartialLocation } from "history";
+import { parsePath, Path } from "history";
 import { isMultipleParam, isNonEmpty, isParam } from "./helpers";
 import { encodeSearch } from "./search";
 import { Location, Matcher, Params, Search, Segment } from "./types";
@@ -149,10 +149,10 @@ export const match = (
   return;
 };
 
-export const getHistoryLocationFromMatcher = (
+export const matchToHistoryPath = (
   matcher: Matcher,
   params: Params = {},
-): PartialLocation => {
+): Path => {
   const pathname =
     "/" +
     matcher.segments

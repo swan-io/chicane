@@ -3,7 +3,7 @@ import * as React from "react";
 import { useSubscription } from "use-subscription";
 import { first } from "./helpers";
 import { decodeLocation } from "./location";
-import { getHistoryLocationFromMatcher, getMatcher, match } from "./matcher";
+import { match, matchToHistoryPath } from "./matcher";
 import {
   ExtractRoutesParams,
   GetNestedRoutes,
@@ -84,10 +84,7 @@ export const createRouter = <
       ...args: ParamsArg<FiniteRoutesParams[FiniteRouteName]>
     ): void => {
       history.push(
-        getHistoryLocationFromMatcher(
-          matchers[routeName as keyof Routes],
-          first(args),
-        ),
+        matchToHistoryPath(matchers[routeName as keyof Routes], first(args)),
       );
     },
 
@@ -96,10 +93,7 @@ export const createRouter = <
       ...args: ParamsArg<FiniteRoutesParams[FiniteRouteName]>
     ): void => {
       history.replace(
-        getHistoryLocationFromMatcher(
-          matchers[routeName as keyof Routes],
-          first(args),
-        ),
+        matchToHistoryPath(matchers[routeName as keyof Routes], first(args)),
       );
     },
 
@@ -108,10 +102,7 @@ export const createRouter = <
       ...args: ParamsArg<FiniteRoutesParams[FiniteRouteName]>
     ): string =>
       createPath(
-        getHistoryLocationFromMatcher(
-          matchers[routeName as keyof Routes],
-          first(args),
-        ),
+        matchToHistoryPath(matchers[routeName as keyof Routes], first(args)),
       ),
 
     useLocation: (): Location =>
