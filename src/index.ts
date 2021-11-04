@@ -1,7 +1,7 @@
 import { createBrowserHistory, createPath, parsePath } from "history";
 import * as React from "react";
 import { useSubscription } from "use-subscription";
-import { first, useIsoLayoutEffect } from "./helpers";
+import { first } from "./helpers";
 import { decodeLocation } from "./location";
 import { getMatcher, match, matchToHistoryPath } from "./matcher";
 import {
@@ -10,7 +10,6 @@ import {
   Location,
   Matcher,
   ParamsArg,
-  ParamsProp,
   PrependBasePath,
   Simplify,
   Subscription,
@@ -128,27 +127,52 @@ export const createRouter = <
       ),
     );
 
-  const Redirect = <RouteName extends keyof FiniteRoutes>(
-    props: { to: RouteName } & ParamsProp<FiniteRoutesParams[RouteName]>,
-  ): null => {
-    const { url } = useLocation();
+  // Kudos to https://github.com/remix-run/react-router/pull/7998
+  const useLink = ({
+    href,
+    replace = false,
+    target,
+  }: {
+    href: string;
+    replace?: boolean | undefined;
+    target?: React.HTMLAttributeAnchorTarget | undefined;
+  }) => {
+    const active = useSubscription(
+      React.useMemo(
+        () => ({
+          getCurrentValue: () => href === currentLocation.url,
+          subscribe,
+        }),
+        [href],
+      ),
+    );
 
-    useIsoLayoutEffect(() => {
-      const {
-        // @ts-expect-error
-        params,
-        to,
-      } = props;
+    const shouldReplace = replace || active;
+    const targetIgnored = !target || target === "_self";
 
-      const matcher = matchers[to as keyof Routes];
-      const path = matchToHistoryPath(matcher, params);
+    return {
+      active,
+      onClick: React.useCallback(
+        (event: React.MouseEvent) => {
+          if (
+            !event.defaultPrevented &&
+            targetIgnored && // Let browser handle "target=_blank" etc.
+            event.button === 0 && // Ignore everything but left clicks
+            !(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey) // Ignore clicks with modifier keys
+          ) {
+            event.preventDefault();
 
-      if (createPath(path) !== url) {
-        history.replace(path);
-      }
-    }, []);
+            const { pathname = "/", search = "", hash = "" } = parsePath(href);
+            const historyLocation = { pathname, search, hash };
 
-    return null;
+            shouldReplace
+              ? history.replace(historyLocation)
+              : history.push(historyLocation);
+          }
+        },
+        [shouldReplace, targetIgnored, href],
+      ),
+    };
   };
 
   return {
@@ -165,65 +189,6 @@ export const createRouter = <
 
     useLocation,
     useRoute,
-
-    Redirect,
-
-    // Kudos to https://github.com/remix-run/react-router/pull/7998
-    useLink: ({
-      href,
-      replace = false,
-      target,
-    }: {
-      href: string;
-      replace?: boolean | undefined;
-      target?: React.HTMLAttributeAnchorTarget | undefined;
-    }) => {
-      const active = useSubscription(
-        React.useMemo(
-          () => ({
-            getCurrentValue: () => href === currentLocation.url,
-            subscribe,
-          }),
-          [href],
-        ),
-      );
-
-      const shouldReplace = replace || active;
-      const shouldIgnoreTarget = !target || target === "_self";
-
-      return {
-        active,
-        onClick: React.useCallback(
-          (event: React.MouseEvent) => {
-            if (
-              !event.defaultPrevented &&
-              shouldIgnoreTarget && // Let browser handle "target=_blank" etc.
-              event.button === 0 && // Ignore everything but left clicks
-              !(
-                event.metaKey ||
-                event.altKey ||
-                event.ctrlKey ||
-                event.shiftKey
-              ) // Ignore clicks with modifier keys
-            ) {
-              event.preventDefault();
-
-              const {
-                pathname = "/",
-                search = "",
-                hash = "",
-              } = parsePath(href);
-
-              const historyLocation = { pathname, search, hash };
-
-              shouldReplace
-                ? history.replace(historyLocation)
-                : history.push(historyLocation);
-            }
-          },
-          [shouldIgnoreTarget, href, shouldReplace],
-        ),
-      };
-    },
+    useLink,
   };
 };
