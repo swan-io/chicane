@@ -279,11 +279,34 @@ const App = () => {
 };
 ```
 
+#### Router.unsafeNavigate and Router.unsafeReplace
+
+Two methods similar to `Router.navigate` and `Router.replace` but which accept a `string` as unique argument. Useful for escape hatches.
+
+A quick example with a `Redirect` component:
+
+```tsx
+const Redirect = ({ to }: { to: string }) => {
+  const { url } = Router.useLocation();
+
+  React.useLayoutEffect(() => {
+    if (to !== url) {
+      Router.unsafeReplace(to);
+    }
+  }, []);
+
+  return null;
+};
+
+// usage
+<Redirect to={Router.createURL("root")} />;
+```
+
 ## 👷‍♂️ Roadmap
 
 - Improve documentation
 - Tests, tests, tests
-- Switch to `useMutableSource` (React 18+)
+- Switch to `useSyncExternalStore` (React 18+)
 - Add navigation blocker
 - Write a "focus reset" recipe
 - Find a cool logo
