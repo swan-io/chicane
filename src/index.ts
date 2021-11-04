@@ -129,7 +129,7 @@ export const createRouter = <
     );
 
   const Redirect = <RouteName extends keyof FiniteRoutes>(
-    props: { route: RouteName } & ParamsProp<FiniteRoutesParams[RouteName]>,
+    props: { to: RouteName } & ParamsProp<FiniteRoutesParams[RouteName]>,
   ): null => {
     const { url } = useLocation();
 
@@ -137,14 +137,14 @@ export const createRouter = <
       const {
         // @ts-expect-error
         params,
-        route,
+        to,
       } = props;
 
-      const matcher = matchers[route as keyof Routes];
-      const to = matchToHistoryPath(matcher, params);
+      const matcher = matchers[to as keyof Routes];
+      const path = matchToHistoryPath(matcher, params);
 
-      if (createPath(to) !== url) {
-        history.replace(to);
+      if (createPath(path) !== url) {
+        history.replace(path);
       }
     }, []);
 

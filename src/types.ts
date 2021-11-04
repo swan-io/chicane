@@ -84,9 +84,7 @@ export type ExtractRoutesParams<Routes extends Record<string, string>> = {
 
 type EmptyRecord = Record<string | number | symbol, never>;
 
-export type Simplify<Params> = Params extends EmptyRecord
-  ? {}
-  : { [K in keyof Params]: Params[K] };
+export type Simplify<T> = T extends EmptyRecord ? {} : { [K in keyof T]: T[K] };
 
 type NonOptionalProperties<T> = Exclude<
   { [K in keyof T]: T extends Record<K, T[K]> ? K : never }[keyof T],
@@ -104,11 +102,3 @@ export type ParamsProp<Params> = Params extends EmptyRecord
   : NonOptionalProperties<Params> extends never
   ? { params?: { [K in keyof Params]: Params[K] } }
   : { params: { [K in keyof Params]: Params[K] } };
-
-// export type RedirectProps<RouteName, Params> =
-//   | { external: true; replace?: boolean; href: string }
-//   | ({
-//       external?: false;
-//       replace?: boolean;
-//       route: RouteName;
-//     } & ParamsProp<Params>);
