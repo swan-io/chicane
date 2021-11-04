@@ -3,23 +3,23 @@ import { useLink } from "./router";
 
 export const Link = ({
   children,
-  href,
   replace,
   target,
+  to,
   ...props
 }: {
   children?: React.ReactNode;
-  href: string;
-  replace?: boolean | undefined;
-  target?: React.HTMLAttributeAnchorTarget | undefined;
+  to: string;
+  replace?: boolean;
+  target?: React.HTMLAttributeAnchorTarget;
 }) => {
-  const { active, onClick } = useLink({ href, replace, target });
+  const { active, onClick } = useLink({ href: to, replace, target });
 
   return (
     <a
-      href={href}
-      target={target}
+      href={to}
       onClick={onClick}
+      target={target}
       {...props}
       style={{
         fontWeight: active ? 700 : 400,

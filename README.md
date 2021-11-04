@@ -218,22 +218,22 @@ As this library doesn't provide a single component, we expose this hook to creat
 ```tsx
 const Link = ({
   children,
-  href,
+  to,
   replace,
   target,
 }: {
   children?: React.ReactNode;
-  href: string;
+  to: string;
   replace?: boolean;
   target?: React.HTMLAttributeAnchorTarget;
 }) => {
-  const { active, onClick } = Router.useLink({ href, replace, target });
+  const { active, onClick } = useLink({ href: to, replace, target });
 
   return (
     <a
-      href={href}
-      target={target}
+      href={to}
       onClick={onClick}
+      target={target}
       style={{ fontWeight: active ? 700 : 400 }}
     >
       {children}
@@ -242,7 +242,7 @@ const Link = ({
 };
 
 // usage
-<Link href={Router.createURL("user", { userId: "zoontek" })}>Profile</Link>;
+<Link to={Router.createURL("user", { userId: "zoontek" })}>Profile</Link>;
 ```
 
 #### Router.useLocation
@@ -279,11 +279,34 @@ const App = () => {
 };
 ```
 
+#### Router.unsafeNavigate and Router.unsafeReplace
+
+Two methods similar to `Router.navigate` and `Router.replace` but which accept a `string` as unique argument. Useful for escape hatches.
+
+A quick example with a `Redirect` component:
+
+```tsx
+const Redirect = ({ to }: { to: string }) => {
+  const { url } = Router.useLocation();
+
+  React.useLayoutEffect(() => {
+    if (to !== url) {
+      Router.unsafeReplace(to);
+    }
+  }, []);
+
+  return null;
+};
+
+// usage
+<Redirect to={Router.createURL("root")} />;
+```
+
 ## 👷‍♂️ Roadmap
 
 - Improve documentation
 - Tests, tests, tests
-- Switch to `useMutableSource` (React 18+)
+- Switch to `useSyncExternalStore` (React 18+)
 - Add navigation blocker
 - Write a "focus reset" recipe
 - Find a cool logo

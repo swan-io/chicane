@@ -3,13 +3,13 @@ import * as React from "react";
 import { useSubscription } from "use-subscription";
 import { first } from "./helpers";
 import { decodeLocation } from "./location";
-import { getHistoryLocationFromMatcher, getMatcher, match } from "./matcher";
+import { getMatcher, match, matchToHistoryPath } from "./matcher";
 import {
-  Arguments,
   ExtractRoutesParams,
   GetNestedRoutes,
   Location,
   Matcher,
+  ParamsArg,
   PrependBasePath,
   Simplify,
   Subscription,
@@ -61,6 +61,43 @@ export const createRouter = <
     subscriptions.forEach((subscription) => subscription(currentLocation));
   });
 
+  const goForward = (): void => history.forward();
+  const goBack = (): void => history.back();
+
+  const unsafeNavigate = (url: string): void => {
+    const { pathname = "/", search = "", hash = "" } = parsePath(url);
+    history.push({ pathname, search, hash });
+  };
+
+  const unsafeReplace = (url: string) => {
+    const { pathname = "/", search = "", hash = "" } = parsePath(url);
+    history.replace({ pathname, search, hash });
+  };
+
+  const createURL = <RouteName extends keyof FiniteRoutes>(
+    routeName: RouteName,
+    ...args: ParamsArg<FiniteRoutesParams[RouteName]>
+  ): string =>
+    createPath(
+      matchToHistoryPath(matchers[routeName as keyof Routes], first(args)),
+    );
+
+  const navigate = <RouteName extends keyof FiniteRoutes>(
+    routeName: RouteName,
+    ...args: ParamsArg<FiniteRoutesParams[RouteName]>
+  ): void =>
+    history.push(
+      matchToHistoryPath(matchers[routeName as keyof Routes], first(args)),
+    );
+
+  const replace = <RouteName extends keyof FiniteRoutes>(
+    routeName: RouteName,
+    ...args: ParamsArg<FiniteRoutesParams[RouteName]>
+  ): void =>
+    history.replace(
+      matchToHistoryPath(matchers[routeName as keyof Routes], first(args)),
+    );
+
   const subscribe = (subscription: Subscription): (() => void) => {
     subscriptions.add(subscription);
 
@@ -69,143 +106,99 @@ export const createRouter = <
     };
   };
 
+  const useLocation = (): Location =>
+    useSubscription(
+      React.useMemo(
+        () => ({ getCurrentValue: () => currentLocation, subscribe }),
+        [],
+      ),
+    );
+
+  const useRoute = <RouteName extends keyof FiniteRoutes | keyof NestedRoutes>(
+    routeNames: ReadonlyArray<RouteName>,
+  ): RouteName extends string
+    ? { name: RouteName; params: Simplify<RoutesParams[RouteName]> } | undefined
+    : never =>
+    // JSON.{stringify,parse} is used to prevent some re-renders,
+    // as the params object instance is updated on each one
+    JSON.parse(
+      useSubscription(
+        React.useMemo(() => {
+          const matchers = rankedMatchers.filter(({ name }) =>
+            routeNames.includes(name as RouteName),
+          );
+
+          return {
+            getCurrentValue: () =>
+              JSON.stringify(match(currentLocation, matchers)),
+            subscribe,
+          };
+        }, [JSON.stringify(routeNames)]),
+      ),
+    );
+
+  // Kudos to https://github.com/remix-run/react-router/pull/7998
+  const useLink = ({
+    href,
+    replace = false,
+    target,
+  }: {
+    href: string;
+    replace?: boolean | undefined;
+    target?: React.HTMLAttributeAnchorTarget | undefined;
+  }) => {
+    const active = useSubscription(
+      React.useMemo(
+        () => ({
+          getCurrentValue: () => href === currentLocation.url,
+          subscribe,
+        }),
+        [href],
+      ),
+    );
+
+    const shouldReplace = replace || active;
+    const shouldIgnoreTarget = !target || target === "_self";
+
+    return {
+      active,
+      onClick: React.useCallback(
+        (event: React.MouseEvent) => {
+          if (
+            !event.defaultPrevented &&
+            shouldIgnoreTarget && // Let browser handle "target=_blank" etc.
+            event.button === 0 && // Ignore everything but left clicks
+            !(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey) // Ignore clicks with modifier keys
+          ) {
+            event.preventDefault();
+
+            if (shouldReplace) {
+              unsafeReplace(href);
+            } else {
+              unsafeNavigate(href);
+            }
+          }
+        },
+        [shouldReplace, shouldIgnoreTarget, href],
+      ),
+    };
+  };
+
   return {
     get location() {
       return currentLocation;
     },
 
+    createURL,
+    goBack,
+    goForward,
+    navigate,
+    replace,
     subscribe,
-
-    goForward: (): void => history.forward(),
-    goBack: (): void => history.back(),
-
-    navigate: <FiniteRouteName extends keyof FiniteRoutes>(
-      routeName: FiniteRouteName,
-      ...args: Arguments<FiniteRoutesParams[FiniteRouteName]>
-    ): void => {
-      history.push(
-        getHistoryLocationFromMatcher(
-          matchers[routeName as keyof Routes],
-          first(args),
-        ),
-      );
-    },
-
-    replace: <FiniteRouteName extends keyof FiniteRoutes>(
-      routeName: FiniteRouteName,
-      ...args: Arguments<FiniteRoutesParams[FiniteRouteName]>
-    ): void => {
-      history.replace(
-        getHistoryLocationFromMatcher(
-          matchers[routeName as keyof Routes],
-          first(args),
-        ),
-      );
-    },
-
-    createURL: <FiniteRouteName extends keyof FiniteRoutes>(
-      routeName: FiniteRouteName,
-      ...args: Arguments<FiniteRoutesParams[FiniteRouteName]>
-    ): string =>
-      createPath(
-        getHistoryLocationFromMatcher(
-          matchers[routeName as keyof Routes],
-          first(args),
-        ),
-      ),
-
-    useLocation: (): Location =>
-      useSubscription(
-        React.useMemo(
-          () => ({ getCurrentValue: () => currentLocation, subscribe }),
-          [],
-        ),
-      ),
-
-    useRoute: <RouteName extends keyof FiniteRoutes | keyof NestedRoutes>(
-      routeNames: ReadonlyArray<RouteName>,
-    ): RouteName extends string
-      ?
-          | { name: RouteName; params: Simplify<RoutesParams[RouteName]> }
-          | undefined
-      : never =>
-      // JSON.stringify / JSON.parse trick is used to prevent
-      // unnecessary re-renders, as params object is updated each time
-      JSON.parse(
-        useSubscription(
-          React.useMemo(() => {
-            const matchers = rankedMatchers.filter(({ name }) =>
-              routeNames.includes(name as RouteName),
-            );
-
-            return {
-              getCurrentValue: () =>
-                JSON.stringify(match(currentLocation, matchers)),
-              subscribe,
-            };
-          }, [JSON.stringify(routeNames)]),
-        ),
-      ),
-
-    // Kudos to https://github.com/remix-run/react-router/pull/7998
-    useLink: ({
-      href,
-      replace = false,
-      target,
-    }: {
-      href: string;
-      replace?: boolean | undefined;
-      target?: React.HTMLAttributeAnchorTarget | undefined;
-    }) => {
-      const { active, historyLocation } = useSubscription(
-        React.useMemo(
-          () => ({
-            getCurrentValue: () => {
-              const {
-                pathname = "/",
-                search = "",
-                hash = "",
-              } = parsePath(href);
-
-              return {
-                active: href === currentLocation.url,
-                historyLocation: { pathname, search, hash },
-              };
-            },
-            subscribe,
-          }),
-          [href],
-        ),
-      );
-
-      const shouldReplace = replace || active;
-      const shouldIgnoreTarget = !target || target === "_self";
-
-      return {
-        active,
-        onClick: React.useCallback(
-          (event: React.MouseEvent) => {
-            if (
-              !event.defaultPrevented &&
-              shouldIgnoreTarget && // Let browser handle "target=_blank" etc.
-              event.button === 0 && // Ignore everything but left clicks
-              !(
-                event.metaKey ||
-                event.altKey ||
-                event.ctrlKey ||
-                event.shiftKey
-              ) // Ignore clicks with modifier keys
-            ) {
-              event.preventDefault();
-
-              shouldReplace
-                ? history.replace(historyLocation)
-                : history.push(historyLocation);
-            }
-          },
-          [shouldIgnoreTarget, shouldReplace, historyLocation],
-        ),
-      };
-    },
+    unsafeNavigate,
+    unsafeReplace,
+    useLink,
+    useLocation,
+    useRoute,
   };
 };
