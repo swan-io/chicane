@@ -43,18 +43,18 @@
     "react": ">=16.8.0"
   },
   "dependencies": {
-    "history": "^5.0.1",
+    "history": "^5.1.0",
     "use-subscription": "^1.5.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.15.8",
-    "@babel/plugin-transform-react-jsx": "^7.14.9",
-    "@babel/preset-env": "^7.15.8",
-    "@babel/preset-typescript": "^7.15.0",
-    "@testing-library/jest-dom": "^5.14.1",
+    "@babel/core": "^7.16.0",
+    "@babel/plugin-transform-react-jsx": "^7.16.0",
+    "@babel/preset-env": "^7.16.0",
+    "@babel/preset-typescript": "^7.16.0",
+    "@testing-library/jest-dom": "^5.15.0",
     "@testing-library/react": "^12.1.2",
     "@types/jest": "^27.0.2",
-    "@types/react": "^17.0.32",
+    "@types/react": "^17.0.34",
     "@types/use-subscription": "^1.0.0",
     "babel-jest": "^27.3.1",
     "jest": "^27.3.1",

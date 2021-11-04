@@ -1,4 +1,4 @@
-import { parsePath, Path } from "history";
+import { parsePath, Path as HistoryPath } from "history";
 import { isMultipleParam, isNonEmpty, isParam } from "./helpers";
 import { encodeSearch } from "./search";
 import { Location, Matcher, Params, Search, Segment } from "./types";
@@ -152,7 +152,7 @@ export const match = (
 export const matchToHistoryPath = (
   matcher: Matcher,
   params: Params = {},
-): Path => {
+): HistoryPath => {
   const pathname =
     "/" +
     matcher.segments
