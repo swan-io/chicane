@@ -1,6 +1,6 @@
 {
   "name": "react-chicane",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "license": "MIT",
   "description": "A simple and safe router for React and TypeScript",
   "author": "Mathieu Acthernoene <mathieu.acthernoene@swan.io>",
