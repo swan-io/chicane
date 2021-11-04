@@ -178,21 +178,10 @@ export const createRouter = <
       replace?: boolean | undefined;
       target?: React.HTMLAttributeAnchorTarget | undefined;
     }) => {
-      const { active, historyLocation } = useSubscription(
+      const active = useSubscription(
         React.useMemo(
           () => ({
-            getCurrentValue: () => {
-              const {
-                pathname = "/",
-                search = "",
-                hash = "",
-              } = parsePath(href);
-
-              return {
-                active: href === currentLocation.url,
-                historyLocation: { pathname, search, hash },
-              };
-            },
+            getCurrentValue: () => href === currentLocation.url,
             subscribe,
           }),
           [href],
@@ -219,12 +208,20 @@ export const createRouter = <
             ) {
               event.preventDefault();
 
+              const {
+                pathname = "/",
+                search = "",
+                hash = "",
+              } = parsePath(href);
+
+              const historyLocation = { pathname, search, hash };
+
               shouldReplace
                 ? history.replace(historyLocation)
                 : history.push(historyLocation);
             }
           },
-          [shouldIgnoreTarget, shouldReplace, historyLocation],
+          [shouldIgnoreTarget, href, shouldReplace],
         ),
       };
     },
