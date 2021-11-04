@@ -1,4 +1,4 @@
-import { createRouter } from "react-chicane";
+import { createRouter } from "../../src";
 
 export const { createURL, useLink, useLocation, useRoute } = createRouter({
   root: "/",
