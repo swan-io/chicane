@@ -62,6 +62,33 @@ export const createRouter = <
     subscriptions.forEach((subscription) => subscription(currentLocation));
   });
 
+  const goForward = (): void => history.forward();
+  const goBack = (): void => history.back();
+
+  const createURL = <RouteName extends keyof FiniteRoutes>(
+    routeName: RouteName,
+    ...args: ParamsArg<FiniteRoutesParams[RouteName]>
+  ): string =>
+    createPath(
+      matchToHistoryPath(matchers[routeName as keyof Routes], first(args)),
+    );
+
+  const navigate = <RouteName extends keyof FiniteRoutes>(
+    routeName: RouteName,
+    ...args: ParamsArg<FiniteRoutesParams[RouteName]>
+  ): void =>
+    history.push(
+      matchToHistoryPath(matchers[routeName as keyof Routes], first(args)),
+    );
+
+  const replace = <RouteName extends keyof FiniteRoutes>(
+    routeName: RouteName,
+    ...args: ParamsArg<FiniteRoutesParams[RouteName]>
+  ): void =>
+    history.replace(
+      matchToHistoryPath(matchers[routeName as keyof Routes], first(args)),
+    );
+
   const subscribe = (subscription: Subscription): (() => void) => {
     subscriptions.add(subscription);
 
@@ -70,34 +97,58 @@ export const createRouter = <
     };
   };
 
+  const useLocation = (): Location =>
+    useSubscription(
+      React.useMemo(
+        () => ({ getCurrentValue: () => currentLocation, subscribe }),
+        [],
+      ),
+    );
+
+  const useRoute = <RouteName extends keyof FiniteRoutes | keyof NestedRoutes>(
+    routeNames: ReadonlyArray<RouteName>,
+  ): RouteName extends string
+    ? { name: RouteName; params: Simplify<RoutesParams[RouteName]> } | undefined
+    : never =>
+    // JSON.{stringify,parse} is used to prevent some re-renders,
+    // as the params object instance is updated on each one
+    JSON.parse(
+      useSubscription(
+        React.useMemo(() => {
+          const matchers = rankedMatchers.filter(({ name }) =>
+            routeNames.includes(name as RouteName),
+          );
+
+          return {
+            getCurrentValue: () =>
+              JSON.stringify(match(currentLocation, matchers)),
+            subscribe,
+          };
+        }, [JSON.stringify(routeNames)]),
+      ),
+    );
+
   const Redirect = <RouteName extends keyof FiniteRoutes>(
     props: RedirectProps<RouteName, FiniteRoutesParams[RouteName]>,
   ): null => {
+    const { url } = useLocation();
+
     useIsoLayoutEffect(() => {
-      const { replace = false } = props;
-
       if (props.external) {
-        const { href } = props;
+        return window.location.replace(props.href);
+      }
 
-        if (replace) {
-          window.location.replace(href);
-        } else {
-          window.location.assign(href);
-        }
-      } else {
-        const {
-          // @ts-expect-error
-          params,
-          route,
-        } = props;
+      const {
+        // @ts-expect-error
+        params,
+        route,
+      } = props;
 
-        const to = matchToHistoryPath(matchers[route as keyof Routes], params);
+      const matcher = matchers[route as keyof Routes];
+      const to = matchToHistoryPath(matcher, params);
 
-        if (replace) {
-          history.replace(to);
-        } else {
-          history.push(to);
-        }
+      if (createPath(to) !== url) {
+        history.replace(to);
       }
     }, []);
 
@@ -109,67 +160,17 @@ export const createRouter = <
       return currentLocation;
     },
 
+    goForward,
+    goBack,
+    createURL,
+    navigate,
+    replace,
     subscribe,
 
-    goForward: (): void => history.forward(),
-    goBack: (): void => history.back(),
+    useLocation,
+    useRoute,
 
-    navigate: <RouteName extends keyof FiniteRoutes>(
-      routeName: RouteName,
-      ...args: ParamsArg<FiniteRoutesParams[RouteName]>
-    ): void =>
-      history.push(
-        matchToHistoryPath(matchers[routeName as keyof Routes], first(args)),
-      ),
-
-    replace: <RouteName extends keyof FiniteRoutes>(
-      routeName: RouteName,
-      ...args: ParamsArg<FiniteRoutesParams[RouteName]>
-    ): void =>
-      history.replace(
-        matchToHistoryPath(matchers[routeName as keyof Routes], first(args)),
-      ),
-
-    createURL: <RouteName extends keyof FiniteRoutes>(
-      routeName: RouteName,
-      ...args: ParamsArg<FiniteRoutesParams[RouteName]>
-    ): string =>
-      createPath(
-        matchToHistoryPath(matchers[routeName as keyof Routes], first(args)),
-      ),
-
-    useLocation: (): Location =>
-      useSubscription(
-        React.useMemo(
-          () => ({ getCurrentValue: () => currentLocation, subscribe }),
-          [],
-        ),
-      ),
-
-    useRoute: <RouteName extends keyof FiniteRoutes | keyof NestedRoutes>(
-      routeNames: ReadonlyArray<RouteName>,
-    ): RouteName extends string
-      ?
-          | { name: RouteName; params: Simplify<RoutesParams[RouteName]> }
-          | undefined
-      : never =>
-      // JSON.stringify / JSON.parse trick is used to prevent
-      // unnecessary re-renders, as params object is updated each time
-      JSON.parse(
-        useSubscription(
-          React.useMemo(() => {
-            const matchers = rankedMatchers.filter(({ name }) =>
-              routeNames.includes(name as RouteName),
-            );
-
-            return {
-              getCurrentValue: () =>
-                JSON.stringify(match(currentLocation, matchers)),
-              subscribe,
-            };
-          }, [JSON.stringify(routeNames)]),
-        ),
-      ),
+    Redirect,
 
     // Kudos to https://github.com/remix-run/react-router/pull/7998
     useLink: ({
@@ -231,7 +232,5 @@ export const createRouter = <
         ),
       };
     },
-
-    Redirect,
   };
 };

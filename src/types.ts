@@ -109,6 +109,13 @@ export type RedirectProps<RouteName, Params> =
   | { external: true; replace?: boolean; href: string }
   | ({
       external?: false;
-      replace?: boolean;
       route: RouteName;
     } & ParamsProp<Params>);
+
+// export type RedirectProps<RouteName, Params> =
+//   | { external: true; replace?: boolean; href: string }
+//   | ({
+//       external?: false;
+//       replace?: boolean;
+//       route: RouteName;
+//     } & ParamsProp<Params>);
