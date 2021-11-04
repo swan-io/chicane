@@ -99,18 +99,11 @@ export type ParamsArg<Params> = Params extends EmptyRecord
   ? [params?: { [K in keyof Params]: Params[K] }]
   : [params: { [K in keyof Params]: Params[K] }];
 
-type ParamsProp<Params> = Params extends EmptyRecord
+export type ParamsProp<Params> = Params extends EmptyRecord
   ? {}
   : NonOptionalProperties<Params> extends never
   ? { params?: { [K in keyof Params]: Params[K] } }
   : { params: { [K in keyof Params]: Params[K] } };
-
-export type RedirectProps<RouteName, Params> =
-  | { external: true; replace?: boolean; href: string }
-  | ({
-      external?: false;
-      route: RouteName;
-    } & ParamsProp<Params>);
 
 // export type RedirectProps<RouteName, Params> =
 //   | { external: true; replace?: boolean; href: string }

@@ -10,8 +10,8 @@ import {
   Location,
   Matcher,
   ParamsArg,
+  ParamsProp,
   PrependBasePath,
-  RedirectProps,
   Simplify,
   Subscription,
 } from "./types";
@@ -129,15 +129,11 @@ export const createRouter = <
     );
 
   const Redirect = <RouteName extends keyof FiniteRoutes>(
-    props: RedirectProps<RouteName, FiniteRoutesParams[RouteName]>,
+    props: { route: RouteName } & ParamsProp<FiniteRoutesParams[RouteName]>,
   ): null => {
     const { url } = useLocation();
 
     useIsoLayoutEffect(() => {
-      if (props.external) {
-        return window.location.replace(props.href);
-      }
-
       const {
         // @ts-expect-error
         params,
