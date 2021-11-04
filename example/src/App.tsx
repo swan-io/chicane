@@ -39,8 +39,8 @@ export const App = () => {
           minWidth: 200,
         }}
       >
-        <Link href={createURL("root")}>Homepage</Link>
-        <Link href={createURL("users")}>Users</Link>
+        <Link to={createURL("root")}>Homepage</Link>
+        <Link to={createURL("users")}>Users</Link>
       </nav>
 
       <main style={{ display: "flex", flexDirection: "column" }}>
@@ -51,7 +51,7 @@ export const App = () => {
               <h1>Users</h1>
 
               {Object.keys(EXAMPLE_DATA).map((userId) => (
-                <Link key={userId} href={createURL("user", { userId })}>
+                <Link key={userId} to={createURL("user", { userId })}>
                   {userId}
                 </Link>
               ))}
@@ -62,7 +62,7 @@ export const App = () => {
               <h1>{userId}</h1>
               <p>{userId} homepage</p>
 
-              <Link href={createURL("repositories", { userId })}>
+              <Link to={createURL("repositories", { userId })}>
                 His repositories
               </Link>
             </>
@@ -89,7 +89,7 @@ const Repositories = ({ userId }: { userId: string }) => {
           <ul>
             {EXAMPLE_DATA[userId]?.map((repositoryId) => (
               <li key={repositoryId}>
-                <Link href={createURL("repository", { userId, repositoryId })}>
+                <Link to={createURL("repository", { userId, repositoryId })}>
                   {repositoryId}
                 </Link>
               </li>

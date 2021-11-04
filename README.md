@@ -218,22 +218,22 @@ As this library doesn't provide a single component, we expose this hook to creat
 ```tsx
 const Link = ({
   children,
-  href,
+  to,
   replace,
   target,
 }: {
   children?: React.ReactNode;
-  href: string;
+  to: string;
   replace?: boolean;
   target?: React.HTMLAttributeAnchorTarget;
 }) => {
-  const { active, onClick } = Router.useLink({ href, replace, target });
+  const { active, onClick } = useLink({ href: to, replace, target });
 
   return (
     <a
-      href={href}
-      target={target}
+      href={to}
       onClick={onClick}
+      target={target}
       style={{ fontWeight: active ? 700 : 400 }}
     >
       {children}
@@ -242,7 +242,7 @@ const Link = ({
 };
 
 // usage
-<Link href={Router.createURL("user", { userId: "zoontek" })}>Profile</Link>;
+<Link to={Router.createURL("user", { userId: "zoontek" })}>Profile</Link>;
 ```
 
 #### Router.useLocation

@@ -1,7 +1,7 @@
 import { createBrowserHistory, createPath, parsePath } from "history";
 import * as React from "react";
 import { useSubscription } from "use-subscription";
-import { first, useIsoLayoutEffect } from "./helpers";
+import { first } from "./helpers";
 import { decodeLocation } from "./location";
 import { getMatcher, match, matchToHistoryPath } from "./matcher";
 import {
@@ -10,7 +10,6 @@ import {
   Location,
   Matcher,
   ParamsArg,
-  ParamsProp,
   PrependBasePath,
   Simplify,
   Subscription,
@@ -64,6 +63,16 @@ export const createRouter = <
 
   const goForward = (): void => history.forward();
   const goBack = (): void => history.back();
+
+  const unsafeNavigate = (url: string): void => {
+    const { pathname = "/", search = "", hash = "" } = parsePath(url);
+    history.push({ pathname, search, hash });
+  };
+
+  const unsafeReplace = (url: string) => {
+    const { pathname = "/", search = "", hash = "" } = parsePath(url);
+    history.replace({ pathname, search, hash });
+  };
 
   const createURL = <RouteName extends keyof FiniteRoutes>(
     routeName: RouteName,
@@ -149,7 +158,7 @@ export const createRouter = <
     );
 
     const shouldReplace = replace || active;
-    const targetIgnored = !target || target === "_self";
+    const shouldIgnoreTarget = !target || target === "_self";
 
     return {
       active,
@@ -157,43 +166,22 @@ export const createRouter = <
         (event: React.MouseEvent) => {
           if (
             !event.defaultPrevented &&
-            targetIgnored && // Let browser handle "target=_blank" etc.
+            shouldIgnoreTarget && // Let browser handle "target=_blank" etc.
             event.button === 0 && // Ignore everything but left clicks
             !(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey) // Ignore clicks with modifier keys
           ) {
             event.preventDefault();
 
-            const { pathname = "/", search = "", hash = "" } = parsePath(href);
-            const historyLocation = { pathname, search, hash };
-
-            shouldReplace
-              ? history.replace(historyLocation)
-              : history.push(historyLocation);
+            if (shouldReplace) {
+              unsafeReplace(href);
+            } else {
+              unsafeNavigate(href);
+            }
           }
         },
-        [shouldReplace, targetIgnored, href],
+        [shouldReplace, shouldIgnoreTarget, href],
       ),
     };
-  };
-
-  const Redirect = <RouteName extends keyof FiniteRoutes>(
-    props: { to: RouteName } & ParamsProp<FiniteRoutesParams[RouteName]>,
-  ): null => {
-    const { url } = useLocation();
-
-    useIsoLayoutEffect(() => {
-      const {
-        // @ts-expect-error
-        params,
-        to,
-      } = props;
-
-      const matcher = matchers[to as keyof Routes];
-      const path = matchToHistoryPath(matcher, params);
-      createPath(path) !== url && history.replace(path);
-    }, []);
-
-    return null;
   };
 
   return {
@@ -201,17 +189,16 @@ export const createRouter = <
       return currentLocation;
     },
 
-    goForward,
-    goBack,
     createURL,
+    goBack,
+    goForward,
     navigate,
     replace,
     subscribe,
-
+    unsafeNavigate,
+    unsafeReplace,
+    useLink,
     useLocation,
     useRoute,
-    useLink,
-
-    Redirect,
   };
 };
