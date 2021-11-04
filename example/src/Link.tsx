@@ -10,8 +10,8 @@ export const Link = ({
 }: {
   children?: React.ReactNode;
   href: string;
-  replace?: boolean | undefined;
-  target?: React.HTMLAttributeAnchorTarget | undefined;
+  replace?: boolean;
+  target?: React.HTMLAttributeAnchorTarget;
 }) => {
   const { active, onClick } = useLink({ href, replace, target });
 
