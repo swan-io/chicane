@@ -1,22 +1,5 @@
-import { cleanup } from "@testing-library/react";
-import { parsePath } from "history";
-import { decodeLocation } from "../src/location";
 import { getMatcher, match } from "../src/matcher";
-
-afterEach(cleanup);
-
-const getLocation = (path: string) =>
-  decodeLocation(
-    {
-      hash: "",
-      key: "",
-      pathname: "/",
-      search: "",
-      state: null,
-      ...parsePath(path),
-    },
-    false,
-  );
+import { getLocation } from "./utils";
 
 test("getMatcher", () => {
   expect(getMatcher("groups", "/groups")).toStrictEqual({
@@ -84,7 +67,7 @@ test("match", () => {
     getMatcher("myGroup", "/groups/mine"),
     getMatcher("users*", "/groups/:groupId/users*"),
     getMatcher("users", "/groups/:groupId/users"),
-  ].sort((a, b) => b.ranking - a.ranking); // match doesn't respect ranking
+  ].sort((a, b) => b.ranking - a.ranking);
 
   expect(match(getLocation("/groups"), matchers)).toStrictEqual({
     name: "groups",

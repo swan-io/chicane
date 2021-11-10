@@ -31,9 +31,12 @@
     "prepare": "yarn test && yarn build"
   },
   "jest": {
-    "testEnvironment": "jsdom",
     "setupFilesAfterEnv": [
       "<rootDir>/jest-setup.ts"
+    ],
+    "testEnvironment": "jsdom",
+    "testPathIgnorePatterns": [
+      "<rootDir>/__tests__/utils.ts"
     ]
   },
   "prettier": {
