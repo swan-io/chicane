@@ -14,10 +14,8 @@ export const {
   useRoute,
 } = createRouter({
   root: "/",
-
   users: "/users",
   user: "/users/:userId",
-
   repositoriesArea: "/users/:userId/repositories/*",
   repositories: "/users/:userId/repositories",
   repository: "/users/:userId/repositories/:repositoryId",
