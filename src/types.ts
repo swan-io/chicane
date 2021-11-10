@@ -63,6 +63,8 @@ type ExtractRouteParams<Route extends string> =
         ExtractHashParam<Hash>
     : Route extends `${infer Path}?${infer Search}`
     ? ExtractPathParams<Path> & ExtractSearchParams<Search>
+    : Route extends `${infer Path}#${infer Hash}`
+    ? ExtractPathParams<Path> & ExtractSearchParams<Hash>
     : ExtractPathParams<Route>;
 
 export type PrependBasePath<
