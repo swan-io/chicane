@@ -2,49 +2,49 @@ import { decodeLocation } from "../src/location";
 import { getHistoryLocation } from "./utils";
 
 test("decodeLocation with well-formed paths", () => {
-  const strictEqual = <E>(path: string, expected: E) =>
+  const equal = <E>(path: string, expected: E) =>
     expect(decodeLocation(getHistoryLocation(path), false)).toStrictEqual(
       expected,
     );
 
-  strictEqual("/", {
+  equal("/", {
     path: [],
     search: {},
     url: "/",
   });
 
-  strictEqual("/test", {
+  equal("/test", {
     path: ["test"],
     search: {},
     url: "/test",
   });
 
-  strictEqual("/test/ID", {
+  equal("/test/ID", {
     path: ["test", "ID"],
     search: {},
     url: "/test/ID",
   });
 
-  strictEqual("/test/repositories/mine", {
+  equal("/test/repositories/mine", {
     path: ["test", "repositories", "mine"],
     search: {},
     url: "/test/repositories/mine",
   });
 
-  strictEqual("/test#foo", {
+  equal("/test#foo", {
     path: ["test"],
     search: {},
     hash: "foo",
     url: "/test#foo",
   });
 
-  strictEqual("/profile/settings?invitation=code", {
+  equal("/profile/settings?invitation=code", {
     path: ["profile", "settings"],
     search: { invitation: "code" },
     url: "/profile/settings?invitation=code",
   });
 
-  strictEqual("/test?filters=foo&filters=bar", {
+  equal("/test?filters=foo&filters=bar", {
     path: ["test"],
     search: { filters: ["foo", "bar"] },
     url: "/test?filters=foo&filters=bar",
@@ -52,43 +52,43 @@ test("decodeLocation with well-formed paths", () => {
 });
 
 test("decodeLocation with empty params", () => {
-  const strictEqual = <E>(path: string, expected: E) =>
+  const equal = <E>(path: string, expected: E) =>
     expect(decodeLocation(getHistoryLocation(path), false)).toStrictEqual(
       expected,
     );
 
-  strictEqual("/?#", {
+  equal("/?#", {
     path: [],
     search: {},
     hash: "",
     url: "/#",
   });
 
-  strictEqual("/test?", {
+  equal("/test?", {
     path: ["test"],
     search: {},
     url: "/test",
   });
 
-  strictEqual("/test?foo", {
+  equal("/test?foo", {
     path: ["test"],
     search: { foo: "" },
     url: "/test?foo",
   });
 
-  strictEqual("/test?foo=", {
+  equal("/test?foo=", {
     path: ["test"],
     search: { foo: "" },
     url: "/test?foo",
   });
 
-  strictEqual("/test?foo=&foo", {
+  equal("/test?foo=&foo", {
     path: ["test"],
     search: { foo: ["", ""] },
     url: "/test?foo&foo",
   });
 
-  strictEqual("/test#", {
+  equal("/test#", {
     path: ["test"],
     search: {},
     hash: "",
@@ -97,30 +97,30 @@ test("decodeLocation with empty params", () => {
 });
 
 test("decodeLocation with unescaped chars", () => {
-  const strictEqual = <E>(path: string, expected: E) =>
+  const equal = <E>(path: string, expected: E) =>
     expect(decodeLocation(getHistoryLocation(path), false)).toStrictEqual(
       expected,
     );
 
-  strictEqual("/:test+", {
+  equal("/:test+", {
     path: [":test+"],
     search: {},
     url: "/%3Atest%2B",
   });
 
-  strictEqual("/test??foo", {
+  equal("/test??foo", {
     path: ["test"],
     search: { "?foo": "" },
     url: "/test?%3Ffoo",
   });
 
-  strictEqual("/test?foo=?", {
+  equal("/test?foo=?", {
     path: ["test"],
     search: { foo: "?" },
     url: "/test?foo=%3F",
   });
 
-  strictEqual("/test##+foo", {
+  equal("/test##+foo", {
     path: ["test"],
     search: {},
     hash: "#+foo",
@@ -129,30 +129,30 @@ test("decodeLocation with unescaped chars", () => {
 });
 
 test("decodeLocation with extra slashes (without cleaning)", () => {
-  const strictEqual = <E>(path: string, expected: E) =>
+  const equal = <E>(path: string, expected: E) =>
     expect(decodeLocation(getHistoryLocation(path), false)).toStrictEqual(
       expected,
     );
 
-  strictEqual("///", {
+  equal("///", {
     path: ["", "", ""],
     search: {},
     url: "///",
   });
 
-  strictEqual("/test/", {
+  equal("/test/", {
     path: ["test", ""],
     search: {},
     url: "/test/",
   });
 
-  strictEqual("/test/?foo", {
+  equal("/test/?foo", {
     path: ["test", ""],
     search: { foo: "" },
     url: "/test/?foo",
   });
 
-  strictEqual("//profile//settings?invitation=/", {
+  equal("//profile//settings?invitation=/", {
     path: ["", "profile", "", "settings"],
     search: { invitation: "/" },
     url: "//profile//settings?invitation=%2F",
@@ -160,30 +160,30 @@ test("decodeLocation with extra slashes (without cleaning)", () => {
 });
 
 test("decodeLocation with extra slashes (with cleaning)", () => {
-  const strictEqual = <E>(path: string, expected: E) =>
+  const equal = <E>(path: string, expected: E) =>
     expect(decodeLocation(getHistoryLocation(path), true)).toStrictEqual(
       expected,
     );
 
-  strictEqual("///", {
+  equal("///", {
     path: [],
     search: {},
     url: "/",
   });
 
-  strictEqual("/test/", {
+  equal("/test/", {
     path: ["test"],
     search: {},
     url: "/test",
   });
 
-  strictEqual("/test/?foo", {
+  equal("/test/?foo", {
     path: ["test"],
     search: { foo: "" },
     url: "/test?foo",
   });
 
-  strictEqual("//profile//settings?invitation=/", {
+  equal("//profile//settings?invitation=/", {
     path: ["profile", "settings"],
     search: { invitation: "/" },
     url: "/profile/settings?invitation=%2F",

@@ -2,30 +2,28 @@ import { getMatcher, match } from "../src/matcher";
 import { getLocation } from "./utils";
 
 test("getMatcher", () => {
-  expect(getMatcher("groups", "/groups")).toStrictEqual({
-    name: "groups",
+  const equal = <E>(name: string, route: string, expected: E) =>
+    expect(getMatcher(name, route)).toStrictEqual({ name, ...expected });
+
+  equal("groups", "/groups", {
     finite: true,
     ranking: 7,
     search: {},
     segments: [{ name: "groups", param: false }],
   });
 
-  expect(getMatcher("group", "/group/:groupId?:foo&:bar[]#:baz")).toStrictEqual(
-    {
-      name: "group",
-      finite: true,
-      ranking: 13,
-      hash: "baz",
-      search: { foo: "unique", bar: "multiple" },
-      segments: [
-        { name: "group", param: false },
-        { name: "groupId", param: true },
-      ],
-    },
-  );
+  equal("group", "/group/:groupId?:foo&:bar[]#:baz", {
+    finite: true,
+    ranking: 13,
+    hash: "baz",
+    search: { foo: "unique", bar: "multiple" },
+    segments: [
+      { name: "group", param: false },
+      { name: "groupId", param: true },
+    ],
+  });
 
-  expect(getMatcher("myGroup", "/groups/mine")).toStrictEqual({
-    name: "myGroup",
+  equal("myGroup", "/groups/mine", {
     finite: true,
     ranking: 14,
     search: {},
@@ -35,8 +33,7 @@ test("getMatcher", () => {
     ],
   });
 
-  expect(getMatcher("usersArea", "/groups/:groupId/users/*")).toStrictEqual({
-    name: "usersArea",
+  equal("usersArea", "/groups/:groupId/users/*", {
     finite: false,
     ranking: 19,
     search: {},
@@ -47,8 +44,7 @@ test("getMatcher", () => {
     ],
   });
 
-  expect(getMatcher("users", "/groups/:groupId/users")).toStrictEqual({
-    name: "users",
+  equal("users", "/groups/:groupId/users", {
     finite: true,
     ranking: 20,
     search: {},
@@ -69,29 +65,30 @@ test("match", () => {
     getMatcher("users", "/groups/:groupId/users"),
   ].sort((a, b) => b.ranking - a.ranking);
 
-  expect(match(getLocation("/groups"), matchers)).toStrictEqual({
+  const equal = <E>(path: string, expected: E) =>
+    expect(match(getLocation(path), matchers)).toStrictEqual(expected);
+
+  equal("/groups", {
     name: "groups",
     params: {},
   });
 
-  expect(match(getLocation("/groups/github"), matchers)).toStrictEqual({
+  equal("/groups/github", {
     name: "group",
     params: { groupId: "github" },
   });
 
-  expect(match(getLocation("/groups/mine"), matchers)).toStrictEqual({
+  equal("/groups/mine", {
     name: "myGroup",
     params: {},
   });
 
-  expect(
-    match(getLocation("/groups/github/users/nested"), matchers),
-  ).toStrictEqual({
+  equal("/groups/github/users/nested", {
     name: "usersArea",
     params: { groupId: "github" },
   });
 
-  expect(match(getLocation("/groups/github/users"), matchers)).toStrictEqual({
+  equal("/groups/github/users", {
     name: "users",
     params: { groupId: "github" },
   });
