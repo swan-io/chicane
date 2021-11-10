@@ -18,7 +18,7 @@ export const {
   users: "/users",
   user: "/users/:userId",
 
-  "repositories*": "/users/:userId/repositories*",
+  repositoriesArea: "/users/:userId/repositories/*",
   repositories: "/users/:userId/repositories",
   repository: "/users/:userId/repositories/:repositoryId",
 });

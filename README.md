@@ -75,7 +75,7 @@ export const { useRoute } = createRouter({
   users: "/groups/:groupId/users",
   user: "/groups/:groupId/users/:userId",
   // it also supports wildcard routes!
-  "users*": "/groups/:groupId/users*",
+  usersArea: "/groups/:groupId/users/*",
 });
 
 const App = () => {

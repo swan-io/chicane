@@ -35,8 +35,8 @@ test("getMatcher", () => {
     ],
   });
 
-  expect(getMatcher("users*", "/groups/:groupId/users*")).toStrictEqual({
-    name: "users*",
+  expect(getMatcher("usersArea", "/groups/:groupId/users/*")).toStrictEqual({
+    name: "usersArea",
     finite: false,
     ranking: 19,
     search: {},
@@ -65,7 +65,7 @@ test("match", () => {
     getMatcher("groups", "/groups"),
     getMatcher("group", "/groups/:groupId"),
     getMatcher("myGroup", "/groups/mine"),
-    getMatcher("users*", "/groups/:groupId/users*"),
+    getMatcher("usersArea", "/groups/:groupId/users/*"),
     getMatcher("users", "/groups/:groupId/users"),
   ].sort((a, b) => b.ranking - a.ranking);
 
@@ -87,7 +87,7 @@ test("match", () => {
   expect(
     match(getLocation("/groups/github/users/nested"), matchers),
   ).toStrictEqual({
-    name: "users*",
+    name: "usersArea",
     params: { groupId: "github" },
   });
 

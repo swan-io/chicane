@@ -27,7 +27,7 @@ const EXAMPLE_DATA: Record<string, string[]> = {
 };
 
 export const App = () => {
-  const route = useRoute(["root", "users", "user", "repositories*"]);
+  const route = useRoute(["root", "users", "user", "repositoriesArea"]);
 
   return (
     <div style={{ display: "flex" }}>
@@ -67,7 +67,7 @@ export const App = () => {
               </Link>
             </>
           ))
-          .with({ name: "repositories*" }, ({ params }) => (
+          .with({ name: "repositoriesArea" }, ({ params }) => (
             <Repositories userId={params.userId} />
           ))
           .with(undefined, () => <div>404 - Page not found</div>)
