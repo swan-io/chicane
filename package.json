@@ -1,6 +1,6 @@
 {
   "name": "react-chicane",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "license": "MIT",
   "description": "A simple and safe router for React and TypeScript",
   "author": "Mathieu Acthernoene <mathieu.acthernoene@swan.io>",
@@ -25,7 +25,7 @@
     "clean": "rm -rf dist",
     "dev": "microbundle watch",
     "format": "prettier '**/*.{js,md,ts,tsx}' --write",
-    "test": "jest --passWithNoTests",
+    "test": "jest",
     "test:watch": "jest --watch",
     "tscheck": "tsc --noEmit",
     "prepare": "yarn test && yarn build"
