@@ -24,7 +24,7 @@ yarn install && yarn dev
 
 ### Creating a router
 
-This library exports only one function: `createRouter`. The goal behind this is to enforce listing all your project routes using fancy names in a file and use the strongly typed methods returned.
+This library exports a main function: `createRouter`. The goal behind this is to enforce listing all your project routes using fancy names in a file and use the strongly typed methods returned.
 
 ```tsx
 import { createRouter } from "react-chicane";
@@ -127,7 +127,10 @@ const Router = createRouter(
     users: "/users",
     user: "/users/:userId",
   },
-  // { basePath: "/setup/basePath/here" }
+  {
+    basePath: "/setup/basePath/here", // Will be prepend to all your paths (optional)
+    blockerMessage: "Are you sure you want to leave this page?", // A default navigation blocker message (optional)
+  },
 );
 ```
 
@@ -261,6 +264,22 @@ const App = () => {
 };
 ```
 
+#### Router.useBlocker
+
+Block the navigation and ask user for confirmation. Useful to avoid loosing a form state. It accepts a second paramater if you want to override the default `blockerMessage`.
+
+```tsx
+const App = () => {
+  const { formStatus } = useForm(/* … */);
+  Router.useBlocker(
+    formStatus === "editing",
+    "Are you sure you want to stop editing this profile?",
+  );
+
+  // …
+};
+```
+
 #### Router.subscribe
 
 Subscribe to location changes. Useful to reset keyboard focus.
@@ -302,12 +321,25 @@ const Redirect = ({ to }: { to: string }) => {
 <Redirect to={Router.createURL("root")} />;
 ```
 
+### encodeSearch, decodeSearch
+
+Encode and decode url search parameters.
+
+```tsx
+import { encodeSearch, decodeSearch } from "react-chicane";
+
+encodeSearch({ invitation: "542022247745", users: ["frank", "chris"] });
+// -> "?invitation=542022247745&users=frank&users=chris"
+
+decodeSearch("?invitation=542022247745&users=frank&users=chris");
+// -> { invitation: "542022247745", users: ["frank", "chris"] }
+```
+
 ## 👷‍♂️ Roadmap
 
 - Improve documentation
 - Tests, tests, tests
 - Switch to `useSyncExternalStore` (React 18+)
-- Add navigation blocker
 - Write a "focus reset" recipe
 - Find a cool logo
 - Create a website (?)
