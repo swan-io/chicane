@@ -70,7 +70,7 @@ export const App = () => {
           .with({ name: "repositoriesArea" }, ({ params }) => (
             <Repositories userId={params.userId} />
           ))
-          .with(undefined, () => <div>404 - Page not found</div>)
+          .with(undefined, () => <h1>404 - Page not found</h1>)
           .exhaustive()}
       </main>
     </div>
