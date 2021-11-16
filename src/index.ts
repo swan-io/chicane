@@ -118,24 +118,27 @@ export const createRouter = <
     routeNames: ReadonlyArray<RouteName>,
   ): RouteName extends string
     ? { name: RouteName; params: Simplify<RoutesParams[RouteName]> } | undefined
-    : never =>
+    : never => {
     // JSON.{stringify,parse} is used to prevent some re-renders,
     // as the params object instance is updated on each one
-    JSON.parse(
-      useSubscription(
-        React.useMemo(() => {
-          const matchers = rankedMatchers.filter(({ name }) =>
-            routeNames.includes(name as RouteName),
-          );
+    const route = useSubscription(
+      React.useMemo(() => {
+        const matchers = rankedMatchers.filter(({ name }) =>
+          routeNames.includes(name as RouteName),
+        );
 
-          return {
-            getCurrentValue: () =>
-              JSON.stringify(match(currentLocation, matchers)),
-            subscribe,
-          };
-        }, [JSON.stringify(routeNames)]),
-      ),
+        return {
+          getCurrentValue: () => {
+            const route = match(currentLocation, matchers);
+            return route ? JSON.stringify(route) : route;
+          },
+          subscribe,
+        };
+      }, [JSON.stringify(routeNames)]),
     );
+
+    return route ? JSON.parse(route) : route;
+  };
 
   // Kudos to https://github.com/remix-run/react-router/pull/7998
   const useLink = ({
