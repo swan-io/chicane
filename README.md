@@ -271,6 +271,7 @@ Block the navigation and ask user for confirmation. Useful to avoid loosing a fo
 ```tsx
 const App = () => {
   const { formStatus } = useForm(/* … */);
+
   Router.useBlocker(
     formStatus === "editing",
     "Are you sure you want to stop editing this profile?",
@@ -321,7 +322,7 @@ const Redirect = ({ to }: { to: string }) => {
 <Redirect to={Router.createURL("root")} />;
 ```
 
-### encodeSearch, decodeSearch
+### encodeSearch and decodeSearch
 
 Encode and decode url search parameters.
 
