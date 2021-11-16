@@ -29,9 +29,12 @@ export const createRouter = <
   RoutesParams extends NestedRoutesParams & FiniteRoutesParams,
 >(
   routes: Readonly<Routes>,
-  options: { basePath?: BasePath } = {},
+  options: {
+    basePath?: BasePath;
+    blockerMessage?: string;
+  } = {},
 ) => {
-  const { basePath = "" } = options;
+  const { basePath = "", blockerMessage = "" } = options;
 
   const matchers = {} as Record<keyof Routes, Matcher>;
   const rankedMatchers: Matcher[] = []; // higher to lower
@@ -187,6 +190,23 @@ export const createRouter = <
     };
   };
 
+  const useBlocker = (blocked: boolean, message = blockerMessage) => {
+    React.useEffect(() => {
+      if (!blocked) {
+        return;
+      }
+
+      const unblock = history.block((transition) => {
+        if (window.confirm(message)) {
+          unblock();
+          transition.retry();
+        }
+      });
+
+      return unblock;
+    }, [blocked]);
+  };
+
   return {
     get location() {
       return currentLocation;
@@ -203,5 +223,6 @@ export const createRouter = <
     useLink,
     useLocation,
     useRoute,
+    useBlocker,
   };
 };
