@@ -1,6 +1,5 @@
 import { createBrowserHistory, createPath, parsePath } from "history";
 import * as React from "react";
-import { useSubscription } from "use-subscription";
 import { first } from "./helpers";
 import { decodeLocation } from "./location";
 import { getMatcher, match, matchToHistoryPath } from "./matcher";
@@ -107,12 +106,7 @@ export const createRouter = <
   };
 
   const useLocation = (): Location =>
-    useSubscription(
-      React.useMemo(
-        () => ({ getCurrentValue: () => currentLocation, subscribe }),
-        [],
-      ),
-    );
+    React.useSyncExternalStore(subscribe, () => currentLocation);
 
   const useRoute = <RouteName extends keyof FiniteRoutes | keyof NestedRoutes>(
     routeNames: ReadonlyArray<RouteName>,
@@ -120,21 +114,16 @@ export const createRouter = <
     ? { name: RouteName; params: Simplify<RoutesParams[RouteName]> } | undefined
     : never =>
     // JSON.{stringify,parse} is used to prevent some re-renders,
-    // as the params object instance is updated on each one
+    // as the params object instance is updated on each one.
+    // It seems a useSyncExternalStoreWithSelector hook is planned
+    // @see https://github.com/reactwg/react-18/discussions/86
     JSON.parse(
-      useSubscription(
-        React.useMemo(() => {
-          const matchers = rankedMatchers.filter(({ name }) =>
-            routeNames.includes(name as RouteName),
-          );
-
-          return {
-            getCurrentValue: () =>
-              JSON.stringify(match(currentLocation, matchers)),
-            subscribe,
-          };
-        }, [JSON.stringify(routeNames)]),
-      ),
+      React.useSyncExternalStore(subscribe, () => {
+        const matchers = rankedMatchers.filter(({ name }) =>
+          routeNames.includes(name as RouteName),
+        );
+        return JSON.stringify(match(currentLocation, matchers));
+      }),
     );
 
   // Kudos to https://github.com/remix-run/react-router/pull/7998
@@ -147,14 +136,9 @@ export const createRouter = <
     replace?: boolean | undefined;
     target?: React.HTMLAttributeAnchorTarget | undefined;
   }) => {
-    const active = useSubscription(
-      React.useMemo(
-        () => ({
-          getCurrentValue: () => href === currentLocation.url,
-          subscribe,
-        }),
-        [href],
-      ),
+    const active = React.useSyncExternalStore(
+      subscribe,
+      () => href === currentLocation.url,
     );
 
     const shouldReplace = replace || active;
