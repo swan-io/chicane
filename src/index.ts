@@ -81,26 +81,18 @@ export const createRouter = <
   const createURL = <RouteName extends keyof FiniteRoutes>(
     routeName: RouteName,
     ...args: ParamsArg<FiniteRoutesParams[RouteName]>
-  ): string =>
-    createPath(
-      matchToHistoryPath(matchers[routeName as keyof Routes], first(args)),
-    );
+  ): string => createPath(matchToHistoryPath(matchers[routeName], first(args)));
 
   const navigate = <RouteName extends keyof FiniteRoutes>(
     routeName: RouteName,
     ...args: ParamsArg<FiniteRoutesParams[RouteName]>
-  ): void =>
-    history.push(
-      matchToHistoryPath(matchers[routeName as keyof Routes], first(args)),
-    );
+  ): void => history.push(matchToHistoryPath(matchers[routeName], first(args)));
 
   const replace = <RouteName extends keyof FiniteRoutes>(
     routeName: RouteName,
     ...args: ParamsArg<FiniteRoutesParams[RouteName]>
   ): void =>
-    history.replace(
-      matchToHistoryPath(matchers[routeName as keyof Routes], first(args)),
-    );
+    history.replace(matchToHistoryPath(matchers[routeName], first(args)));
 
   const subscribe = (subscription: Subscription): (() => void) => {
     subscriptions.add(subscription);

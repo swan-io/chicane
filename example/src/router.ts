@@ -12,6 +12,7 @@ export const {
   useLink,
   useLocation,
   useRoute,
+  useBlocker,
 } = createRouter({
   root: "/",
   users: "/users",
