@@ -20,13 +20,7 @@ export type { Location, Search } from "./types";
 
 export const createRouter = <
   Routes extends Record<string, string>,
-  BasePath extends string,
-  RoutesWithBasePath extends PrependBasePath<Routes, BasePath>,
-  NestedRoutes extends GetNestedRoutes<RoutesWithBasePath>,
-  NestedRoutesParams extends ExtractRoutesParams<NestedRoutes>,
-  FiniteRoutes extends Omit<RoutesWithBasePath, keyof NestedRoutes>,
-  FiniteRoutesParams extends ExtractRoutesParams<FiniteRoutes>,
-  RoutesParams extends NestedRoutesParams & FiniteRoutesParams,
+  BasePath extends string = string,
 >(
   routes: Readonly<Routes>,
   options: {
@@ -34,6 +28,13 @@ export const createRouter = <
     blockerMessage?: string;
   } = {},
 ) => {
+  type RoutesWithBasePath = PrependBasePath<Routes, BasePath>;
+  type NestedRoutes = GetNestedRoutes<RoutesWithBasePath>;
+  type NestedRoutesParams = ExtractRoutesParams<NestedRoutes>;
+  type FiniteRoutes = Omit<RoutesWithBasePath, keyof NestedRoutes>;
+  type FiniteRoutesParams = ExtractRoutesParams<FiniteRoutes>;
+  type RoutesParams = NestedRoutesParams & FiniteRoutesParams;
+
   const { basePath = "", blockerMessage = "" } = options;
 
   const matchers = {} as Record<keyof Routes, Matcher>;
