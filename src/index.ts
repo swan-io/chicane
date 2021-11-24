@@ -111,7 +111,7 @@ export const createRouter = <
     );
 
   const useRoute = <RouteName extends keyof FiniteRoutes | keyof NestedRoutes>(
-    routeNames: ReadonlyArray<RouteName>,
+    routeNames: ReadonlyArray<RouteName> = Object.keys(routes),
   ): RouteName extends string
     ? { name: RouteName; params: Simplify<RoutesParams[RouteName]> } | undefined
     : never => {
