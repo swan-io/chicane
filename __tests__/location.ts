@@ -1,11 +1,15 @@
 import { decodeLocation } from "../src/location";
 import { getHistoryLocation } from "./utils";
 
-test("decodeLocation with well-formed paths", () => {
-  const equal = <E>(path: string, expected: E) =>
-    expect(decodeLocation(getHistoryLocation(path), false)).toStrictEqual(
-      expected,
-    );
+const getEqual =
+  (removeExtraSlashes: boolean) =>
+  <E>(path: string, expected: E) =>
+    expect(
+      decodeLocation(getHistoryLocation(path), removeExtraSlashes),
+    ).toStrictEqual(expected);
+
+test("decodeLocation decodes well-formed paths properly", () => {
+  const equal = getEqual(false);
 
   equal("/", {
     path: [],
@@ -51,11 +55,8 @@ test("decodeLocation with well-formed paths", () => {
   });
 });
 
-test("decodeLocation with empty params", () => {
-  const equal = <E>(path: string, expected: E) =>
-    expect(decodeLocation(getHistoryLocation(path), false)).toStrictEqual(
-      expected,
-    );
+test("decodeLocation decode route with empty params properly", () => {
+  const equal = getEqual(false);
 
   equal("/?#", {
     path: [],
@@ -96,11 +97,8 @@ test("decodeLocation with empty params", () => {
   });
 });
 
-test("decodeLocation with unescaped chars", () => {
-  const equal = <E>(path: string, expected: E) =>
-    expect(decodeLocation(getHistoryLocation(path), false)).toStrictEqual(
-      expected,
-    );
+test("decodeLocation decodes URI components (and encode it back for url)", () => {
+  const equal = getEqual(false);
 
   equal("/:test+", {
     path: [":test+"],
@@ -128,11 +126,8 @@ test("decodeLocation with unescaped chars", () => {
   });
 });
 
-test("decodeLocation with extra slashes (without cleaning)", () => {
-  const equal = <E>(path: string, expected: E) =>
-    expect(decodeLocation(getHistoryLocation(path), false)).toStrictEqual(
-      expected,
-    );
+test("decodeLocation keeps extra slashes when removeExtraSlashes is false", () => {
+  const equal = getEqual(false);
 
   equal("///", {
     path: ["", "", ""],
@@ -159,11 +154,8 @@ test("decodeLocation with extra slashes (without cleaning)", () => {
   });
 });
 
-test("decodeLocation with extra slashes (with cleaning)", () => {
-  const equal = <E>(path: string, expected: E) =>
-    expect(decodeLocation(getHistoryLocation(path), true)).toStrictEqual(
-      expected,
-    );
+test("decodeLocation removes extra slashes when removeExtraSlashes is true", () => {
+  const equal = getEqual(true);
 
   equal("///", {
     path: [],

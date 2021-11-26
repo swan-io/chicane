@@ -18,24 +18,24 @@ test("isNonEmpty returns false if the value is an empty string", () => {
   expect(isNonEmpty("")).toBe(false);
 });
 
-test("isParam returns true if the value is a well formatted route param", () => {
+test("isParam returns true if the value is a well-formed route param", () => {
   expect(isParam(":test")).toBe(true);
   expect(isParam(":")).toBe(true);
   expect(isParam(": ")).toBe(true);
 });
 
-test("isParam returns false if the value is not a well formatted route param", () => {
+test("isParam returns false if the value is not a well-formed route param", () => {
   expect(isParam(" :test")).toBe(false);
   expect(isParam("test")).toBe(false);
 });
 
-test("isMultipleParam returns true if the value is a well formatted route multiple param", () => {
+test("isMultipleParam returns true if the value is a well-formed route multiple param", () => {
   expect(isMultipleParam(":test[]")).toBe(true);
   expect(isMultipleParam(":[]")).toBe(true);
   expect(isMultipleParam(": []")).toBe(true);
 });
 
-test("isMultipleParam returns false if the value is not a well formatted route multiple param", () => {
+test("isMultipleParam returns false if the value is not a well-formed route multiple param", () => {
   expect(isMultipleParam(" :test[]")).toBe(false);
   expect(isMultipleParam("test[]")).toBe(false);
   expect(isMultipleParam(":test]")).toBe(false);
