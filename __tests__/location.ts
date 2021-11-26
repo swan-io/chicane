@@ -8,7 +8,7 @@ const getEqual =
       decodeLocation(getHistoryLocation(path), removeExtraSlashes),
     ).toStrictEqual(expected);
 
-test("decodeLocation decodes well-formed paths properly", () => {
+test("decodeLocation parses well-formed paths properly", () => {
   const equal = getEqual(false);
 
   equal("/", {
@@ -55,7 +55,7 @@ test("decodeLocation decodes well-formed paths properly", () => {
   });
 });
 
-test("decodeLocation decode route with empty params properly", () => {
+test("decodeLocation parses route with empty params properly", () => {
   const equal = getEqual(false);
 
   equal("/?#", {
@@ -97,7 +97,7 @@ test("decodeLocation decode route with empty params properly", () => {
   });
 });
 
-test("decodeLocation decodes URI components (and encode it back for url)", () => {
+test("decodeLocation parses URI components (and encode it back for url)", () => {
   const equal = getEqual(false);
 
   equal("/:test+", {
