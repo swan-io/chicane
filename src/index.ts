@@ -1,6 +1,7 @@
+/// <reference types="react/next" />
+
 import { createBrowserHistory, createPath, parsePath } from "history";
 import * as React from "react";
-import { useSubscription } from "use-subscription";
 import { first } from "./helpers";
 import { decodeLocation } from "./location";
 import { getMatcher, match, matchToHistoryPath } from "./matcher";
@@ -103,12 +104,7 @@ export const createRouter = <
   };
 
   const useLocation = (): Location =>
-    useSubscription(
-      React.useMemo(
-        () => ({ getCurrentValue: () => currentLocation, subscribe }),
-        [],
-      ),
-    );
+    React.useSyncExternalStore(subscribe, () => currentLocation);
 
   const useRoute = <RouteName extends keyof FiniteRoutes | keyof NestedRoutes>(
     routeNames: ReadonlyArray<RouteName>,
@@ -116,22 +112,17 @@ export const createRouter = <
     ? { name: RouteName; params: Simplify<RoutesParams[RouteName]> } | undefined
     : never => {
     // JSON.{stringify,parse} is used to prevent some re-renders,
-    // as the params object instance is updated on each one
-    const route = useSubscription(
-      React.useMemo(() => {
-        const matchers = rankedMatchers.filter(({ name }) =>
-          routeNames.includes(name as RouteName),
-        );
+    // as the params object instance is updated on each one.
+    // It seems a useSyncExternalStoreWithSelector hook is planned
+    // @see https://github.com/reactwg/react-18/discussions/86
+    const route = React.useSyncExternalStore(subscribe, () => {
+      const matchers = rankedMatchers.filter(({ name }) =>
+        routeNames.includes(name as RouteName),
+      );
 
-        return {
-          getCurrentValue: () => {
-            const route = match(currentLocation, matchers);
-            return route ? JSON.stringify(route) : route;
-          },
-          subscribe,
-        };
-      }, [JSON.stringify(routeNames)]),
-    );
+      const route = match(currentLocation, matchers);
+      return route ? JSON.stringify(route) : route;
+    });
 
     return route ? JSON.parse(route) : route;
   };
@@ -146,14 +137,9 @@ export const createRouter = <
     replace?: boolean | undefined;
     target?: React.HTMLAttributeAnchorTarget | undefined;
   }) => {
-    const active = useSubscription(
-      React.useMemo(
-        () => ({
-          getCurrentValue: () => href === currentLocation.url,
-          subscribe,
-        }),
-        [href],
-      ),
+    const active = React.useSyncExternalStore(
+      subscribe,
+      () => href === currentLocation.url,
     );
 
     const shouldReplace = replace || active;
