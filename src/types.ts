@@ -19,7 +19,7 @@ export type Matcher = {
 export type Location = Readonly<{
   url: string;
   path: readonly string[];
-  search: Search;
+  search: Readonly<Search>;
   hash?: string;
 }>;
 
