@@ -1,6 +1,6 @@
 {
   "name": "react-chicane",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "license": "MIT",
   "description": "A simple and safe router for React and TypeScript",
   "author": "Mathieu Acthernoene <mathieu.acthernoene@swan.io>",
@@ -57,7 +57,7 @@
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@types/jest": "^27.0.3",
-    "@types/react": "^17.0.37",
+    "@types/react": "^17.0.38",
     "@types/use-subscription": "^1.0.0",
     "babel-jest": "^27.4.5",
     "jest": "^27.4.5",
