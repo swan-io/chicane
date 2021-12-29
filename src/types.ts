@@ -16,12 +16,12 @@ export type Matcher = {
   ranking: number;
 };
 
-export type Location = {
+export type Location = Readonly<{
   url: string;
-  path: string[];
+  path: readonly string[];
   search: Search;
   hash?: string;
-};
+}>;
 
 type Split<
   Value extends string,
