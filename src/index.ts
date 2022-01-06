@@ -22,6 +22,13 @@ import {
 export { decodeSearch, encodeSearch } from "./search";
 export type { Location, Search } from "./types";
 
+const focusableElements: Record<string, boolean> = {
+  A: true,
+  INPUT: true,
+  SELECT: true,
+  TEXTAREA: true,
+};
+
 export const createRouter = <
   Routes extends Record<string, string>,
   BasePath extends string = string,
@@ -172,6 +179,45 @@ export const createRouter = <
     }, [blocked]);
   };
 
+  type RouteFocusProps = {
+    route?:
+      | { name: string; params: Record<string, string | string[] | undefined> }
+      | undefined;
+    containerRef: React.RefObject<unknown>;
+  };
+
+  let hasChangedLocation = false;
+
+  let unsubscribeToLocationChange: (() => void) | undefined;
+  unsubscribeToLocationChange = subscribe(() => {
+    hasChangedLocation = true;
+    if (typeof unsubscribeToLocationChange == "function") {
+      unsubscribeToLocationChange();
+    }
+    unsubscribeToLocationChange = undefined;
+  });
+
+  const useRouteFocus = ({ route, containerRef }: RouteFocusProps) => {
+    React.useEffect(() => {
+      const element = containerRef.current as HTMLElement | undefined;
+      if (element && hasChangedLocation) {
+        try {
+          const name = element.nodeName;
+          // A tabIndex of -1 allows element to be programmatically focused but
+          // prevents keyboard focus, so we don't want to set the value on elements
+          // that support keyboard focus by default.
+          if (
+            element.getAttribute("tabIndex") == null &&
+            focusableElements[name] == null
+          ) {
+            element.setAttribute("tabIndex", "-1");
+          }
+          element.focus();
+        } catch (err) {}
+      }
+    }, [route?.name, JSON.stringify(route?.params), containerRef]);
+  };
+
   return {
     getLocation: getCurrentLocation,
     createURL,
@@ -186,5 +232,6 @@ export const createRouter = <
     useLocation,
     useRoute,
     useBlocker,
+    useRouteFocus,
   };
 };

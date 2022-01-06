@@ -13,6 +13,7 @@ export const {
   useLocation,
   useRoute,
   useBlocker,
+  useRouteFocus,
   getLocation,
 } = createRouter({
   root: "/",
@@ -21,8 +22,4 @@ export const {
   repositoriesArea: "/users/:userId/repositories/*",
   repositories: "/users/:userId/repositories",
   repository: "/users/:userId/repositories/:repositoryId",
-});
-
-subscribe(() => {
-  console.log(getLocation());
 });

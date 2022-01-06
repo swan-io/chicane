@@ -1,6 +1,7 @@
+import * as React from "react";
 import { match } from "ts-pattern";
 import { Link } from "./Link";
-import { createURL, useRoute } from "./router";
+import { createURL, useRoute, useRouteFocus } from "./router";
 
 const EXAMPLE_DATA: Record<string, string[]> = {
   zoontek: [
@@ -29,6 +30,13 @@ const EXAMPLE_DATA: Record<string, string[]> = {
 export const App = () => {
   const route = useRoute(["root", "users", "user", "repositoriesArea"]);
 
+  const containerRef = React.useRef(null);
+
+  useRouteFocus({
+    containerRef,
+    route,
+  });
+
   return (
     <div style={{ display: "flex" }}>
       <nav
@@ -43,7 +51,10 @@ export const App = () => {
         <Link to={createURL("users")}>Users</Link>
       </nav>
 
-      <main style={{ display: "flex", flexDirection: "column" }}>
+      <main
+        ref={containerRef}
+        style={{ display: "flex", flexDirection: "column" }}
+      >
         {match(route)
           .with({ name: "root" }, () => <h1>Homepage</h1>)
           .with({ name: "users" }, () => (
@@ -79,33 +90,40 @@ export const App = () => {
 
 const Repositories = ({ userId }: { userId: string }) => {
   const route = useRoute(["repositories", "repository"]);
+  const containerRef = React.useRef(null);
+
+  useRouteFocus({
+    containerRef,
+    route,
+  });
 
   return (
     <>
       <h1>{userId} repositories</h1>
-
-      {match(route)
-        .with({ name: "repositories" }, () => (
-          <ul>
-            {EXAMPLE_DATA[userId]?.map((repositoryId) => (
-              <li key={repositoryId}>
-                <Link to={createURL("repository", { userId, repositoryId })}>
-                  {repositoryId}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        ))
-        .with(
-          { name: "repository" },
-          ({ params: { userId, repositoryId } }) => (
-            <h2>
-              {userId}/{repositoryId}
-            </h2>
-          ),
-        )
-        .with(undefined, () => <div>404 - Repository not found</div>)
-        .exhaustive()}
+      <div ref={containerRef}>
+        {match(route)
+          .with({ name: "repositories" }, () => (
+            <ul>
+              {EXAMPLE_DATA[userId]?.map((repositoryId) => (
+                <li key={repositoryId}>
+                  <Link to={createURL("repository", { userId, repositoryId })}>
+                    {repositoryId}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ))
+          .with(
+            { name: "repository" },
+            ({ params: { userId, repositoryId } }) => (
+              <h2>
+                {userId}/{repositoryId}
+              </h2>
+            ),
+          )
+          .with(undefined, () => <div>404 - Repository not found</div>)
+          .exhaustive()}
+      </div>
     </>
   );
 };
