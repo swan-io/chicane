@@ -1,18 +1,21 @@
-import { createBrowserHistory, createPath, parsePath } from "history";
 import * as React from "react";
-import { useSubscription } from "use-subscription";
 import { first } from "./helpers";
-import { decodeLocation } from "./location";
+import {
+  createPath,
+  getCurrentLocation,
+  history,
+  parsePath,
+  subscribe,
+  useLocation,
+} from "./history";
 import { getMatcher, match, matchToHistoryPath } from "./matcher";
 import {
   ExtractRoutesParams,
   GetNestedRoutes,
-  Location,
   Matcher,
   ParamsArg,
   PrependBasePath,
   Simplify,
-  Subscription,
 } from "./types";
 
 export { decodeSearch, encodeSearch } from "./search";
@@ -39,7 +42,6 @@ export const createRouter = <
 
   const matchers = {} as Record<keyof Routes, Matcher>;
   const rankedMatchers: Matcher[] = []; // higher to lower
-  const subscriptions = new Set<Subscription>();
 
   for (const routeName in routes) {
     if (Object.prototype.hasOwnProperty.call(routes, routeName)) {
@@ -52,18 +54,6 @@ export const createRouter = <
   rankedMatchers.sort(
     (matcherA, matcherB) => matcherB.ranking - matcherA.ranking,
   );
-
-  const history = createBrowserHistory();
-  let currentLocation = decodeLocation(history.location, true);
-
-  if (currentLocation.url !== createPath(history.location)) {
-    history.replace(currentLocation.url); // URL cleanup
-  }
-
-  history.listen(({ location }) => {
-    currentLocation = decodeLocation(location, false);
-    subscriptions.forEach((subscription) => subscription(currentLocation));
-  });
 
   const goForward = (): void => history.forward();
   const goBack = (): void => history.back();
@@ -94,46 +84,25 @@ export const createRouter = <
   ): void =>
     history.replace(matchToHistoryPath(matchers[routeName], first(args)));
 
-  const subscribe = (subscription: Subscription): (() => void) => {
-    subscriptions.add(subscription);
-
-    return () => {
-      subscriptions.delete(subscription);
-    };
-  };
-
-  const useLocation = (): Location =>
-    useSubscription(
-      React.useMemo(
-        () => ({ getCurrentValue: () => currentLocation, subscribe }),
-        [],
-      ),
-    );
-
   const useRoute = <RouteName extends keyof FiniteRoutes | keyof NestedRoutes>(
     routeNames: ReadonlyArray<RouteName>,
   ): RouteName extends string
     ? { name: RouteName; params: Simplify<RoutesParams[RouteName]> } | undefined
     : never => {
-    // JSON.{stringify,parse} is used to prevent some re-renders,
-    // as the params object instance is updated on each one
-    const route = useSubscription(
-      React.useMemo(() => {
-        const matchers = rankedMatchers.filter(({ name }) =>
-          routeNames.includes(name as RouteName),
-        );
+    const location = useLocation();
 
-        return {
-          getCurrentValue: () => {
-            const route = match(currentLocation, matchers);
-            return route ? JSON.stringify(route) : route;
-          },
-          subscribe,
-        };
-      }, [JSON.stringify(routeNames)]),
-    );
+    const route = React.useMemo(() => {
+      const matchers = rankedMatchers.filter(({ name }) =>
+        routeNames.includes(name as RouteName),
+      );
+      return match(location, matchers);
+    }, [location, JSON.stringify(routeNames)]) as RouteName extends string
+      ?
+          | { name: RouteName; params: Simplify<RoutesParams[RouteName]> }
+          | undefined
+      : never;
 
-    return route ? JSON.parse(route) : route;
+    return route;
   };
 
   // Kudos to https://github.com/remix-run/react-router/pull/7998
@@ -146,15 +115,11 @@ export const createRouter = <
     replace?: boolean | undefined;
     target?: React.HTMLAttributeAnchorTarget | undefined;
   }) => {
-    const active = useSubscription(
-      React.useMemo(
-        () => ({
-          getCurrentValue: () => href === currentLocation.url,
-          subscribe,
-        }),
-        [href],
-      ),
-    );
+    const location = useLocation();
+    // TODO: explode/implode `href` in order to guarantee the search params order
+    const active = React.useMemo(() => {
+      return href === location.url;
+    }, [location, href]);
 
     const shouldReplace = replace || active;
     const shouldIgnoreTarget = !target || target === "_self";
@@ -201,10 +166,7 @@ export const createRouter = <
   };
 
   return {
-    get location() {
-      return currentLocation;
-    },
-
+    getLocation: getCurrentLocation,
     createURL,
     goBack,
     goForward,
