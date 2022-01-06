@@ -191,9 +191,7 @@ export const createRouter = <
   let unsubscribeToLocationChange: (() => void) | undefined;
   unsubscribeToLocationChange = subscribe(() => {
     hasChangedLocation = true;
-    if (typeof unsubscribeToLocationChange == "function") {
-      unsubscribeToLocationChange();
-    }
+    unsubscribeToLocationChange?.();
     unsubscribeToLocationChange = undefined;
   });
 
