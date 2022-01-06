@@ -136,7 +136,7 @@ const Router = createRouter(
 
 #### 👇 Note: All the following examples will use this `Router` instance.
 
-#### Router.location
+#### Router.getLocation
 
 ```tsx
 type Location = {
@@ -146,7 +146,7 @@ type Location = {
   hash?: string;
 };
 
-Router.location; // Location
+Router.getLocation(); // Location
 ```
 
 #### Router.navigate
@@ -327,7 +327,7 @@ const Redirect = ({ to }: { to: string }) => {
 Encode and decode url search parameters.
 
 ```tsx
-import { encodeSearch, decodeSearch } from "react-chicane";
+import { decodeSearch, encodeSearch } from "react-chicane";
 
 encodeSearch({ invitation: "542022247745", users: ["frank", "chris"] });
 // -> "?invitation=542022247745&users=frank&users=chris"
