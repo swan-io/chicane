@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useSubscription } from "use-subscription";
 import { first } from "./helpers";
 import {
   createPath,
@@ -89,20 +90,23 @@ export const createRouter = <
   ): RouteName extends string
     ? { name: RouteName; params: Simplify<RoutesParams[RouteName]> } | undefined
     : never => {
-    const location = useLocation();
+    const route = useSubscription(
+      React.useMemo(() => {
+        const matchers = rankedMatchers.filter(({ name }) =>
+          routeNames.includes(name as RouteName),
+        );
 
-    const route = React.useMemo(() => {
-      const matchers = rankedMatchers.filter(({ name }) =>
-        routeNames.includes(name as RouteName),
-      );
-      return match(location, matchers);
-    }, [location, JSON.stringify(routeNames)]) as RouteName extends string
-      ?
-          | { name: RouteName; params: Simplify<RoutesParams[RouteName]> }
-          | undefined
-      : never;
+        return {
+          getCurrentValue: () => {
+            const route = match(getCurrentLocation(), matchers);
+            return route ? JSON.stringify(route) : route;
+          },
+          subscribe,
+        };
+      }, [JSON.stringify(routeNames)]),
+    );
 
-    return route;
+    return route ? JSON.parse(route) : route;
   };
 
   // Kudos to https://github.com/remix-run/react-router/pull/7998
@@ -115,12 +119,15 @@ export const createRouter = <
     replace?: boolean | undefined;
     target?: React.HTMLAttributeAnchorTarget | undefined;
   }) => {
-    const location = useLocation();
-    // TODO: explode/implode `href` in order to guarantee the search params order
-    const active = React.useMemo(() => {
-      return href === location.url;
-    }, [location, href]);
-
+    const active = useSubscription(
+      React.useMemo(
+        () => ({
+          getCurrentValue: () => href === getCurrentLocation().url,
+          subscribe,
+        }),
+        [href],
+      ),
+    );
     const shouldReplace = replace || active;
     const shouldIgnoreTarget = !target || target === "_self";
 
