@@ -34,3 +34,8 @@ export const decodeLocation = (
     }),
   };
 };
+
+// As the `encodeSearch` function guarantees a stable sorting, we can rely on a simple URL comparison
+export const areLocationsEqual = (a: Location, b: Location) => {
+  return a.url === b.url;
+};
