@@ -6,26 +6,23 @@ import * as React from "react";
 import { useSubscription } from "use-subscription";
 import { areLocationsEqual, decodeLocation } from "./location";
 import { Location, Subscription } from "./types";
+
 const subscriptions = new Set<Subscription>();
 
 export const history = createBrowserHistory();
 
 let currentLocation = decodeLocation(history.location, true);
-
-export const getCurrentLocation = () => {
-  return currentLocation;
-};
+let initialLocationHasChanged = false;
 
 if (currentLocation.url !== createPath(history.location)) {
   history.replace(currentLocation.url); // URL cleanup
 }
 
-let locationHasChanged = false;
-
 history.listen(({ location }) => {
   const nextLocation = decodeLocation(location, false);
+
   if (!areLocationsEqual(nextLocation, currentLocation)) {
-    locationHasChanged = true;
+    initialLocationHasChanged = true;
     currentLocation = nextLocation;
     subscriptions.forEach((subscription) => subscription(currentLocation));
   }
@@ -33,27 +30,26 @@ history.listen(({ location }) => {
 
 export const subscribe = (subscription: Subscription): (() => void) => {
   subscriptions.add(subscription);
+
   return () => {
     subscriptions.delete(subscription);
   };
 };
 
-export const useLocation = (): Location => {
-  const subscription = React.useMemo(
-    () => ({ getCurrentValue: () => currentLocation, subscribe }),
-    [],
+export const useLocation = (): Location =>
+  useSubscription(
+    React.useMemo(
+      () => ({ getCurrentValue: () => currentLocation, subscribe }),
+      [],
+    ),
   );
-  return useSubscription(subscription);
-};
 
-export { createPath as createPath };
-export { parsePath as parsePath };
+export const getCurrentLocation = () => currentLocation;
+export const hasInitialLocationChanged = () => initialLocationHasChanged;
 
 // For testing purposes
-export const resetHasLocationChanged = () => {
-  locationHasChanged = false;
+export const resetInitialHasLocationChanged = () => {
+  initialLocationHasChanged = false;
 };
 
-export const hasLocationChanged = () => {
-  return locationHasChanged;
-};
+export { createPath, parsePath };

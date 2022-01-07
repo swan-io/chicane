@@ -3,6 +3,10 @@ import { isNonEmpty } from "./helpers";
 import { decodeSearch, encodeSearch } from "./search";
 import { Location } from "./types";
 
+// As the `encodeSearch` function guarantees a stable sorting, we can rely on a simple URL comparison
+export const areLocationsEqual = (locationA: Location, locationB: Location) =>
+  locationA.url === locationB.url;
+
 export const decodeLocation = (
   { pathname, search, hash }: HistoryLocation,
   removeExtraSlashes: boolean,
@@ -33,9 +37,4 @@ export const decodeLocation = (
       hash: outputHash,
     }),
   };
-};
-
-// As the `encodeSearch` function guarantees a stable sorting, we can rely on a simple URL comparison
-export const areLocationsEqual = (a: Location, b: Location) => {
-  return a.url === b.url;
 };

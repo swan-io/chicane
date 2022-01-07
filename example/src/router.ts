@@ -11,9 +11,10 @@ export const {
   unsafeReplace,
   useLink,
   useLocation,
+  useRoutes,
   useRoute,
-  useBlocker,
   useRouteFocus,
+  useBlocker,
   getLocation,
 } = createRouter({
   root: "/",

@@ -310,10 +310,7 @@ const App = () => {
   const route = Router.useRoute(["root", "users", "user"]);
   const containerRef = React.useRef(null);
 
-  Router.useRouteFocus({
-    containerRef,
-    route,
-  });
+  Router.useRouteFocus({ containerRef, route });
 
   <div ref={containerRef}>{/* match your route here*/}</div>;
 };

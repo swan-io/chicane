@@ -4,7 +4,7 @@ import { first } from "./helpers";
 import {
   createPath,
   getCurrentLocation,
-  hasLocationChanged,
+  hasInitialLocationChanged,
   history,
   parsePath,
   subscribe,
@@ -15,6 +15,7 @@ import {
   ExtractRoutesParams,
   GetNestedRoutes,
   Matcher,
+  Params,
   ParamsArg,
   PrependBasePath,
   Simplify,
@@ -160,6 +161,7 @@ export const createRouter = <
         [href],
       ),
     );
+
     const shouldReplace = replace || active;
     const shouldIgnoreTarget = !target || target === "_self";
 
@@ -204,21 +206,24 @@ export const createRouter = <
     }, [blocked]);
   };
 
-  type RouteFocusProps = {
-    route?:
-      | { name: string; params: Record<string, string | string[] | undefined> }
-      | undefined;
+  const useRouteFocus = ({
+    route,
+    containerRef,
+  }: {
+    route?: { name: string; params: Params } | undefined;
     containerRef: React.RefObject<unknown>;
-  };
+  }) => {
+    const updateKey: string | undefined = JSON.stringify(route);
 
-  const useRouteFocus = ({ route, containerRef }: RouteFocusProps) => {
     React.useEffect(() => {
       const element = containerRef.current as HTMLElement | undefined;
+
       // Only focus after a history change for UX, so that areas outside routing (e.g. navigation header)
       // are available immediately to keyboard navigation
-      if (element && hasLocationChanged()) {
+      if (element && hasInitialLocationChanged()) {
         try {
           const name = element.nodeName;
+
           // A tabIndex of -1 allows element to be programmatically focused but
           // prevents keyboard focus, so we don't want to set the value on elements
           // that support keyboard focus by default.
@@ -228,10 +233,11 @@ export const createRouter = <
           ) {
             element.setAttribute("tabIndex", "-1");
           }
+
           element.focus();
-        } catch (err) {}
+        } catch (_error) {}
       }
-    }, [route?.name, JSON.stringify(route?.params), containerRef]);
+    }, [containerRef, updateKey]);
   };
 
   return {
@@ -248,7 +254,7 @@ export const createRouter = <
     useLocation,
     useRoutes,
     useRoute,
-    useBlocker,
     useRouteFocus,
+    useBlocker,
   };
 };

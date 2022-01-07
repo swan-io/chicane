@@ -29,13 +29,9 @@ const EXAMPLE_DATA: Record<string, string[]> = {
 
 export const App = () => {
   const route = useRoute(["root", "users", "user", "repositoriesArea"]);
-
   const containerRef = React.useRef(null);
 
-  useRouteFocus({
-    containerRef,
-    route,
-  });
+  useRouteFocus({ containerRef, route });
 
   return (
     <div style={{ display: "flex" }}>
@@ -92,38 +88,34 @@ const Repositories = ({ userId }: { userId: string }) => {
   const route = useRoute(["repositories", "repository"]);
   const containerRef = React.useRef(null);
 
-  useRouteFocus({
-    containerRef,
-    route,
-  });
+  useRouteFocus({ containerRef, route });
 
   return (
-    <>
+    <div ref={containerRef}>
       <h1>{userId} repositories</h1>
-      <div ref={containerRef}>
-        {match(route)
-          .with({ name: "repositories" }, () => (
-            <ul>
-              {EXAMPLE_DATA[userId]?.map((repositoryId) => (
-                <li key={repositoryId}>
-                  <Link to={createURL("repository", { userId, repositoryId })}>
-                    {repositoryId}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ))
-          .with(
-            { name: "repository" },
-            ({ params: { userId, repositoryId } }) => (
-              <h2>
-                {userId}/{repositoryId}
-              </h2>
-            ),
-          )
-          .with(undefined, () => <div>404 - Repository not found</div>)
-          .exhaustive()}
-      </div>
-    </>
+
+      {match(route)
+        .with({ name: "repositories" }, () => (
+          <ul>
+            {EXAMPLE_DATA[userId]?.map((repositoryId) => (
+              <li key={repositoryId}>
+                <Link to={createURL("repository", { userId, repositoryId })}>
+                  {repositoryId}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ))
+        .with(
+          { name: "repository" },
+          ({ params: { userId, repositoryId } }) => (
+            <h2>
+              {userId}/{repositoryId}
+            </h2>
+          ),
+        )
+        .with(undefined, () => <div>404 - Repository not found</div>)
+        .exhaustive()}
+    </div>
   );
 };
