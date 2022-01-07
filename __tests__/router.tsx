@@ -73,9 +73,9 @@ describe("router", () => {
     expect(container.textContent).toContain("Not found");
   });
 
-  test("useRoutes: should match multiple routes (DESC order)", () => {
+  test("useRoutes: should match multiple routes (desc order)", () => {
     const App = () => {
-      const routes = useRoutes(routesToMatch);
+      const routes = useRoutes(routesToMatch, { orderBy: "desc" });
       return <>{routes.map((item) => `[${item.name}]`).join("")}</>;
     };
 
@@ -90,9 +90,9 @@ describe("router", () => {
     expect(container.textContent).toContain("[profile][profiles]");
   });
 
-  test("useRoutes: should match multiple routes (ASC order)", () => {
+  test("useRoutes: should match multiple routes (asc order)", () => {
     const App = () => {
-      const routes = useRoutes(routesToMatch);
+      const routes = useRoutes(routesToMatch, { orderBy: "asc" });
       return <>{routes.map((item) => `[${item.name}]`).join("")}</>;
     };
 
