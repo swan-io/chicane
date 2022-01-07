@@ -96,6 +96,7 @@ export const createRouter = <
 
   const useRoutes = <RouteName extends keyof FiniteRoutes | keyof NestedRoutes>(
     routeNames: ReadonlyArray<RouteName>,
+    { orderBy = "desc" }: { orderBy?: "asc" | "desc" } = {},
   ): RouteName extends string
     ? { name: RouteName; params: Simplify<RoutesParams[RouteName]> }[]
     : never => {
@@ -107,12 +108,17 @@ export const createRouter = <
 
         return {
           getCurrentValue: () => {
-            const routes = matchAll(getCurrentLocation(), matchers).reverse();
+            const routes = matchAll(getCurrentLocation(), matchers);
+
+            if (orderBy === "asc") {
+              routes.reverse();
+            }
+
             return JSON.stringify(routes);
           },
           subscribe,
         };
-      }, [JSON.stringify(routeNames)]),
+      }, [JSON.stringify(routeNames), orderBy]),
     );
 
     return JSON.parse(routes);

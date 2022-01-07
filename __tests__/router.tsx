@@ -36,7 +36,7 @@ describe("router", () => {
   });
 
   test("useRoute: should match the correct route", () => {
-    function App() {
+    const App = () => {
       const route = useRoute(routesToMatch);
 
       if (route === undefined) {
@@ -52,7 +52,7 @@ describe("router", () => {
           ) : null}
         </>
       );
-    }
+    };
 
     act(() => {
       ReactDOM.render(<App />, container);
@@ -73,12 +73,28 @@ describe("router", () => {
     expect(container.textContent).toContain("Not found");
   });
 
-  test("useRoutes: should match multiple routes", () => {
-    function App() {
-      const routes = useRoutes(routesToMatch);
-
+  test("useRoutes: should match multiple routes (desc order)", () => {
+    const App = () => {
+      const routes = useRoutes(routesToMatch, { orderBy: "desc" });
       return <>{routes.map((item) => `[${item.name}]`).join("")}</>;
-    }
+    };
+
+    act(() => {
+      ReactDOM.render(<App />, container);
+    });
+
+    act(() => {
+      unsafeNavigate("/profile/zoontek");
+    });
+
+    expect(container.textContent).toContain("[profile][profiles]");
+  });
+
+  test("useRoutes: should match multiple routes (asc order)", () => {
+    const App = () => {
+      const routes = useRoutes(routesToMatch, { orderBy: "asc" });
+      return <>{routes.map((item) => `[${item.name}]`).join("")}</>;
+    };
 
     act(() => {
       ReactDOM.render(<App />, container);
@@ -92,7 +108,7 @@ describe("router", () => {
   });
 
   test("useRouteFocus: should focus the correct element", () => {
-    function App() {
+    const App = () => {
       const route = useRoute(routesToMatch);
       const containerRef = React.useRef(null);
 
@@ -111,7 +127,7 @@ describe("router", () => {
           ) : null}
         </div>
       );
-    }
+    };
 
     act(() => {
       ReactDOM.render(<App />, container);
