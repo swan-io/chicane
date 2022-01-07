@@ -190,6 +190,8 @@ export const createRouter = <
   const useRouteFocus = ({ route, containerRef }: RouteFocusProps) => {
     React.useEffect(() => {
       const element = containerRef.current as HTMLElement | undefined;
+      // Only focus after a history change for UX, so that areas outside routing (e.g. navigation header)
+      // are available immediately to keyboard navigation
       if (element && hasLocationChanged()) {
         try {
           const name = element.nodeName;
