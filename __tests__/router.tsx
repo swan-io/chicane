@@ -2,7 +2,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { act } from "react-dom/test-utils";
 import { createRouter } from "../src";
-import { resetHasLocationChanged } from "../src/history";
+import { resetInitialHasLocationChanged } from "../src/history";
 
 const routes = {
   home: "/",
@@ -21,7 +21,7 @@ describe("router", () => {
   let container;
   beforeEach(() => {
     unsafeNavigate("/");
-    resetHasLocationChanged();
+    resetInitialHasLocationChanged();
 
     container = document.createElement("div");
     document.body.append(container);
@@ -61,10 +61,10 @@ describe("router", () => {
     expect(container.textContent).toContain("Home");
 
     act(() => {
-      unsafeNavigate("/profile/Zoontek");
+      unsafeNavigate("/profile/zoontek");
     });
 
-    expect(container.textContent).toContain("Profile Zoontek");
+    expect(container.textContent).toContain("Profile zoontek");
 
     act(() => {
       unsafeNavigate("/unknown");
@@ -85,7 +85,7 @@ describe("router", () => {
     });
 
     act(() => {
-      unsafeNavigate("/profile/Zoontek");
+      unsafeNavigate("/profile/zoontek");
     });
 
     expect(container.textContent).toContain("[profiles][profile]");
@@ -96,10 +96,7 @@ describe("router", () => {
       const route = useRoute(routesToMatch);
       const containerRef = React.useRef(null);
 
-      useRouteFocus({
-        containerRef,
-        route,
-      });
+      useRouteFocus({ containerRef, route });
 
       if (route === undefined) {
         return <div> Not found </div>;
@@ -124,7 +121,7 @@ describe("router", () => {
     expect(document.activeElement).toBe(document.body);
 
     act(() => {
-      unsafeNavigate("/profile/Zoontek");
+      unsafeNavigate("/profile/zoontek");
     });
 
     // takes focus after a route change
@@ -137,7 +134,7 @@ describe("router", () => {
     document.body.focus();
     expect(document.activeElement).toBe(document.body);
     act(() => {
-      unsafeNavigate("/profile/Zoontek");
+      unsafeNavigate("/profile/zoontek");
     });
     expect(document.activeElement).toBe(document.body);
 
