@@ -1,3 +1,11 @@
+<br />
+
+<p align="center">
+  <img width="500" alt="react-chicane logo" src="docs/logo.svg">
+</p>
+
+<br />
+
 # react-chicane
 
 [![mit licence](https://img.shields.io/dub/l/vibe-d.svg?style=for-the-badge)](https://github.com/zoontek/react-chicane/blob/main/LICENSE)
@@ -368,7 +376,6 @@ decodeSearch("?invitation=542022247745&users=frank&users=chris");
 - Improve documentation
 - Tests, tests, tests
 - Switch to `useSyncExternalStore` (React 18+)
-- Find a cool logo
 - Create a website (?)
 
 ## 🙌 Acknowledgements
