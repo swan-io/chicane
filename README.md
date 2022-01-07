@@ -281,6 +281,24 @@ const App = () => {
 };
 ```
 
+#### Router.useRouteFocus
+
+Registers a component as a route container, so that the element receives focus on route change. When using nested routes, the deepest route container is focused.
+
+```tsx
+const App = () => {
+  const route = Router.useRoute(["root", "users", "user"]);
+  const containerRef = React.useRef(null);
+
+  Router.useRouteFocus({
+    containerRef,
+    route,
+  });
+
+  <div ref={containerRef}>{/* match your route here*/}</div>;
+};
+```
+
 #### Router.subscribe
 
 Subscribe to location changes. Useful to reset keyboard focus.
@@ -341,7 +359,6 @@ decodeSearch("?invitation=542022247745&users=frank&users=chris");
 - Improve documentation
 - Tests, tests, tests
 - Switch to `useSyncExternalStore` (React 18+)
-- Write a "focus reset" recipe
 - Find a cool logo
 - Create a website (?)
 
