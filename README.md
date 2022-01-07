@@ -1,7 +1,7 @@
 <br />
 
 <p align="center">
-  <img width="400" alt="react-chicane logo" src="docs/logo.svg">
+  <img width="450" alt="react-chicane logo" src="docs/logo.svg">
 </p>
 
 <br />
