@@ -134,6 +134,22 @@ export const extractLocationParams = (
   return params;
 };
 
+export const matchAll = (
+  location: Location,
+  matchers: Matcher[],
+): { name: string; params: Params }[] => {
+  const routes = [];
+  for (const matcher of matchers) {
+    const params = extractLocationParams(location, matcher);
+
+    if (params != null) {
+      routes.push({ name: matcher.name, params });
+    }
+  }
+
+  return routes;
+};
+
 export const match = (
   location: Location,
   matchers: Matcher[],

@@ -10,7 +10,7 @@ import {
   subscribe,
   useLocation,
 } from "./history";
-import { getMatcher, match, matchToHistoryPath } from "./matcher";
+import { getMatcher, match, matchAll, matchToHistoryPath } from "./matcher";
 import {
   ExtractRoutesParams,
   GetNestedRoutes,
@@ -92,6 +92,30 @@ export const createRouter = <
     ...args: ParamsArg<FiniteRoutesParams[RouteName]>
   ): void =>
     history.replace(matchToHistoryPath(matchers[routeName], first(args)));
+
+  const useRoutes = <RouteName extends keyof FiniteRoutes | keyof NestedRoutes>(
+    routeNames: ReadonlyArray<RouteName>,
+  ): RouteName extends string
+    ? { name: RouteName; params: Simplify<RoutesParams[RouteName]> }[]
+    : never => {
+    const routes = useSubscription(
+      React.useMemo(() => {
+        const matchers = rankedMatchers.filter(({ name }) =>
+          routeNames.includes(name as RouteName),
+        );
+
+        return {
+          getCurrentValue: () => {
+            const routes = matchAll(getCurrentLocation(), matchers).reverse();
+            return JSON.stringify(routes);
+          },
+          subscribe,
+        };
+      }, [JSON.stringify(routeNames)]),
+    );
+
+    return JSON.parse(routes);
+  };
 
   const useRoute = <RouteName extends keyof FiniteRoutes | keyof NestedRoutes>(
     routeNames: ReadonlyArray<RouteName>,
@@ -222,6 +246,7 @@ export const createRouter = <
     unsafeReplace,
     useLink,
     useLocation,
+    useRoutes,
     useRoute,
     useBlocker,
     useRouteFocus,

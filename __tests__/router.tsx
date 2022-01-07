@@ -2,28 +2,35 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { act } from "react-dom/test-utils";
 import { createRouter } from "../src";
+import { resetHasLocationChanged } from "../src/history";
 
 const routes = {
   home: "/",
+  profiles: "/profile/*",
   profile: "/profile/:username",
 } as const;
 
-const { useRoute, unsafeNavigate, getLocation, useRouteFocus } =
-  createRouter(routes);
-
-export type RouteName = keyof typeof routes;
-
-const routesToMatch: RouteName[] = ["home", "profile"];
-
 describe("router", () => {
+  const { useRoute, useRoutes, unsafeNavigate, useRouteFocus } =
+    createRouter(routes);
+
+  type RouteName = keyof typeof routes;
+
+  const routesToMatch: RouteName[] = ["home", "profiles", "profile"];
+
   let container;
   beforeEach(() => {
+    unsafeNavigate("/");
+    resetHasLocationChanged();
+
     container = document.createElement("div");
     document.body.append(container);
   });
 
   afterEach(() => {
-    ReactDOM.unmountComponentAtNode(container);
+    act(() => {
+      ReactDOM.unmountComponentAtNode(container);
+    });
     container.remove();
     container = undefined;
   });
@@ -64,6 +71,24 @@ describe("router", () => {
     });
 
     expect(container.textContent).toContain("Not found");
+  });
+
+  test("useRoutes: should match multiple routes", () => {
+    function App() {
+      const routes = useRoutes(routesToMatch);
+
+      return <>{routes.map((item) => `[${item.name}]`).join("")}</>;
+    }
+
+    act(() => {
+      ReactDOM.render(<App />, container);
+    });
+
+    act(() => {
+      unsafeNavigate("/profile/Zoontek");
+    });
+
+    expect(container.textContent).toContain("[profiles][profile]");
   });
 
   test("useRouteFocus: should focus the correct element", () => {

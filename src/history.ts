@@ -49,6 +49,11 @@ export const useLocation = (): Location => {
 export { createPath as createPath };
 export { parsePath as parsePath };
 
+// For testing purposes
+export const resetHasLocationChanged = () => {
+  locationHasChanged = false;
+};
+
 export const hasLocationChanged = () => {
   return locationHasChanged;
 };
