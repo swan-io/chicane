@@ -136,7 +136,7 @@ const Router = createRouter(
 
 #### 👇 Note: All the following examples will use this `Router` instance.
 
-#### Router.location
+#### Router.getLocation
 
 ```tsx
 type Location = {
@@ -146,7 +146,7 @@ type Location = {
   hash?: string;
 };
 
-Router.location; // Location
+Router.getLocation(); // Location
 ```
 
 #### Router.navigate
@@ -211,6 +211,26 @@ const App = () => {
     .with({ name: "users" }, () => <h1>users</h1>)
     .with({ name: "user" }, ({ params: { groupId } }) => <h1>user</h1>)
     .otherwise(() => <h1>404</h1>);
+};
+```
+
+#### Router.useRoutes
+
+Listen and match a bunch of your routes. Returns an array of routes, sorted by ascending specificity. Useful for route hierarchical representation (e.g. a breadcrumb component).
+
+```tsx
+import { match } from "ts-pattern";
+
+const Breadcrumbs = () => {
+  const routes = Router.useRoutes(["root", "users", "user"]);
+
+  return routes.map((route) => {
+    return match(route)
+      .with({ name: "root" }, () => "Home")
+      .with({ name: "users" }, () => "Users")
+      .with({ name: "user" }, ({ params: { userId } }) => userId)
+      .otherwise(() => null);
+  });
 };
 ```
 
@@ -281,6 +301,24 @@ const App = () => {
 };
 ```
 
+#### Router.useRouteFocus
+
+Registers a component as a route container, so that the element receives focus on route change. When using nested routes, the deepest route container is focused.
+
+```tsx
+const App = () => {
+  const route = Router.useRoute(["root", "users", "user"]);
+  const containerRef = React.useRef(null);
+
+  Router.useRouteFocus({
+    containerRef,
+    route,
+  });
+
+  <div ref={containerRef}>{/* match your route here*/}</div>;
+};
+```
+
 #### Router.subscribe
 
 Subscribe to location changes. Useful to reset keyboard focus.
@@ -327,7 +365,7 @@ const Redirect = ({ to }: { to: string }) => {
 Encode and decode url search parameters.
 
 ```tsx
-import { encodeSearch, decodeSearch } from "react-chicane";
+import { decodeSearch, encodeSearch } from "react-chicane";
 
 encodeSearch({ invitation: "542022247745", users: ["frank", "chris"] });
 // -> "?invitation=542022247745&users=frank&users=chris"
@@ -341,7 +379,6 @@ decodeSearch("?invitation=542022247745&users=frank&users=chris");
 - Improve documentation
 - Tests, tests, tests
 - Switch to `useSyncExternalStore` (React 18+)
-- Write a "focus reset" recipe
 - Find a cool logo
 - Create a website (?)
 

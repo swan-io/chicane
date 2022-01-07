@@ -1,22 +1,34 @@
-import { createBrowserHistory, createPath, parsePath } from "history";
 import * as React from "react";
 import { useSubscription } from "use-subscription";
 import { first } from "./helpers";
-import { decodeLocation } from "./location";
-import { getMatcher, match, matchToHistoryPath } from "./matcher";
+import {
+  createPath,
+  getCurrentLocation,
+  hasLocationChanged,
+  history,
+  parsePath,
+  subscribe,
+  useLocation,
+} from "./history";
+import { getMatcher, match, matchAll, matchToHistoryPath } from "./matcher";
 import {
   ExtractRoutesParams,
   GetNestedRoutes,
-  Location,
   Matcher,
   ParamsArg,
   PrependBasePath,
   Simplify,
-  Subscription,
 } from "./types";
 
 export { decodeSearch, encodeSearch } from "./search";
 export type { Location, Search } from "./types";
+
+const focusableElements: Record<string, boolean> = {
+  A: true,
+  INPUT: true,
+  SELECT: true,
+  TEXTAREA: true,
+};
 
 export const createRouter = <
   Routes extends Record<string, string>,
@@ -39,7 +51,6 @@ export const createRouter = <
 
   const matchers = {} as Record<keyof Routes, Matcher>;
   const rankedMatchers: Matcher[] = []; // higher to lower
-  const subscriptions = new Set<Subscription>();
 
   for (const routeName in routes) {
     if (Object.prototype.hasOwnProperty.call(routes, routeName)) {
@@ -52,18 +63,6 @@ export const createRouter = <
   rankedMatchers.sort(
     (matcherA, matcherB) => matcherB.ranking - matcherA.ranking,
   );
-
-  const history = createBrowserHistory();
-  let currentLocation = decodeLocation(history.location, true);
-
-  if (currentLocation.url !== createPath(history.location)) {
-    history.replace(currentLocation.url); // URL cleanup
-  }
-
-  history.listen(({ location }) => {
-    currentLocation = decodeLocation(location, false);
-    subscriptions.forEach((subscription) => subscription(currentLocation));
-  });
 
   const goForward = (): void => history.forward();
   const goBack = (): void => history.back();
@@ -94,29 +93,35 @@ export const createRouter = <
   ): void =>
     history.replace(matchToHistoryPath(matchers[routeName], first(args)));
 
-  const subscribe = (subscription: Subscription): (() => void) => {
-    subscriptions.add(subscription);
+  const useRoutes = <RouteName extends keyof FiniteRoutes | keyof NestedRoutes>(
+    routeNames: ReadonlyArray<RouteName>,
+  ): RouteName extends string
+    ? { name: RouteName; params: Simplify<RoutesParams[RouteName]> }[]
+    : never => {
+    const routes = useSubscription(
+      React.useMemo(() => {
+        const matchers = rankedMatchers.filter(({ name }) =>
+          routeNames.includes(name as RouteName),
+        );
 
-    return () => {
-      subscriptions.delete(subscription);
-    };
-  };
-
-  const useLocation = (): Location =>
-    useSubscription(
-      React.useMemo(
-        () => ({ getCurrentValue: () => currentLocation, subscribe }),
-        [],
-      ),
+        return {
+          getCurrentValue: () => {
+            const routes = matchAll(getCurrentLocation(), matchers).reverse();
+            return JSON.stringify(routes);
+          },
+          subscribe,
+        };
+      }, [JSON.stringify(routeNames)]),
     );
+
+    return JSON.parse(routes);
+  };
 
   const useRoute = <RouteName extends keyof FiniteRoutes | keyof NestedRoutes>(
     routeNames: ReadonlyArray<RouteName>,
   ): RouteName extends string
     ? { name: RouteName; params: Simplify<RoutesParams[RouteName]> } | undefined
     : never => {
-    // JSON.{stringify,parse} is used to prevent some re-renders,
-    // as the params object instance is updated on each one
     const route = useSubscription(
       React.useMemo(() => {
         const matchers = rankedMatchers.filter(({ name }) =>
@@ -125,7 +130,7 @@ export const createRouter = <
 
         return {
           getCurrentValue: () => {
-            const route = match(currentLocation, matchers);
+            const route = match(getCurrentLocation(), matchers);
             return route ? JSON.stringify(route) : route;
           },
           subscribe,
@@ -149,13 +154,12 @@ export const createRouter = <
     const active = useSubscription(
       React.useMemo(
         () => ({
-          getCurrentValue: () => href === currentLocation.url,
+          getCurrentValue: () => href === getCurrentLocation().url,
           subscribe,
         }),
         [href],
       ),
     );
-
     const shouldReplace = replace || active;
     const shouldIgnoreTarget = !target || target === "_self";
 
@@ -200,11 +204,38 @@ export const createRouter = <
     }, [blocked]);
   };
 
-  return {
-    get location() {
-      return currentLocation;
-    },
+  type RouteFocusProps = {
+    route?:
+      | { name: string; params: Record<string, string | string[] | undefined> }
+      | undefined;
+    containerRef: React.RefObject<unknown>;
+  };
 
+  const useRouteFocus = ({ route, containerRef }: RouteFocusProps) => {
+    React.useEffect(() => {
+      const element = containerRef.current as HTMLElement | undefined;
+      // Only focus after a history change for UX, so that areas outside routing (e.g. navigation header)
+      // are available immediately to keyboard navigation
+      if (element && hasLocationChanged()) {
+        try {
+          const name = element.nodeName;
+          // A tabIndex of -1 allows element to be programmatically focused but
+          // prevents keyboard focus, so we don't want to set the value on elements
+          // that support keyboard focus by default.
+          if (
+            element.getAttribute("tabIndex") == null &&
+            focusableElements[name] == null
+          ) {
+            element.setAttribute("tabIndex", "-1");
+          }
+          element.focus();
+        } catch (err) {}
+      }
+    }, [route?.name, JSON.stringify(route?.params), containerRef]);
+  };
+
+  return {
+    getLocation: getCurrentLocation,
     createURL,
     goBack,
     goForward,
@@ -215,7 +246,9 @@ export const createRouter = <
     unsafeReplace,
     useLink,
     useLocation,
+    useRoutes,
     useRoute,
     useBlocker,
+    useRouteFocus,
   };
 };

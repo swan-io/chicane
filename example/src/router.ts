@@ -13,6 +13,8 @@ export const {
   useLocation,
   useRoute,
   useBlocker,
+  useRouteFocus,
+  getLocation,
 } = createRouter({
   root: "/",
   users: "/users",
