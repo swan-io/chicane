@@ -214,6 +214,21 @@ const App = () => {
 };
 ```
 
+#### Router.useRouteFocus
+
+Registers a component as a route container, so that the element receives focus on route change. When using nested routes, the deepest route container is focused.
+
+```tsx
+const App = () => {
+  const route = Router.useRoute(["root", "users", "user"]);
+  const containerRef = React.useRef(null);
+
+  Router.useRouteFocus({ containerRef, route });
+
+  <div ref={containerRef}>{/* match your route here */}</div>;
+};
+```
+
 #### Router.useRoutes
 
 Listen and match a bunch of your routes. Returns an array of routes, sorted by ascending specificity. Useful for route hierarchical representation (e.g. a breadcrumb component).
@@ -301,37 +316,14 @@ const App = () => {
 };
 ```
 
-#### Router.useRouteFocus
-
-Registers a component as a route container, so that the element receives focus on route change. When using nested routes, the deepest route container is focused.
-
-```tsx
-const App = () => {
-  const route = Router.useRoute(["root", "users", "user"]);
-  const containerRef = React.useRef(null);
-
-  Router.useRouteFocus({ containerRef, route });
-
-  <div ref={containerRef}>{/* match your route here*/}</div>;
-};
-```
-
 #### Router.subscribe
 
-Subscribe to location changes. Useful to reset keyboard focus.
+Subscribe to location changes.
 
 ```tsx
-const App = () => {
-  React.useEffect(() => {
-    const unsubscribe = Router.subscribe((location: Location) => {
-      resetKeyboardFocusToContent();
-    });
-
-    return unsubscribe;
-  }, []);
-
+const unsubscribe = Router.subscribe((location: Location) => {
   // …
-};
+});
 ```
 
 #### Router.unsafeNavigate and Router.unsafeReplace
