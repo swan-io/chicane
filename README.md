@@ -214,6 +214,26 @@ const App = () => {
 };
 ```
 
+#### Router.useRoutes
+
+Listen and match a bunch of your routes. Returns an array of routes, sorted by ascending specificity. Useful for route hierarchical representation (e.g. a breadcrumb component).
+
+```tsx
+import { match } from "ts-pattern";
+
+const Breadcrumbs = () => {
+  const routes = Router.useRoutes(["root", "users", "user"]);
+
+  return routes.map((route) => {
+    return match(route)
+      .with({ name: "root" }, () => "Home")
+      .with({ name: "users" }, () => "Users")
+      .with({ name: "user" }, ({ params: { userId } }) => userId)
+      .otherwise(() => null);
+  });
+};
+```
+
 #### Router.useLink
 
 As this library doesn't provide a single component, we expose this hook to create your own customized `Link`.
