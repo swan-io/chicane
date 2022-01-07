@@ -213,7 +213,7 @@ export const createRouter = <
     route?: { name: string; params: Params } | undefined;
     containerRef: React.RefObject<unknown>;
   }) => {
-    const updateKey = route ? JSON.stringify(route) : undefined;
+    const updateKey: string | undefined = JSON.stringify(route);
 
     React.useEffect(() => {
       const element = containerRef.current as HTMLElement | undefined;
