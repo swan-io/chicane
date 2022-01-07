@@ -20,9 +20,12 @@ if (currentLocation.url !== createPath(history.location)) {
   history.replace(currentLocation.url); // URL cleanup
 }
 
+let locationHasChanged = false;
+
 history.listen(({ location }) => {
   const nextLocation = decodeLocation(location, false);
   if (!areLocationsEqual(nextLocation, currentLocation)) {
+    locationHasChanged = true;
     currentLocation = nextLocation;
     subscriptions.forEach((subscription) => subscription(currentLocation));
   }
@@ -45,3 +48,7 @@ export const useLocation = (): Location => {
 
 export { createPath as createPath };
 export { parsePath as parsePath };
+
+export const hasLocationChanged = () => {
+  return locationHasChanged;
+};

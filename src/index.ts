@@ -4,6 +4,7 @@ import { first } from "./helpers";
 import {
   createPath,
   getCurrentLocation,
+  hasLocationChanged,
   history,
   parsePath,
   subscribe,
@@ -186,19 +187,10 @@ export const createRouter = <
     containerRef: React.RefObject<unknown>;
   };
 
-  let hasChangedLocation = false;
-
-  let unsubscribeToLocationChange: (() => void) | undefined;
-  unsubscribeToLocationChange = subscribe(() => {
-    hasChangedLocation = true;
-    unsubscribeToLocationChange?.();
-    unsubscribeToLocationChange = undefined;
-  });
-
   const useRouteFocus = ({ route, containerRef }: RouteFocusProps) => {
     React.useEffect(() => {
       const element = containerRef.current as HTMLElement | undefined;
-      if (element && hasChangedLocation) {
+      if (element && hasLocationChanged()) {
         try {
           const name = element.nodeName;
           // A tabIndex of -1 allows element to be programmatically focused but
