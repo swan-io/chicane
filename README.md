@@ -233,7 +233,7 @@ const App = () => {
 
   Router.useRouteFocus({ containerRef, route });
 
-  <div ref={containerRef}>{/* match your route here */}</div>;
+  return <div ref={containerRef}>{/* match your route here */}</div>;
 };
 ```
 
@@ -245,15 +245,17 @@ Listen and match a bunch of your routes. Returns an array of routes, sorted by a
 import { match } from "ts-pattern";
 
 const Breadcrumbs = () => {
-  const routes = Router.useRoutes(["root", "users", "user"], { orderBy: "asc" }); // accepts "asc" or "desc" order, default is "desc"
+  const routes = Router.useRoutes(["root", "users", "user"], {
+    orderBy: "asc", // accepts "asc" or "desc" order (default is "desc")
+  });
 
-  return routes.map((route) => {
-    return match(route)
+  return routes.map((route) =>
+    match(route)
       .with({ name: "root" }, () => "Home")
       .with({ name: "users" }, () => "Users")
       .with({ name: "user" }, ({ params: { userId } }) => userId)
-      .otherwise(() => null);
-  });
+      .otherwise(() => null),
+  );
 };
 ```
 
