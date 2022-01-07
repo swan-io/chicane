@@ -245,7 +245,7 @@ Listen and match a bunch of your routes. Returns an array of routes, sorted by a
 import { match } from "ts-pattern";
 
 const Breadcrumbs = () => {
-  const routes = Router.useRoutes(["root", "users", "user"]);
+  const routes = Router.useRoutes(["root", "users", "user"], { orderBy: "desc" }); // accepts "asc" or "desc" order, default is "desc"
 
   return routes.map((route) => {
     return match(route)
