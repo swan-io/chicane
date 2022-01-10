@@ -97,9 +97,9 @@ export const createRouter = <
   const useRoutes = <RouteName extends keyof FiniteRoutes | keyof NestedRoutes>(
     routeNames: ReadonlyArray<RouteName>,
     { orderBy = "desc" }: { orderBy?: "asc" | "desc" } = {},
-  ): RouteName extends string
-    ? { name: RouteName; params: Simplify<RoutesParams[RouteName]> }[]
-    : never => {
+  ): (RouteName extends string
+    ? { name: RouteName; params: Simplify<RoutesParams[RouteName]> }
+    : never)[] => {
     const routes = useSubscription(
       React.useMemo(() => {
         const matchers = rankedMatchers.filter(({ name }) =>
