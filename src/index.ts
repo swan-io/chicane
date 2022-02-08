@@ -148,23 +148,33 @@ export const createRouter = <
     return route ? JSON.parse(route) : route;
   };
 
+  type CompareHrefUrl = { href: string; currentLocation: string };
+  const defaultCompareUrls = ({ href, currentLocation }: CompareHrefUrl) =>
+    href === currentLocation;
+
   // Kudos to https://github.com/remix-run/react-router/pull/7998
   const useLink = ({
     href,
     replace = false,
     target,
+    compareUrls = defaultCompareUrls,
   }: {
     href: string;
     replace?: boolean | undefined;
     target?: React.HTMLAttributeAnchorTarget | undefined;
+    compareUrls?: (params: CompareHrefUrl) => boolean;
   }) => {
     const active = useSubscription(
       React.useMemo(
         () => ({
-          getCurrentValue: () => href === getCurrentLocation().url,
+          getCurrentValue: () =>
+            compareUrls({
+              href,
+              currentLocation: getCurrentLocation().url,
+            }),
           subscribe,
         }),
-        [href],
+        [href, compareUrls],
       ),
     );
 
