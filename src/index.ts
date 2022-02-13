@@ -158,13 +158,16 @@ export const createRouter = <
     replace?: boolean | undefined;
     target?: React.HTMLAttributeAnchorTarget | undefined;
   }) => {
+    const hrefPathname = React.useMemo(() => parsePath(href).pathname, [href]);
+
     const active = useSubscription(
       React.useMemo(
         () => ({
-          getCurrentValue: () => href === getCurrentLocation().url,
+          getCurrentValue: () =>
+            hrefPathname === parsePath(getCurrentLocation().url).pathname,
           subscribe,
         }),
-        [href],
+        [hrefPathname],
       ),
     );
 
