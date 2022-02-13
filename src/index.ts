@@ -24,7 +24,7 @@ import {
 export { decodeSearch, encodeSearch } from "./search";
 export type { Location, Search } from "./types";
 
-const focusableElements: Record<string, boolean> = {
+const focusableElements: Record<string, true> = {
   A: true,
   INPUT: true,
   SELECT: true,
@@ -235,7 +235,7 @@ export const createRouter = <
           // that support keyboard focus by default.
           if (
             element.getAttribute("tabIndex") == null &&
-            focusableElements[name] == null
+            !focusableElements[name]
           ) {
             element.setAttribute("tabIndex", "-1");
           }
