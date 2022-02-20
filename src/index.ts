@@ -1,15 +1,15 @@
+import { createPath, parsePath } from "history";
 import * as React from "react";
-import { useSubscription } from "use-subscription";
+import { useSyncExternalStore } from "use-sync-external-store/shim";
 import { first } from "./helpers";
 import {
-  createPath,
   getCurrentLocation,
   hasInitialLocationChanged,
   history,
-  parsePath,
   subscribe,
   useLocation,
 } from "./history";
+import { useSubscribeWithDeps } from "./hooks/useSubscribeWithDeps";
 import { getMatcher, match, matchAll, matchToHistoryPath } from "./matcher";
 import {
   ExtractRoutesParams,
@@ -100,26 +100,28 @@ export const createRouter = <
   ): (RouteName extends string
     ? { name: RouteName; params: Simplify<RoutesParams[RouteName]> }
     : never)[] => {
-    const routes = useSubscription(
-      React.useMemo(() => {
-        const matchers = rankedMatchers.filter(({ name }) =>
+    const matchers = React.useMemo(
+      () =>
+        rankedMatchers.filter(({ name }) =>
           routeNames.includes(name as RouteName),
-        );
-
-        return {
-          getCurrentValue: () => {
-            const routes = matchAll(getCurrentLocation(), matchers);
-
-            if (orderBy === "asc") {
-              routes.reverse();
-            }
-
-            return JSON.stringify(routes);
-          },
-          subscribe,
-        };
-      }, [JSON.stringify(routeNames), orderBy]),
+        ),
+      [JSON.stringify(routeNames)],
     );
+
+    const subscribeWithDeps = useSubscribeWithDeps(subscribe, [
+      matchers,
+      orderBy,
+    ]);
+
+    const routes = useSyncExternalStore(subscribeWithDeps, () => {
+      const routes = matchAll(getCurrentLocation(), matchers);
+
+      if (orderBy === "asc") {
+        routes.reverse();
+      }
+
+      return JSON.stringify(routes);
+    });
 
     return JSON.parse(routes);
   };
@@ -129,21 +131,20 @@ export const createRouter = <
   ): RouteName extends string
     ? { name: RouteName; params: Simplify<RoutesParams[RouteName]> } | undefined
     : never => {
-    const route = useSubscription(
-      React.useMemo(() => {
-        const matchers = rankedMatchers.filter(({ name }) =>
+    const matchers = React.useMemo(
+      () =>
+        rankedMatchers.filter(({ name }) =>
           routeNames.includes(name as RouteName),
-        );
-
-        return {
-          getCurrentValue: () => {
-            const route = match(getCurrentLocation(), matchers);
-            return route ? JSON.stringify(route) : route;
-          },
-          subscribe,
-        };
-      }, [JSON.stringify(routeNames)]),
+        ),
+      [JSON.stringify(routeNames)],
     );
+
+    const subscribeWithDeps = useSubscribeWithDeps(subscribe, [matchers]);
+
+    const route = useSyncExternalStore(subscribeWithDeps, () => {
+      const route = match(getCurrentLocation(), matchers);
+      return route ? JSON.stringify(route) : route;
+    });
 
     return route ? JSON.parse(route) : route;
   };
@@ -159,16 +160,11 @@ export const createRouter = <
     target?: React.HTMLAttributeAnchorTarget | undefined;
   }) => {
     const hrefPathname = React.useMemo(() => parsePath(href).pathname, [href]);
+    const subscribeWithDeps = useSubscribeWithDeps(subscribe, [hrefPathname]);
 
-    const active = useSubscription(
-      React.useMemo(
-        () => ({
-          getCurrentValue: () =>
-            hrefPathname === parsePath(getCurrentLocation().url).pathname,
-          subscribe,
-        }),
-        [hrefPathname],
-      ),
+    const active = useSyncExternalStore(
+      subscribeWithDeps,
+      () => hrefPathname === parsePath(getCurrentLocation().url).pathname,
     );
 
     const shouldReplace = replace || active;

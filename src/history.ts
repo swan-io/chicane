@@ -1,9 +1,8 @@
 /**
  * This module makes the different routes created with react-chicane listen to the same history instance
  */
-import { createBrowserHistory, createPath, parsePath } from "history";
-import * as React from "react";
-import { useSubscription } from "use-subscription";
+import { createBrowserHistory, createPath } from "history";
+import { useSyncExternalStore } from "use-sync-external-store/shim";
 import { areLocationsEqual, decodeLocation } from "./location";
 import { Location, Subscription } from "./types";
 
@@ -36,20 +35,13 @@ export const subscribe = (subscription: Subscription): (() => void) => {
   };
 };
 
-export const useLocation = (): Location =>
-  useSubscription(
-    React.useMemo(
-      () => ({ getCurrentValue: () => currentLocation, subscribe }),
-      [],
-    ),
-  );
-
 export const getCurrentLocation = () => currentLocation;
 export const hasInitialLocationChanged = () => initialLocationHasChanged;
+
+export const useLocation = (): Location =>
+  useSyncExternalStore(subscribe, getCurrentLocation);
 
 // For testing purposes
 export const resetInitialHasLocationChanged = () => {
   initialLocationHasChanged = false;
 };
-
-export { createPath, parsePath };

@@ -47,7 +47,7 @@
   },
   "dependencies": {
     "history": "^5.2.0",
-    "use-subscription": "^1.5.1"
+    "use-sync-external-store": "1.0.0-rc.0 || ^1.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.17.2",
@@ -58,7 +58,7 @@
     "@testing-library/react": "^12.1.2",
     "@types/jest": "^27.4.0",
     "@types/react": "^17.0.39",
-    "@types/use-subscription": "^1.0.0",
+    "@types/use-sync-external-store": "^0.0.3",
     "babel-jest": "^27.5.1",
     "jest": "^27.5.1",
     "microbundle": "^0.14.2",
