@@ -9,7 +9,6 @@ import {
   subscribe,
   useLocation,
 } from "./history";
-import { useSubscribeWithDeps } from "./hooks/useSubscribeWithDeps";
 import { getMatcher, match, matchAll, matchToHistoryPath } from "./matcher";
 import {
   ExtractRoutesParams,
@@ -108,12 +107,7 @@ export const createRouter = <
       [JSON.stringify(routeNames)],
     );
 
-    const subscribeWithDeps = useSubscribeWithDeps(subscribe, [
-      matchers,
-      orderBy,
-    ]);
-
-    const routes = useSyncExternalStore(subscribeWithDeps, () => {
+    const routes = useSyncExternalStore(subscribe, () => {
       const routes = matchAll(getCurrentLocation(), matchers);
 
       if (orderBy === "asc") {
@@ -139,9 +133,7 @@ export const createRouter = <
       [JSON.stringify(routeNames)],
     );
 
-    const subscribeWithDeps = useSubscribeWithDeps(subscribe, [matchers]);
-
-    const route = useSyncExternalStore(subscribeWithDeps, () => {
+    const route = useSyncExternalStore(subscribe, () => {
       const route = match(getCurrentLocation(), matchers);
       return route ? JSON.stringify(route) : route;
     });
@@ -160,12 +152,11 @@ export const createRouter = <
     target?: React.HTMLAttributeAnchorTarget | undefined;
   }) => {
     const hrefPathname = React.useMemo(() => parsePath(href).pathname, [href]);
-    const subscribeWithDeps = useSubscribeWithDeps(subscribe, [hrefPathname]);
 
-    const active = useSyncExternalStore(
-      subscribeWithDeps,
-      () => hrefPathname === parsePath(getCurrentLocation().url).pathname,
-    );
+    const active = useSyncExternalStore(subscribe, () => {
+      const currentPathname = parsePath(getCurrentLocation().url).pathname;
+      return hrefPathname === currentPathname;
+    });
 
     const shouldReplace = replace || active;
     const shouldIgnoreTarget = !target || target === "_self";
