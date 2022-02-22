@@ -9,6 +9,7 @@ test("useIsUpdate returns false on first render, true after that", () => {
   };
 
   const { getByText, rerender } = render(<App />);
+
   expect(getByText("isUpdate: false")).toBeInTheDocument();
   rerender(<App />);
   expect(getByText("isUpdate: true")).toBeInTheDocument();
