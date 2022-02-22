@@ -223,18 +223,16 @@ export const createRouter = <
     React.useEffect(() => {
       const element = containerRef.current as HTMLElement | undefined;
 
-      // Only focus after a history change for UX, so that areas outside routing (e.g. navigation header)
-      // are available immediately to keyboard navigation
+      // Only focus after a history change for UX, so that areas outside routing
+      // (e.g. navigation header) are available immediately to keyboard navigation
       if (element && hasInitialLocationChanged()) {
         try {
-          const name = element.nodeName;
-
           // A tabIndex of -1 allows element to be programmatically focused but
           // prevents keyboard focus, so we don't want to set the value on elements
           // that support keyboard focus by default.
           if (
             element.getAttribute("tabIndex") == null &&
-            !focusableElements[name]
+            !focusableElements[element.nodeName]
           ) {
             element.setAttribute("tabIndex", "-1");
           }
