@@ -1,6 +1,5 @@
+import { act, render } from "@testing-library/react";
 import * as React from "react";
-import * as ReactDOM from "react-dom";
-import { act } from "react-dom/test-utils";
 import { createRouter } from "../src";
 import { resetInitialHasLocationChanged } from "../src/history";
 
@@ -18,21 +17,9 @@ describe("router", () => {
 
   const routesToMatch: RouteName[] = ["home", "profiles", "profile"];
 
-  let container;
   beforeEach(() => {
     unsafeNavigate("/");
     resetInitialHasLocationChanged();
-
-    container = document.createElement("div");
-    document.body.append(container);
-  });
-
-  afterEach(() => {
-    act(() => {
-      ReactDOM.unmountComponentAtNode(container);
-    });
-    container.remove();
-    container = undefined;
   });
 
   test("useRoute: should match the correct route", () => {
@@ -54,9 +41,7 @@ describe("router", () => {
       );
     };
 
-    act(() => {
-      ReactDOM.render(<App />, container);
-    });
+    const { container } = render(<App />);
 
     expect(container.textContent).toContain("Home");
 
@@ -79,9 +64,7 @@ describe("router", () => {
       return <>{routes.map((item) => `[${item.name}]`).join("")}</>;
     };
 
-    act(() => {
-      ReactDOM.render(<App />, container);
-    });
+    const { container } = render(<App />);
 
     act(() => {
       unsafeNavigate("/profile/zoontek");
@@ -96,9 +79,7 @@ describe("router", () => {
       return <>{routes.map((item) => `[${item.name}]`).join("")}</>;
     };
 
-    act(() => {
-      ReactDOM.render(<App />, container);
-    });
+    const { container } = render(<App />);
 
     act(() => {
       unsafeNavigate("/profile/zoontek");
@@ -119,7 +100,7 @@ describe("router", () => {
       }
 
       return (
-        <div ref={containerRef} data-test-id="routeContainer">
+        <div ref={containerRef} data-testid="routeContainer">
           {route.name === "home" ? (
             <div> Home </div>
           ) : route.name === "profile" ? (
@@ -129,37 +110,39 @@ describe("router", () => {
       );
     };
 
-    act(() => {
-      ReactDOM.render(<App />, container);
-    });
+    const { getByTestId, baseElement } = render(<App />);
+    const body = baseElement as HTMLBodyElement;
+    const routeContainer = getByTestId("routeContainer");
 
     // doesn't take focus initially
-    expect(document.activeElement).toBe(document.body);
+    expect(body).toHaveFocus();
 
     act(() => {
       unsafeNavigate("/profile/zoontek");
     });
 
     // takes focus after a route change
-    expect(document.activeElement).toBe(
-      document.querySelector("[data-test-id='routeContainer']"),
-    );
+    expect(routeContainer).toHaveFocus();
 
-    // doesn't switch focus if route remains the same
-    document.body.setAttribute("tabIndex", "-1");
-    document.body.focus();
-    expect(document.activeElement).toBe(document.body);
+    act(() => {
+      // doesn't switch focus if route remains the same
+      body.setAttribute("tabIndex", "-1");
+      body.focus();
+    });
+
+    expect(body).toHaveFocus();
+
     act(() => {
       unsafeNavigate("/profile/zoontek");
     });
-    expect(document.activeElement).toBe(document.body);
+
+    expect(body).toHaveFocus();
 
     act(() => {
       unsafeNavigate("/profile/bloodyowl");
     });
+
     // takes focus when only a param changes
-    expect(document.activeElement).toBe(
-      document.querySelector("[data-test-id='routeContainer']"),
-    );
+    expect(routeContainer).toHaveFocus();
   });
 });
