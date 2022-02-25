@@ -378,7 +378,6 @@ decodeSearch("?invitation=542022247745&users=frank&users=chris");
 
 - Improve documentation
 - Tests, tests, tests
-- Switch to `useSyncExternalStore` (React 18+)
 - Create a website (?)
 
 ## 🙌 Acknowledgements

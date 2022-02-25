@@ -1,12 +1,11 @@
+import { createPath, parsePath } from "history";
 import * as React from "react";
-import { useSubscription } from "use-subscription";
+import { useSyncExternalStore } from "use-sync-external-store/shim";
 import { first } from "./helpers";
 import {
-  createPath,
   getCurrentLocation,
   hasInitialLocationChanged,
   history,
-  parsePath,
   subscribe,
   useLocation,
 } from "./history";
@@ -100,26 +99,23 @@ export const createRouter = <
   ): (RouteName extends string
     ? { name: RouteName; params: Simplify<RoutesParams[RouteName]> }
     : never)[] => {
-    const routes = useSubscription(
-      React.useMemo(() => {
-        const matchers = rankedMatchers.filter(({ name }) =>
+    const matchers = React.useMemo(
+      () =>
+        rankedMatchers.filter(({ name }) =>
           routeNames.includes(name as RouteName),
-        );
-
-        return {
-          getCurrentValue: () => {
-            const routes = matchAll(getCurrentLocation(), matchers);
-
-            if (orderBy === "asc") {
-              routes.reverse();
-            }
-
-            return JSON.stringify(routes);
-          },
-          subscribe,
-        };
-      }, [JSON.stringify(routeNames), orderBy]),
+        ),
+      [JSON.stringify(routeNames)],
     );
+
+    const routes = useSyncExternalStore(subscribe, () => {
+      const routes = matchAll(getCurrentLocation(), matchers);
+
+      if (orderBy === "asc") {
+        routes.reverse();
+      }
+
+      return JSON.stringify(routes);
+    });
 
     return JSON.parse(routes);
   };
@@ -129,21 +125,18 @@ export const createRouter = <
   ): RouteName extends string
     ? { name: RouteName; params: Simplify<RoutesParams[RouteName]> } | undefined
     : never => {
-    const route = useSubscription(
-      React.useMemo(() => {
-        const matchers = rankedMatchers.filter(({ name }) =>
+    const matchers = React.useMemo(
+      () =>
+        rankedMatchers.filter(({ name }) =>
           routeNames.includes(name as RouteName),
-        );
-
-        return {
-          getCurrentValue: () => {
-            const route = match(getCurrentLocation(), matchers);
-            return route ? JSON.stringify(route) : route;
-          },
-          subscribe,
-        };
-      }, [JSON.stringify(routeNames)]),
+        ),
+      [JSON.stringify(routeNames)],
     );
+
+    const route = useSyncExternalStore(subscribe, () => {
+      const route = match(getCurrentLocation(), matchers);
+      return route ? JSON.stringify(route) : route;
+    });
 
     return route ? JSON.parse(route) : route;
   };
@@ -160,16 +153,10 @@ export const createRouter = <
   }) => {
     const hrefPathname = React.useMemo(() => parsePath(href).pathname, [href]);
 
-    const active = useSubscription(
-      React.useMemo(
-        () => ({
-          getCurrentValue: () =>
-            hrefPathname === parsePath(getCurrentLocation().url).pathname,
-          subscribe,
-        }),
-        [hrefPathname],
-      ),
-    );
+    const active = useSyncExternalStore(subscribe, () => {
+      const currentPathname = parsePath(getCurrentLocation().url).pathname;
+      return hrefPathname === currentPathname;
+    });
 
     const shouldReplace = replace || active;
     const shouldIgnoreTarget = !target || target === "_self";
@@ -227,18 +214,16 @@ export const createRouter = <
     React.useEffect(() => {
       const element = containerRef.current as HTMLElement | undefined;
 
-      // Only focus after a history change for UX, so that areas outside routing (e.g. navigation header)
-      // are available immediately to keyboard navigation
+      // Only focus after a history change for UX, so that areas outside routing
+      // (e.g. navigation header) are available immediately to keyboard navigation
       if (element && hasInitialLocationChanged()) {
         try {
-          const name = element.nodeName;
-
           // A tabIndex of -1 allows element to be programmatically focused but
           // prevents keyboard focus, so we don't want to set the value on elements
           // that support keyboard focus by default.
           if (
             element.getAttribute("tabIndex") == null &&
-            !focusableElements[name]
+            !focusableElements[element.nodeName]
           ) {
             element.setAttribute("tabIndex", "-1");
           }
