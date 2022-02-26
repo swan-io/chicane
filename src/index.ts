@@ -30,6 +30,31 @@ const focusableElements: Record<string, true> = {
   TEXTAREA: true,
 };
 
+export const groupRoutes = <
+  GroupName extends string,
+  BasePath extends string,
+  Routes extends Record<string, string>,
+>(
+  name: GroupName,
+  basePath: BasePath,
+  routes: Readonly<Routes>,
+): {
+  [K in keyof Routes as K extends string
+    ? `${GroupName}.${K}`
+    : never]: `${BasePath}/${Routes[K]}`;
+} => {
+  const output: Record<string, string> = {};
+
+  for (const key in routes) {
+    if (Object.prototype.hasOwnProperty.call(routes, key)) {
+      output[`${name}.${key}`] = `${basePath}/${routes[key]}`;
+    }
+  }
+
+  // @ts-expect-error
+  return output;
+};
+
 export const createRouter = <
   Routes extends Record<string, string>,
   BasePath extends string = string,
