@@ -67,20 +67,20 @@ type ExtractRouteParams<Route extends string> =
     ? ExtractPathParams<Path> & ExtractSearchParams<Hash>
     : ExtractPathParams<Route>;
 
-export type PrependBasePath<
-  BasePath extends string,
-  Route extends string,
-> = Route extends "/"
-  ? BasePath
-  : Route extends `/${infer _}`
-  ? `${BasePath}${Route}`
-  : `${BasePath}/${Route}`;
+export type ConcatPaths<
+  PathA extends string,
+  PathB extends string,
+> = PathB extends "/"
+  ? PathA
+  : PathB extends `/${infer _}`
+  ? `${PathA}${PathB}`
+  : `${PathA}/${PathB}`;
 
-export type PrependBasePathToRoutes<
+export type PrependBasePath<
   Routes extends Record<string, string>,
   BasePath extends string,
 > = {
-  [K in keyof Routes]: PrependBasePath<BasePath, Routes[K]>;
+  [K in keyof Routes]: ConcatPaths<BasePath, Routes[K]>;
 };
 
 export type GetNestedRoutes<Routes extends Record<string, string>> = {
