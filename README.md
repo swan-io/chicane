@@ -360,7 +360,38 @@ const Redirect = ({ to }: { to: string }) => {
 <Redirect to={Router.createURL("root")} />;
 ```
 
-### encodeSearch and decodeSearch
+### groupRoutes
+
+Reduce routes declaration repetitions by subpath grouping.
+
+```tsx
+import { createRouter, groupRoutes } from "react-chicane";
+
+const Router = createRouter({
+  root: "/",
+  user: "/:userName",
+
+  ...groupRoutes("repository", "/:repositoryName", {
+    root: "/",
+    issues: "/issues",
+    pulls: "/pulls",
+    actions: "/actions",
+
+    // Can be nested indefinitely
+    ...groupRoutes("settings", "/settings", {
+      root: "/",
+      collaborators: "/access",
+      branches: "/branches",
+    }),
+  }),
+});
+
+Router.createURL("user", { userName: "zoontek" });
+Router.createURL("repository.actions", { repositoryName: "valienv" });
+Router.createURL("repository.settings.branches", { repositoryName: "valienv" });
+```
+
+### encodeSearch / decodeSearch
 
 Encode and decode url search parameters.
 

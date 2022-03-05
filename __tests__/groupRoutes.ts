@@ -7,7 +7,6 @@ test("groupRoutes prefix routes keys / paths", () => {
 
     ...groupRoutes("repository", "/:repositoryName", {
       root: "/",
-
       issues: "/issues",
       pulls: "/pulls",
       actions: "/actions",
