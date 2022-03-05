@@ -1,7 +1,7 @@
 import { createPath, parsePath } from "history";
 import * as React from "react";
 import { useSyncExternalStore } from "use-sync-external-store/shim";
-import { first } from "./helpers";
+import { concatPaths, first } from "./helpers";
 import {
   getCurrentLocation,
   hasInitialLocationChanged,
@@ -11,6 +11,7 @@ import {
 } from "./history";
 import { getMatcher, match, matchAll, matchToHistoryPath } from "./matcher";
 import {
+  ConcatPaths,
   ExtractRoutesParams,
   GetNestedRoutes,
   Matcher,
@@ -28,6 +29,31 @@ const focusableElements: Record<string, true> = {
   INPUT: true,
   SELECT: true,
   TEXTAREA: true,
+};
+
+export const groupRoutes = <
+  GroupName extends string,
+  BasePath extends string,
+  Routes extends Record<string, string>,
+>(
+  name: GroupName,
+  basePath: BasePath,
+  routes: Readonly<Routes>,
+): {
+  [K in keyof Routes as K extends string
+    ? `${GroupName}.${K}`
+    : never]: ConcatPaths<BasePath, Routes[K]>;
+} => {
+  const output: Record<string, string> = {};
+
+  for (const key in routes) {
+    if (Object.prototype.hasOwnProperty.call(routes, key)) {
+      output[`${name}.${key}`] = concatPaths(basePath, routes[key]);
+    }
+  }
+
+  // @ts-expect-error
+  return output;
 };
 
 export const createRouter = <
@@ -54,7 +80,11 @@ export const createRouter = <
 
   for (const routeName in routes) {
     if (Object.prototype.hasOwnProperty.call(routes, routeName)) {
-      const matcher = getMatcher(routeName, `${basePath}/${routes[routeName]}`);
+      const matcher = getMatcher(
+        routeName,
+        concatPaths(basePath, routes[routeName]),
+      );
+
       matchers[routeName] = matcher;
       rankedMatchers.push(matcher);
     }
