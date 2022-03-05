@@ -1,7 +1,7 @@
 import { createPath, parsePath } from "history";
 import * as React from "react";
 import { useSyncExternalStore } from "use-sync-external-store/shim";
-import { first } from "./helpers";
+import { first, prependBasePath } from "./helpers";
 import {
   getCurrentLocation,
   hasInitialLocationChanged,
@@ -17,6 +17,7 @@ import {
   Params,
   ParamsArg,
   PrependBasePath,
+  PrependBasePathToRoutes,
   Simplify,
 } from "./types";
 
@@ -41,13 +42,13 @@ export const groupRoutes = <
 ): {
   [K in keyof Routes as K extends string
     ? `${GroupName}.${K}`
-    : never]: `${BasePath}/${Routes[K]}`;
+    : never]: PrependBasePath<BasePath, Routes[K]>;
 } => {
   const output: Record<string, string> = {};
 
   for (const key in routes) {
     if (Object.prototype.hasOwnProperty.call(routes, key)) {
-      output[`${name}.${key}`] = `${basePath}/${routes[key]}`;
+      output[`${name}.${key}`] = prependBasePath(basePath, routes[key]);
     }
   }
 
@@ -65,7 +66,7 @@ export const createRouter = <
     blockerMessage?: string;
   } = {},
 ) => {
-  type RoutesWithBasePath = PrependBasePath<Routes, BasePath>;
+  type RoutesWithBasePath = PrependBasePathToRoutes<Routes, BasePath>;
   type NestedRoutes = GetNestedRoutes<RoutesWithBasePath>;
   type NestedRoutesParams = ExtractRoutesParams<NestedRoutes>;
   type FiniteRoutes = Omit<RoutesWithBasePath, keyof NestedRoutes>;
@@ -79,7 +80,11 @@ export const createRouter = <
 
   for (const routeName in routes) {
     if (Object.prototype.hasOwnProperty.call(routes, routeName)) {
-      const matcher = getMatcher(routeName, `${basePath}/${routes[routeName]}`);
+      const matcher = getMatcher(
+        routeName,
+        prependBasePath(basePath, routes[routeName]),
+      );
+
       matchers[routeName] = matcher;
       rankedMatchers.push(matcher);
     }
