@@ -67,14 +67,20 @@ type ExtractRouteParams<Route extends string> =
     ? ExtractPathParams<Path> & ExtractSearchParams<Hash>
     : ExtractPathParams<Route>;
 
+export type PrefixWithSlash<Path extends string> = Path extends `/${infer _}`
+  ? Path
+  : `/${Path}`;
+
 export type ConcatPaths<
   PathA extends string,
   PathB extends string,
-> = PathB extends "/"
-  ? PathA
-  : PathB extends `/${infer _}`
-  ? `${PathA}${PathB}`
-  : `${PathA}/${PathB}`;
+  PrefixedPathA extends string = PrefixWithSlash<PathA>,
+  PrefixedPathB extends string = PrefixWithSlash<PathB>,
+> = PrefixedPathA extends "/"
+  ? PrefixedPathB
+  : PrefixedPathB extends "/"
+  ? PrefixedPathA
+  : `${PrefixedPathA}${PrefixedPathB}`;
 
 export type PrependBasePath<
   Routes extends Record<string, string>,
