@@ -1,13 +1,11 @@
-import { Location as HistoryLocation, parsePath } from "history";
+import { parsePath, Path as HistoryLocation } from "history";
 import { decodeLocation } from "../src/location";
 import { Location } from "../src/types";
 
 export const getHistoryLocation = (path: string): HistoryLocation => ({
   hash: "",
-  key: "",
   pathname: "/",
   search: "",
-  state: null,
   ...parsePath(path),
 });
 
