@@ -2,14 +2,9 @@ export type Search = Record<string, string | string[]>;
 export type Params = Record<string, string | string[] | undefined>;
 export type Subscription = (location: Location) => void;
 
-export type Segment = {
-  name: string;
-  param: boolean;
-};
-
 export type Matcher = {
   name: string;
-  segments: Segment[];
+  segments: { name: string; param: boolean }[];
   search: Record<string, "unique" | "multiple">;
   hash?: string;
   finite: boolean;

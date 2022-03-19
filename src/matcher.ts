@@ -1,12 +1,12 @@
 import { parsePath, Path as HistoryPath } from "history";
 import { isMultipleParam, isNonEmpty, isParam } from "./helpers";
 import { encodeSearch } from "./search";
-import { Location, Matcher, Params, Search, Segment } from "./types";
+import { Location, Matcher, Params, Search } from "./types";
 
 // Kudos to https://reach.tech/router/ranking
 export const getRankingAndSegments = (route: string) => {
   const parts = route.split("/").filter(isNonEmpty);
-  const segments: Segment[] = [];
+  const segments: Matcher["segments"] = [];
   let ranking = parts.length > 0 ? parts.length * 4 : 5;
 
   for (const part of parts) {
