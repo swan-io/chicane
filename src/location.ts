@@ -13,28 +13,29 @@ export const decodeLocation = (
 ): Location => {
   const path = pathname.substring(1);
 
-  const outputPath =
+  const parsedPath =
     path !== ""
       ? removeExtraSlashes
         ? path.split("/").filter(isNonEmpty).map(decodeURIComponent)
         : path.split("/").map(decodeURIComponent)
       : [];
 
-  const outputSearch = search !== "" ? decodeSearch(search) : {};
-  const outputHash = hash !== "" ? decodeURIComponent(hash.substring(1)) : null;
+  const parsedSearch = search !== "" ? decodeSearch(search) : {};
+  const parsedHash = hash !== "" ? decodeURIComponent(hash.substring(1)) : null;
 
-  const url =
-    "/" +
-    outputPath.map(encodeURIComponent).join("/") +
-    encodeSearch(outputSearch) +
-    (outputHash != null ? "#" + encodeURIComponent(outputHash) : "");
+  const raw = {
+    path: "/" + parsedPath.map(encodeURIComponent).join("/"),
+    search: encodeSearch(parsedSearch),
+    hash: parsedHash != null ? "#" + encodeURIComponent(parsedHash) : "",
+  };
 
   return {
-    url,
-    path: outputPath,
-    search: outputSearch,
-    ...(outputHash !== null && {
-      hash: outputHash,
+    url: raw.path + raw.search + raw.hash,
+    raw,
+    path: parsedPath,
+    search: parsedSearch,
+    ...(parsedHash !== null && {
+      hash: parsedHash,
     }),
   };
 };

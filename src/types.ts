@@ -13,9 +13,16 @@ export type Matcher = {
 
 export type Location = Readonly<{
   url: string;
+
   path: readonly string[];
   search: Readonly<Search>;
   hash?: string;
+
+  raw: {
+    path: string;
+    search: string;
+    hash: string;
+  };
 }>;
 
 type Split<
