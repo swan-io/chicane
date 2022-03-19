@@ -181,11 +181,10 @@ export const createRouter = <
     replace?: boolean | undefined;
     target?: React.HTMLAttributeAnchorTarget | undefined;
   }) => {
-    const hrefPathname = React.useMemo(() => parsePath(href).pathname, [href]);
+    const hrefPath = React.useMemo(() => parsePath(href).pathname, [href]);
 
     const active = useSyncExternalStore(subscribe, () => {
-      const currentPathname = parsePath(getCurrentLocation().url).pathname;
-      return hrefPathname === currentPathname;
+      return hrefPath === getCurrentLocation().raw.path;
     });
 
     const shouldReplace = replace || active;

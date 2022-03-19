@@ -1,16 +1,12 @@
 import { Path as HistoryLocation } from "history";
 import { isNonEmpty } from "./helpers";
 import { decodeSearch, encodeSearch } from "./search";
-import { Location } from "./types";
-
-// As the `encodeSearch` function guarantees a stable sorting, we can rely on a simple URL comparison
-export const areLocationsEqual = (locationA: Location, locationB: Location) =>
-  locationA.url === locationB.url;
+import { MutableLocation } from "./types";
 
 export const decodeLocation = (
   { pathname, search, hash }: HistoryLocation,
   removeExtraSlashes: boolean,
-): Location => {
+): MutableLocation => {
   const path = pathname.substring(1);
 
   const parsedPath =
@@ -23,19 +19,24 @@ export const decodeLocation = (
   const parsedSearch = search !== "" ? decodeSearch(search) : {};
   const parsedHash = hash !== "" ? decodeURIComponent(hash.substring(1)) : null;
 
-  const raw = {
-    path: "/" + parsedPath.map(encodeURIComponent).join("/"),
-    search: encodeSearch(parsedSearch),
-    hash: parsedHash != null ? "#" + encodeURIComponent(parsedHash) : "",
-  };
+  const rawPath = "/" + parsedPath.map(encodeURIComponent).join("/");
+  const rawSearch = encodeSearch(parsedSearch);
+  const rawHash =
+    parsedHash != null ? "#" + encodeURIComponent(parsedHash) : "";
 
   return {
-    url: raw.path + raw.search + raw.hash,
-    raw,
+    url: rawPath + rawSearch + rawHash,
+
     path: parsedPath,
     search: parsedSearch,
     ...(parsedHash !== null && {
       hash: parsedHash,
     }),
+
+    raw: {
+      path: rawPath,
+      search: rawSearch,
+      hash: rawHash,
+    },
   };
 };

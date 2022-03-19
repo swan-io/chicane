@@ -11,19 +11,21 @@ export type Matcher = {
   ranking: number;
 };
 
-export type Location = Readonly<{
+export type MutableLocation = {
   url: string;
 
   path: readonly string[];
   search: Readonly<Search>;
   hash?: string;
 
-  raw: {
+  raw: Readonly<{
     path: string;
     search: string;
     hash: string;
-  };
-}>;
+  }>;
+};
+
+export type Location = Readonly<MutableLocation>;
 
 type Split<
   Value extends string,
