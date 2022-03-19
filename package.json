@@ -50,14 +50,14 @@
     "use-sync-external-store": "1.0.0-rc.2 || ^1.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.17.7",
+    "@babel/core": "^7.17.8",
     "@babel/plugin-transform-react-jsx": "^7.17.3",
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-typescript": "^7.16.7",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.4",
     "@types/jest": "^27.4.1",
-    "@types/react": "^17.0.40",
+    "@types/react": "^17.0.41",
     "@types/use-sync-external-store": "^0.0.3",
     "babel-jest": "^27.5.1",
     "jest": "^27.5.1",
