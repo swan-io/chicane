@@ -95,6 +95,28 @@ export const createRouter = <
     (matcherA, matcherB) => matcherB.ranking - matcherA.ranking,
   );
 
+  const getRouteFocusUpdateKey = (
+    route?: { name: string; params: Params } | undefined,
+  ): string | undefined => {
+    if (route == null) {
+      return;
+    }
+
+    const matcher = matchers[route.name];
+
+    if (matcher == null) {
+      return;
+    }
+
+    const params: Params = {};
+
+    for (const key of matcher.pathParams) {
+      params[key] = route.params[key];
+    }
+
+    return JSON.stringify({ name: route.name, params });
+  };
+
   const goForward = (): void => history.forward();
   const goBack = (): void => history.back();
 
@@ -260,7 +282,7 @@ export const createRouter = <
     route?: { name: string; params: Params } | undefined;
     containerRef: React.RefObject<unknown>;
   }) => {
-    const updateKey: string | undefined = JSON.stringify(route);
+    const updateKey = getRouteFocusUpdateKey(route);
 
     React.useEffect(() => {
       const element = containerRef.current as HTMLElement | undefined;
