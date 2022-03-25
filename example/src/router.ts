@@ -1,22 +1,6 @@
 import { createRouter } from "../../src";
 
-export const {
-  createURL,
-  goBack,
-  goForward,
-  navigate,
-  replace,
-  subscribe,
-  unsafeNavigate,
-  unsafeReplace,
-  useLink,
-  useLocation,
-  useRoutes,
-  useRoute,
-  useRouteFocus,
-  useBlocker,
-  getLocation,
-} = createRouter({
+export const Router = createRouter({
   root: "/",
   users: "/users",
   user: "/users/:userId",

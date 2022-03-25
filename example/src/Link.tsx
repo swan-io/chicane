@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useLink } from "./router";
+import { Router } from "./router";
 
 export const Link = ({
   children,
@@ -13,7 +13,7 @@ export const Link = ({
   replace?: boolean;
   target?: React.HTMLAttributeAnchorTarget;
 }) => {
-  const { active, onClick } = useLink({ href: to, replace, target });
+  const { active, onClick } = Router.useLink({ href: to, replace, target });
 
   return (
     <a

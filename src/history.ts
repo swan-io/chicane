@@ -11,66 +11,63 @@ export const history = createBrowserHistory();
 let currentLocation = decodeLocation(history.location, true);
 let initialLocationHasChanged = false;
 
-if (currentLocation.raw.toString() !== createPath(history.location)) {
-  history.replace(currentLocation.raw.toString()); // URL cleanup
+if (currentLocation.toString() !== createPath(history.location)) {
+  history.replace(currentLocation.toString()); // URL cleanup
 }
 
 history.listen(({ location }) => {
   const nextLocation = decodeLocation(location, false);
 
   // As the `encodeSearch` function guarantees a stable sorting, we can rely on a simple URL comparison
-  if (nextLocation.raw.toString() === currentLocation.raw.toString()) {
-    return;
-  }
+  if (nextLocation.toString() !== currentLocation.toString()) {
+    initialLocationHasChanged = true;
 
-  initialLocationHasChanged = true;
+    const searchHasChanged =
+      nextLocation.raw.search !== currentLocation.raw.search;
 
-  // We have to create a new location object instance to trigger a location update
-  currentLocation = { ...currentLocation };
+    const search: Search = searchHasChanged ? {} : currentLocation.search;
 
-  if (nextLocation.raw.path !== currentLocation.raw.path) {
-    currentLocation.path = nextLocation.path;
-  }
+    if (searchHasChanged) {
+      for (const key in nextLocation.search) {
+        if (Object.prototype.hasOwnProperty.call(nextLocation.search, key)) {
+          const value = nextLocation.search[key];
+          const prevValue = currentLocation.search[key];
 
-  if (nextLocation.raw.search !== currentLocation.raw.search) {
-    const nextSearch: Search = {};
+          if (value == null) {
+            continue;
+          }
 
-    for (const key in nextLocation.search) {
-      if (Object.prototype.hasOwnProperty.call(nextLocation.search, key)) {
-        const value = nextLocation.search[key];
-        const prevValue = currentLocation.search[key];
-
-        if (value == null) {
-          continue;
-        }
-
-        if (
-          typeof value === "string" ||
-          prevValue == null ||
-          value.length !== prevValue.length ||
-          JSON.stringify(value) !== JSON.stringify(prevValue)
-        ) {
-          nextSearch[key] = value;
-        } else {
-          // Reuse array instance if the new content is similar
-          nextSearch[key] = prevValue;
+          if (
+            typeof value === "string" ||
+            prevValue == null ||
+            value.length !== prevValue.length ||
+            JSON.stringify(value) !== JSON.stringify(prevValue)
+          ) {
+            search[key] = value;
+          } else {
+            // Reuse array instance if the new content is similar
+            search[key] = prevValue;
+          }
         }
       }
-
-      currentLocation.search = nextSearch;
     }
-  }
 
-  if (nextLocation.raw.hash !== currentLocation.raw.hash) {
-    if (nextLocation.hash != null) {
-      currentLocation.hash = nextLocation.hash;
-    } else {
-      delete currentLocation.hash;
-    }
-  }
+    // We have to create a new location object instance to trigger a location update
+    currentLocation = {
+      path:
+        nextLocation.raw.path !== currentLocation.raw.path
+          ? nextLocation.path
+          : currentLocation.path,
+      search,
+      ...(nextLocation.hash != null && {
+        hash: nextLocation.hash,
+      }),
+      raw: nextLocation.raw,
+      toString: nextLocation.toString,
+    };
 
-  currentLocation.raw = nextLocation.raw;
-  subscriptions.forEach((subscription) => subscription(currentLocation));
+    subscriptions.forEach((subscription) => subscription(currentLocation));
+  }
 });
 
 export const subscribe = (subscription: Subscription): (() => void) => {

@@ -152,13 +152,8 @@ type Location = {
   path: string[];
   search: Record<string, string | string[]>;
   hash?: string;
-
-  raw: {
-    path: string;
-    search: string;
-    hash: string;
-    toString(): string;
-  };
+  raw: { path: string; search: string; hash: string };
+  toString(): string;
 };
 
 Router.getLocation(); // Location
@@ -351,10 +346,10 @@ A quick example with a `Redirect` component:
 
 ```tsx
 const Redirect = ({ to }: { to: string }) => {
-  const { url } = Router.useLocation();
+  const location = Router.useLocation().toString();
 
   React.useLayoutEffect(() => {
-    if (to !== url) {
+    if (to !== location) {
       Router.unsafeReplace(to);
     }
   }, []);

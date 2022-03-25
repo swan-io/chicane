@@ -24,7 +24,7 @@ export const decodeLocation = (
   const rawHash =
     parsedHash != null ? "#" + encodeURIComponent(parsedHash) : "";
 
-  const stringifiedRaw = rawPath + rawSearch + rawHash;
+  const stringifiedLocation = rawPath + rawSearch + rawHash;
 
   return {
     path: parsedPath,
@@ -37,10 +37,10 @@ export const decodeLocation = (
       path: rawPath,
       search: rawSearch,
       hash: rawHash,
+    },
 
-      toString() {
-        return stringifiedRaw;
-      },
+    toString() {
+      return stringifiedLocation;
     },
   };
 };

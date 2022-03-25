@@ -20,8 +20,9 @@ export type MutableLocation = {
     path: string;
     search: string;
     hash: string;
-    toString(): string;
   }>;
+
+  toString(): string;
 };
 
 export type Location = Readonly<MutableLocation>;
