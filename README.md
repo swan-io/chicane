@@ -149,8 +149,6 @@ const Router = createRouter(
 
 ```tsx
 type Location = {
-  url: string;
-
   path: string[];
   search: Record<string, string | string[]>;
   hash?: string;
@@ -159,6 +157,7 @@ type Location = {
     path: string;
     search: string;
     hash: string;
+    toString(): string;
   };
 };
 
