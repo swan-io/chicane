@@ -16,10 +16,10 @@ if (currentLocation.raw.toString() !== createPath(history.location)) {
 }
 
 history.listen(({ location }) => {
-  const { path, search, hash, raw } = decodeLocation(location, false);
+  const nextLocation = decodeLocation(location, false);
 
   // As the `encodeSearch` function guarantees a stable sorting, we can rely on a simple URL comparison
-  if (raw.toString() === currentLocation.raw.toString()) {
+  if (nextLocation.raw.toString() === currentLocation.raw.toString()) {
     return;
   }
 
@@ -28,18 +28,21 @@ history.listen(({ location }) => {
   // We have to create a new location object instance to trigger a location update
   currentLocation = { ...currentLocation };
 
-  if (raw.path !== currentLocation.raw.path) {
-    currentLocation.path = path;
+  if (nextLocation.raw.path !== currentLocation.raw.path) {
+    currentLocation.path = nextLocation.path;
   }
 
-  if (raw.search !== currentLocation.raw.search) {
+  if (nextLocation.raw.search !== currentLocation.raw.search) {
     const nextSearch: Search = {};
 
-    for (const key in search) {
+    for (const key in nextLocation.search) {
+      const value = nextLocation.search[key];
       const prevValue = currentLocation.search[key];
-      const value = search[key];
 
-      if (value == null || !Object.prototype.hasOwnProperty.call(search, key)) {
+      if (
+        value == null ||
+        !Object.prototype.hasOwnProperty.call(nextLocation.search, key)
+      ) {
         continue;
       }
 
@@ -59,15 +62,15 @@ history.listen(({ location }) => {
     currentLocation.search = nextSearch;
   }
 
-  if (raw.hash !== currentLocation.raw.hash) {
-    if (hash != null) {
-      currentLocation.hash = hash;
+  if (nextLocation.raw.hash !== currentLocation.raw.hash) {
+    if (nextLocation.hash != null) {
+      currentLocation.hash = nextLocation.hash;
     } else {
       delete currentLocation.hash;
     }
   }
 
-  currentLocation.raw = raw;
+  currentLocation.raw = nextLocation.raw;
   subscriptions.forEach((subscription) => subscription(currentLocation));
 });
 
