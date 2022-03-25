@@ -98,12 +98,12 @@ export const createRouter = <
   const goBack = (): void => history.back();
 
   const unsafeNavigate = (url: string): void => {
-    const { pathname = "/", search = "", hash = "" } = parsePath(url);
+    const { pathname = "", search = "", hash = "" } = parsePath(url);
     history.push({ pathname, search, hash });
   };
 
   const unsafeReplace = (url: string) => {
-    const { pathname = "/", search = "", hash = "" } = parsePath(url);
+    const { pathname = "", search = "", hash = "" } = parsePath(url);
     history.replace({ pathname, search, hash });
   };
 
