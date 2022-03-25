@@ -1,6 +1,4 @@
-/**
- * This module makes the different routes created with react-chicane listen to the same history instance
- */
+// This module makes the different routes created with react-chicane listen to the same history instance
 import { createBrowserHistory, createPath } from "history";
 import { useSyncExternalStore } from "use-sync-external-store/shim";
 import { decodeLocation } from "./location";
@@ -13,15 +11,15 @@ export const history = createBrowserHistory();
 let currentLocation = decodeLocation(history.location, true);
 let initialLocationHasChanged = false;
 
-if (currentLocation.url !== createPath(history.location)) {
-  history.replace(currentLocation.url); // URL cleanup
+if (currentLocation.raw.toString() !== createPath(history.location)) {
+  history.replace(currentLocation.raw.toString()); // URL cleanup
 }
 
 history.listen(({ location }) => {
-  const { url, path, search, hash, raw } = decodeLocation(location, false);
+  const { path, search, hash, raw } = decodeLocation(location, false);
 
   // As the `encodeSearch` function guarantees a stable sorting, we can rely on a simple URL comparison
-  if (url !== currentLocation.url) {
+  if (raw.toString() !== currentLocation.raw.toString()) {
     initialLocationHasChanged = true;
 
     // We have to create a new location object instance to trigger a location update
@@ -68,9 +66,7 @@ history.listen(({ location }) => {
       }
     }
 
-    currentLocation.url = url;
     currentLocation.raw = raw;
-
     subscriptions.forEach((subscription) => subscription(currentLocation));
   }
 });

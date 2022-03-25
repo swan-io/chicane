@@ -12,8 +12,6 @@ export type Matcher = {
 };
 
 export type MutableLocation = {
-  url: string;
-
   path: readonly string[];
   search: Readonly<Search>;
   hash?: string;
@@ -22,6 +20,7 @@ export type MutableLocation = {
     path: string;
     search: string;
     hash: string;
+    toString(): string;
   }>;
 };
 
