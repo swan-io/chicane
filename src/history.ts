@@ -35,22 +35,21 @@ history.listen(({ location }) => {
       for (const key in search) {
         if (Object.prototype.hasOwnProperty.call(search, key)) {
           const value = search[key];
-          const prevValue = currentLocation.search[key];
 
-          if (value == null) {
-            continue;
-          }
+          if (value != null) {
+            const prevValue = currentLocation.search[key];
 
-          if (
-            typeof value === "string" ||
-            prevValue == null ||
-            value.length !== prevValue.length ||
-            JSON.stringify(value) !== JSON.stringify(prevValue)
-          ) {
-            nextSearch[key] = value;
-          } else {
-            // Reuse previous array instance if the new content is similar
-            nextSearch[key] = prevValue;
+            if (
+              typeof value === "string" ||
+              prevValue == null ||
+              value.length !== prevValue.length ||
+              JSON.stringify(value) !== JSON.stringify(prevValue)
+            ) {
+              nextSearch[key] = value;
+            } else {
+              // Reuse previous array instance if the new content is similar
+              nextSearch[key] = prevValue;
+            }
           }
         }
       }
