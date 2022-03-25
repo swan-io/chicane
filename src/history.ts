@@ -36,8 +36,8 @@ history.listen(({ location }) => {
     const nextSearch: Search = {};
 
     for (const key in nextLocation.search) {
-      const value = nextLocation.search[key];
       const prevValue = currentLocation.search[key];
+      const value = nextLocation.search[key];
 
       if (
         value == null ||
