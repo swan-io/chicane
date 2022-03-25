@@ -3,18 +3,19 @@ import { getHistoryLocation } from "./utils";
 
 const getEqual =
   (removeExtraSlashes: boolean) =>
-  <E>(path: string, expected: E) =>
-    expect(
-      decodeLocation(getHistoryLocation(path), removeExtraSlashes),
-    ).toStrictEqual(expected);
+  <E>(path: string, sanitized: string, location: E) => {
+    const value = decodeLocation(getHistoryLocation(path), removeExtraSlashes);
+    const { toString, ...raw } = value.raw;
+    expect(toString()).toStrictEqual(sanitized);
+    expect({ ...value, raw }).toStrictEqual(location);
+  };
 
 test("decodeLocation parses well-formed paths properly", () => {
   const equal = getEqual(false);
 
-  equal("/", {
+  equal("/", "/", {
     path: [],
     search: {},
-    url: "/",
     raw: {
       path: "/",
       search: "",
@@ -22,10 +23,9 @@ test("decodeLocation parses well-formed paths properly", () => {
     },
   });
 
-  equal("/test", {
+  equal("/test", "/test", {
     path: ["test"],
     search: {},
-    url: "/test",
     raw: {
       path: "/test",
       search: "",
@@ -33,10 +33,9 @@ test("decodeLocation parses well-formed paths properly", () => {
     },
   });
 
-  equal("/test/ID", {
+  equal("/test/ID", "/test/ID", {
     path: ["test", "ID"],
     search: {},
-    url: "/test/ID",
     raw: {
       path: "/test/ID",
       search: "",
@@ -44,10 +43,9 @@ test("decodeLocation parses well-formed paths properly", () => {
     },
   });
 
-  equal("/test/repositories/mine", {
+  equal("/test/repositories/mine", "/test/repositories/mine", {
     path: ["test", "repositories", "mine"],
     search: {},
-    url: "/test/repositories/mine",
     raw: {
       path: "/test/repositories/mine",
       search: "",
@@ -55,11 +53,10 @@ test("decodeLocation parses well-formed paths properly", () => {
     },
   });
 
-  equal("/test#foo", {
+  equal("/test#foo", "/test#foo", {
     path: ["test"],
     search: {},
     hash: "foo",
-    url: "/test#foo",
     raw: {
       path: "/test",
       search: "",
@@ -67,21 +64,23 @@ test("decodeLocation parses well-formed paths properly", () => {
     },
   });
 
-  equal("/profile/settings?invitation=code", {
-    path: ["profile", "settings"],
-    search: { invitation: "code" },
-    url: "/profile/settings?invitation=code",
-    raw: {
-      path: "/profile/settings",
-      search: "?invitation=code",
-      hash: "",
+  equal(
+    "/profile/settings?invitation=code",
+    "/profile/settings?invitation=code",
+    {
+      path: ["profile", "settings"],
+      search: { invitation: "code" },
+      raw: {
+        path: "/profile/settings",
+        search: "?invitation=code",
+        hash: "",
+      },
     },
-  });
+  );
 
-  equal("/test?filters=foo&filters=bar", {
+  equal("/test?filters=foo&filters=bar", "/test?filters=foo&filters=bar", {
     path: ["test"],
     search: { filters: ["foo", "bar"] },
-    url: "/test?filters=foo&filters=bar",
     raw: {
       path: "/test",
       search: "?filters=foo&filters=bar",
@@ -93,11 +92,10 @@ test("decodeLocation parses well-formed paths properly", () => {
 test("decodeLocation parses route with empty params properly", () => {
   const equal = getEqual(false);
 
-  equal("/?#", {
+  equal("/?#", "/#", {
     path: [],
     search: {},
     hash: "",
-    url: "/#",
     raw: {
       path: "/",
       search: "",
@@ -105,10 +103,9 @@ test("decodeLocation parses route with empty params properly", () => {
     },
   });
 
-  equal("/test?", {
+  equal("/test?", "/test", {
     path: ["test"],
     search: {},
-    url: "/test",
     raw: {
       path: "/test",
       search: "",
@@ -116,10 +113,9 @@ test("decodeLocation parses route with empty params properly", () => {
     },
   });
 
-  equal("/test?foo", {
+  equal("/test?foo", "/test?foo", {
     path: ["test"],
     search: { foo: "" },
-    url: "/test?foo",
     raw: {
       path: "/test",
       search: "?foo",
@@ -127,10 +123,9 @@ test("decodeLocation parses route with empty params properly", () => {
     },
   });
 
-  equal("/test?foo=", {
+  equal("/test?foo=", "/test?foo", {
     path: ["test"],
     search: { foo: "" },
-    url: "/test?foo",
     raw: {
       path: "/test",
       search: "?foo",
@@ -138,10 +133,9 @@ test("decodeLocation parses route with empty params properly", () => {
     },
   });
 
-  equal("/test?foo=&foo", {
+  equal("/test?foo=&foo", "/test?foo&foo", {
     path: ["test"],
     search: { foo: ["", ""] },
-    url: "/test?foo&foo",
     raw: {
       path: "/test",
       search: "?foo&foo",
@@ -149,11 +143,10 @@ test("decodeLocation parses route with empty params properly", () => {
     },
   });
 
-  equal("/test#", {
+  equal("/test#", "/test#", {
     path: ["test"],
     search: {},
     hash: "",
-    url: "/test#",
     raw: {
       path: "/test",
       search: "",
@@ -165,10 +158,9 @@ test("decodeLocation parses route with empty params properly", () => {
 test("decodeLocation parses URI components (and encode it back for url)", () => {
   const equal = getEqual(false);
 
-  equal("/:test+", {
+  equal("/:test+", "/%3Atest%2B", {
     path: [":test+"],
     search: {},
-    url: "/%3Atest%2B",
     raw: {
       path: "/%3Atest%2B",
       search: "",
@@ -176,10 +168,9 @@ test("decodeLocation parses URI components (and encode it back for url)", () => 
     },
   });
 
-  equal("/test??foo", {
+  equal("/test??foo", "/test?%3Ffoo", {
     path: ["test"],
     search: { "?foo": "" },
-    url: "/test?%3Ffoo",
     raw: {
       path: "/test",
       search: "?%3Ffoo",
@@ -187,10 +178,9 @@ test("decodeLocation parses URI components (and encode it back for url)", () => 
     },
   });
 
-  equal("/test?foo=?", {
+  equal("/test?foo=?", "/test?foo=%3F", {
     path: ["test"],
     search: { foo: "?" },
-    url: "/test?foo=%3F",
     raw: {
       path: "/test",
       search: "?foo=%3F",
@@ -198,11 +188,10 @@ test("decodeLocation parses URI components (and encode it back for url)", () => 
     },
   });
 
-  equal("/test##+foo", {
+  equal("/test##+foo", "/test#%23%2Bfoo", {
     path: ["test"],
     search: {},
     hash: "#+foo",
-    url: "/test#%23%2Bfoo",
     raw: {
       path: "/test",
       search: "",
@@ -214,10 +203,9 @@ test("decodeLocation parses URI components (and encode it back for url)", () => 
 test("decodeLocation keeps extra slashes when removeExtraSlashes is false", () => {
   const equal = getEqual(false);
 
-  equal("///", {
+  equal("///", "///", {
     path: ["", "", ""],
     search: {},
-    url: "///",
     raw: {
       path: "///",
       search: "",
@@ -225,10 +213,9 @@ test("decodeLocation keeps extra slashes when removeExtraSlashes is false", () =
     },
   });
 
-  equal("/test/", {
+  equal("/test/", "/test/", {
     path: ["test", ""],
     search: {},
-    url: "/test/",
     raw: {
       path: "/test/",
       search: "",
@@ -236,10 +223,9 @@ test("decodeLocation keeps extra slashes when removeExtraSlashes is false", () =
     },
   });
 
-  equal("/test/?foo", {
+  equal("/test/?foo", "/test/?foo", {
     path: ["test", ""],
     search: { foo: "" },
-    url: "/test/?foo",
     raw: {
       path: "/test/",
       search: "?foo",
@@ -247,25 +233,27 @@ test("decodeLocation keeps extra slashes when removeExtraSlashes is false", () =
     },
   });
 
-  equal("//profile//settings?invitation=/", {
-    path: ["", "profile", "", "settings"],
-    search: { invitation: "/" },
-    url: "//profile//settings?invitation=%2F",
-    raw: {
-      path: "//profile//settings",
-      search: "?invitation=%2F",
-      hash: "",
+  equal(
+    "//profile//settings?invitation=/",
+    "//profile//settings?invitation=%2F",
+    {
+      path: ["", "profile", "", "settings"],
+      search: { invitation: "/" },
+      raw: {
+        path: "//profile//settings",
+        search: "?invitation=%2F",
+        hash: "",
+      },
     },
-  });
+  );
 });
 
 test("decodeLocation removes extra slashes when removeExtraSlashes is true", () => {
   const equal = getEqual(true);
 
-  equal("///", {
+  equal("///", "/", {
     path: [],
     search: {},
-    url: "/",
     raw: {
       path: "/",
       search: "",
@@ -273,10 +261,9 @@ test("decodeLocation removes extra slashes when removeExtraSlashes is true", () 
     },
   });
 
-  equal("/test/", {
+  equal("/test/", "/test", {
     path: ["test"],
     search: {},
-    url: "/test",
     raw: {
       path: "/test",
       search: "",
@@ -284,10 +271,9 @@ test("decodeLocation removes extra slashes when removeExtraSlashes is true", () 
     },
   });
 
-  equal("/test/?foo", {
+  equal("/test/?foo", "/test?foo", {
     path: ["test"],
     search: { foo: "" },
-    url: "/test?foo",
     raw: {
       path: "/test",
       search: "?foo",
@@ -295,14 +281,17 @@ test("decodeLocation removes extra slashes when removeExtraSlashes is true", () 
     },
   });
 
-  equal("//profile//settings?invitation=/", {
-    path: ["profile", "settings"],
-    search: { invitation: "/" },
-    url: "/profile/settings?invitation=%2F",
-    raw: {
-      path: "/profile/settings",
-      search: "?invitation=%2F",
-      hash: "",
+  equal(
+    "//profile//settings?invitation=/",
+    "/profile/settings?invitation=%2F",
+    {
+      path: ["profile", "settings"],
+      search: { invitation: "/" },
+      raw: {
+        path: "/profile/settings",
+        search: "?invitation=%2F",
+        hash: "",
+      },
     },
-  });
+  );
 });
