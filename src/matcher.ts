@@ -166,8 +166,6 @@ export const match = (
       return { name: matcher.name, params };
     }
   }
-
-  return;
 };
 
 export const matchToHistoryPath = (
