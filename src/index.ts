@@ -1,7 +1,8 @@
 import { createPath, parsePath } from "history";
 import * as React from "react";
 import { useSyncExternalStore } from "use-sync-external-store/shim";
-import { concatPaths, first } from "./helpers";
+import { useSyncExternalStoreWithSelector } from "use-sync-external-store/shim/with-selector";
+import { concatPaths, first, identity } from "./helpers";
 import {
   getCurrentLocation,
   hasInitialLocationChanged,
@@ -137,17 +138,27 @@ export const createRouter = <
       [JSON.stringify(routeNames)],
     );
 
-    const routes = useSyncExternalStore(subscribe, () => {
-      const routes = matchAll(getCurrentLocation(), matchers);
+    const { routes } = useSyncExternalStoreWithSelector(
+      subscribe,
+      () => {
+        const routes = matchAll(getCurrentLocation(), matchers);
 
-      if (orderBy === "asc") {
-        routes.reverse();
-      }
+        if (orderBy === "asc") {
+          routes.reverse();
+        }
 
-      return JSON.stringify(routes);
-    });
+        return {
+          key: JSON.stringify(routes),
+          routes,
+        };
+      },
+      undefined,
+      identity,
+      (prevRoutes, nextRoutes) => prevRoutes.key === nextRoutes.key,
+    );
 
-    return JSON.parse(routes);
+    // @ts-expect-error
+    return routes;
   };
 
   const useRoute = <RouteName extends keyof FiniteRoutes | keyof NestedRoutes>(
@@ -163,12 +174,23 @@ export const createRouter = <
       [JSON.stringify(routeNames)],
     );
 
-    const route = useSyncExternalStore(subscribe, () => {
-      const route = match(getCurrentLocation(), matchers);
-      return route ? JSON.stringify(route) : route;
-    });
+    const { route } = useSyncExternalStoreWithSelector(
+      subscribe,
+      () => {
+        const route = match(getCurrentLocation(), matchers);
 
-    return route ? JSON.parse(route) : route;
+        return {
+          key: JSON.stringify(route),
+          route,
+        };
+      },
+      undefined,
+      identity,
+      (prevRoute, nextRoute) => prevRoute.key === nextRoute.key,
+    );
+
+    // @ts-expect-error
+    return route;
   };
 
   // Kudos to https://github.com/remix-run/react-router/pull/7998
