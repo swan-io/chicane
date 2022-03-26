@@ -43,7 +43,6 @@ history.listen(({ location }) => {
             prevValue == null ||
             typeof prevValue === "string" ||
             typeof value === "string" ||
-            value.length !== prevValue.length ||
             areArrayDifferent(value, prevValue)
           ) {
             search[key] = value;
