@@ -67,7 +67,6 @@ history.listen(({ location }) => {
       }),
 
       raw: nextLocation.raw,
-
       toString: nextLocation.toString,
     };
 
