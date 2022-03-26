@@ -10,8 +10,7 @@ const routes = {
 } as const;
 
 describe("router", () => {
-  const { useRoute, useRoutes, unsafeNavigate, useRouteFocus } =
-    createRouter(routes);
+  const { useRoute, unsafeNavigate, useRouteFocus } = createRouter(routes);
 
   type RouteName = keyof typeof routes;
 
@@ -56,36 +55,6 @@ describe("router", () => {
     });
 
     expect(container.textContent).toContain("Not found");
-  });
-
-  test("useRoutes: should match multiple routes (desc order)", () => {
-    const App = () => {
-      const routes = useRoutes(routesToMatch, { orderBy: "desc" });
-      return <>{routes.map((item) => `[${item.name}]`).join("")}</>;
-    };
-
-    const { container } = render(<App />);
-
-    act(() => {
-      unsafeNavigate("/profile/zoontek");
-    });
-
-    expect(container.textContent).toContain("[profile][profiles]");
-  });
-
-  test("useRoutes: should match multiple routes (asc order)", () => {
-    const App = () => {
-      const routes = useRoutes(routesToMatch, { orderBy: "asc" });
-      return <>{routes.map((item) => `[${item.name}]`).join("")}</>;
-    };
-
-    const { container } = render(<App />);
-
-    act(() => {
-      unsafeNavigate("/profile/zoontek");
-    });
-
-    expect(container.textContent).toContain("[profiles][profile]");
   });
 
   test("useRouteFocus: should focus the correct element", () => {

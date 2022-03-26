@@ -10,7 +10,7 @@ import {
   subscribe,
   useLocation,
 } from "./history";
-import { getMatcher, match, matchAll, matchToHistoryPath } from "./matcher";
+import { getMatcher, match, matchToHistoryPath } from "./matcher";
 import {
   ConcatPaths,
   ExtractRoutesParams,
@@ -123,43 +123,6 @@ export const createRouter = <
     ...args: ParamsArg<FiniteRoutesParams[RouteName]>
   ): void =>
     history.replace(matchToHistoryPath(matchers[routeName], first(args)));
-
-  const useRoutes = <RouteName extends keyof FiniteRoutes | keyof NestedRoutes>(
-    routeNames: ReadonlyArray<RouteName>,
-    { orderBy = "desc" }: { orderBy?: "asc" | "desc" } = {},
-  ): (RouteName extends string
-    ? { name: RouteName; params: Simplify<RoutesParams[RouteName]> }
-    : never)[] => {
-    const matchers = React.useMemo(
-      () =>
-        rankedMatchers.filter(({ name }) =>
-          routeNames.includes(name as RouteName),
-        ),
-      [JSON.stringify(routeNames)],
-    );
-
-    const { routes } = useSyncExternalStoreWithSelector(
-      subscribe,
-      () => {
-        const routes = matchAll(getCurrentLocation(), matchers);
-
-        if (orderBy === "asc") {
-          routes.reverse();
-        }
-
-        return {
-          key: JSON.stringify(routes),
-          routes,
-        };
-      },
-      undefined,
-      identity,
-      areItemKeysEqual,
-    );
-
-    // @ts-expect-error
-    return routes;
-  };
 
   const useRoute = <RouteName extends keyof FiniteRoutes | keyof NestedRoutes>(
     routeNames: ReadonlyArray<RouteName>,
@@ -314,7 +277,6 @@ export const createRouter = <
     unsafeReplace,
     useLink,
     useLocation,
-    useRoutes,
     useRoute,
     useRouteFocus,
     useBlocker,
