@@ -234,10 +234,7 @@ export const createRouter = <
             params[key] = route.params[key];
           }
 
-          return JSON.stringify({
-            name: route.name,
-            params,
-          });
+          return JSON.stringify({ name: route.name, params });
         }
       }
     }, [route]);
