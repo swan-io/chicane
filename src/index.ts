@@ -263,12 +263,12 @@ export const createRouter = <
   };
 
   return {
+    getLocation: getCurrentLocation,
     back,
     createURL,
     decodeSearch,
     encodeSearch,
     forward,
-    getLocation: getCurrentLocation,
     push,
     pushUnsafe,
     replace,

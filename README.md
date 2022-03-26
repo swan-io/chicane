@@ -247,26 +247,19 @@ const App = () => {
 As this library doesn't provide a single component, we expose this hook to create your own customized `Link`.
 
 ```tsx
-const Link = ({
-  children,
-  to,
-  replace,
-  target,
-}: {
+type Props = {
   children?: React.ReactNode;
   to: string;
   replace?: boolean;
   target?: React.HTMLAttributeAnchorTarget;
-}) => {
+};
+
+const Link = ({ children, to, replace, target }: Props) => {
   const { active, onClick } = useLink({ href: to, replace, target });
+  const style = { fontWeight: active ? 700 : 400 };
 
   return (
-    <a
-      href={to}
-      onClick={onClick}
-      target={target}
-      style={{ fontWeight: active ? 700 : 400 }}
-    >
+    <a href={to} onClick={onClick} target={target} style={style}>
       {children}
     </a>
   );
