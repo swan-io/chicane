@@ -38,14 +38,14 @@ This library exports a main function: `createRouter`. The goal behind this is to
 ```tsx
 import { createRouter } from "react-chicane";
 
-const { useRoute } = createRouter({
+const Router = createRouter({
   Home: "/",
   Users: "/users",
   User: "/users/:userId",
 });
 
 const App = () => {
-  const route = useRoute(["Home", "Users", "User"]);
+  const route = Router.useRoute(["Home", "Users", "User"]);
 
   if (!route) {
     return <h1>404</h1>;
@@ -78,7 +78,7 @@ const App = () => {
 import { createRouter } from "react-chicane";
 import { match } from "ts-pattern";
 
-export const { useRoute } = createRouter({
+export const Router = createRouter({
   Groups: "/groups",
   Group: "/groups/:groupId?:foo&:bar[]#:baz",
   Users: "/groups/:groupId/users",
@@ -88,7 +88,7 @@ export const { useRoute } = createRouter({
 });
 
 const App = () => {
-  const route = useRoute(["Groups", "Group", "Users", "User"]);
+  const route = Router.useRoute(["Groups", "Group", "Users", "User"]);
 
   match(route)
     .with({ name: "Groups" }, ({ params }) => console.log(params)) // {}
@@ -105,20 +105,20 @@ const App = () => {
 
 ### 🔗 Creating URLs
 
-Because it's nice to create safe internal URLs, `createRouter` also returns `createURL`.
+Because it's nice to create safe internal URLs, `createRouter` also returns named functions.
 
 ```tsx
 import { createRouter } from "react-chicane";
 
-const { createURL } = createRouter({
+const Router = createRouter({
   Home: "/",
   Users: "/users",
   User: "/users/:userId",
 });
 
-createURL("Home"); // -> "/"
-createURL("Users"); // -> "/users"
-createURL("User", { userId: "zoontek" }); // -> "/users/zoontek"
+Router.Home(); // -> "/"
+Router.Users(); // -> "/users"
+Router.User({ userId: "zoontek" }); // -> "/users/zoontek"
 ```
 
 ## ⚙️ API
@@ -144,24 +144,33 @@ const Router = createRouter(
 
 #### 👇 Note: All the following examples will use this `Router` instance.
 
-#### Router.getLocation
+#### Router.useRoute
+
+Listen and match a bunch of your routes. Awesome with pattern matching.
 
 ```tsx
-type Location = {
-  path: string[];
-  search: Record<string, string | string[]>;
-  hash?: string;
+import { match } from "ts-pattern";
 
-  raw: {
-    path: string;
-    search: string;
-    hash: string;
-  };
+const App = () => {
+  // The order isn't important, paths are ranked using https://reach.tech/router/ranking
+  const route = Router.useRoute(["Home", "Users", "User"]);
 
-  toString(): string;
+  return match(route)
+    .with({ name: "Home" }, () => <h1>Home</h1>)
+    .with({ name: "Users" }, () => <h1>Users</h1>)
+    .with({ name: "User" }, ({ params: { userId } }) => <h1>User</h1>)
+    .otherwise(() => <h1>404</h1>);
 };
+```
 
-Router.getLocation(); // Location
+#### Router.[RouteName]
+
+Safely create internal URLs.
+
+```tsx
+Router.Home(); // -> "/"
+Router.Users(); // -> "/users"
+Router.User({ userId: "zoontek" }); // -> "/users/zoontek"
 ```
 
 #### Router.push
@@ -184,80 +193,15 @@ Router.replace("Users");
 Router.replace("User", { userId: "zoontek" });
 ```
 
-#### Router.back
-
-Go back in browser history.
-
-```tsx
-Router.back();
-```
-
-#### Router.forward
-
-Go forward in browser history.
-
-```tsx
-Router.forward();
-```
-
-#### Router.createURL
-
-Safely create internal URLs.
-
-```tsx
-Router.createURL("Home"); // -> "/"
-Router.createURL("Users"); // -> "/users"
-Router.createURL("User", { userId: "zoontek" }); // -> "/users/zoontek"
-```
-
-#### Router.useRoute
-
-Listen and match a bunch of your routes. Awesome with pattern matching.
-
-```tsx
-import { match } from "ts-pattern";
-
-const App = () => {
-  // The order isn't important, paths are ranked using https://reach.tech/router/ranking
-  const route = Router.useRoute(["Home", "Users", "User"]);
-
-  return match(route)
-    .with({ name: "Home" }, () => <h1>Home</h1>)
-    .with({ name: "Users" }, () => <h1>Users</h1>)
-    .with({ name: "User" }, ({ params: { userId } }) => <h1>User</h1>)
-    .otherwise(() => <h1>404</h1>);
-};
-```
-
-#### Router.useRouteFocus
-
-Registers a component as a route container, so that the element receives focus on route change. When using nested routes, the deepest route container is focused.
-
-```tsx
-const App = () => {
-  const route = Router.useRoute(["Home", "Users", "User"]);
-  const containerRef = React.useRef(null);
-
-  Router.useRouteFocus({
-    route,
-    containerRef,
-  });
-
-  return <div ref={containerRef}>{/* match your route here */}</div>;
-};
-```
-
-#### Router.Link
+### Link
 
 The only component provided by this library. It renders `a` elements that allow the user to navigate through your website.
 
 ```tsx
-<Router.Link to={Router.createURL("User", { userId: "zoontek" })}>
-  @zoontek profile
-</Router.Link>
+<Link to={Router.User({ userId: "zoontek" })}>@zoontek profile</Link>
 ```
 
-#### Router.useLink
+### useLinkProps
 
 We expose this hook to help you creating your own customized `Link`.
 
@@ -277,7 +221,7 @@ const Link = ({
   target,
   onClick: baseOnClick,
 }: Props) => {
-  const { active, onClick } = useLink({ href: to, replace, target });
+  const { active, onClick } = useLinkProps({ href: to, replace, target });
 
   return (
     <a
@@ -300,13 +244,13 @@ const Link = ({
 <Link to={Router.createURL("User", { userId: "zoontek" })}>Profile</Link>;
 ```
 
-#### Router.useLocation
+### useLocation
 
-Listen and react on `Router.location` changes.
+Listen and react on `location` changes.
 
 ```tsx
 const App = () => {
-  const location: Location = Router.useLocation();
+  const location: Location = useLocation();
 
   React.useEffect(() => {
     console.log("location changed", location);
@@ -316,7 +260,25 @@ const App = () => {
 };
 ```
 
-#### Router.useBlocker
+### useFocusReset
+
+Registers a component as a route container, so that the element receives focus on route change. When using nested routes, the deepest route container is focused.
+
+```tsx
+const App = () => {
+  const route = Router.useRoute(["Home", "Users", "User"]);
+  const containerRef = React.useRef(null);
+
+  useFocusReset({
+    route,
+    containerRef,
+  });
+
+  return <div ref={containerRef}>{/* match your route here */}</div>;
+};
+```
+
+### useNavigationBlocker
 
 Block the navigation and ask user for confirmation. Useful to avoid loosing a form state.
 
@@ -324,7 +286,7 @@ Block the navigation and ask user for confirmation. Useful to avoid loosing a fo
 const App = () => {
   const { formStatus } = useForm(/* … */);
 
-  Router.useBlocker(
+  useNavigationBlocker(
     formStatus === "editing",
     "Are you sure you want to stop editing this profile?",
   );
@@ -333,29 +295,51 @@ const App = () => {
 };
 ```
 
-#### Router.subscribe
+### getLocation
+
+```tsx
+import { getLocation } from "react-chicane";
+
+type Location = {
+  path: string[];
+  search: Record<string, string | string[]>;
+  hash?: string;
+
+  raw: {
+    path: string;
+    search: string;
+    hash: string;
+  };
+
+  toString(): string;
+};
+
+getLocation(); // Location
+```
+
+### subscribeToLocation
 
 Subscribe to location changes.
 
 ```tsx
-const unsubscribe = Router.subscribe((location: Location) => {
+const unsubscribe = subscribeToLocation((location: Location) => {
   // …
 });
 ```
 
-#### Router.encodeSearch / Router.decodeSearch
+### encodeSearch / decodeSearch
 
 Encode and decode url search parameters.
 
 ```tsx
-Router.encodeSearch({ invitation: "542022247745", users: ["frank", "chris"] });
+encodeSearch({ invitation: "542022247745", users: ["frank", "chris"] });
 // -> "?invitation=542022247745&users=frank&users=chris"
 
-Router.decodeSearch("?invitation=542022247745&users=frank&users=chris");
+decodeSearch("?invitation=542022247745&users=frank&users=chris");
 // -> { invitation: "542022247745", users: ["frank", "chris"] }
 ```
 
-#### Router.pushUnsafe and Router.replaceUnsafe
+### pushUnsafe / replaceUnsafe
 
 Two methods similar to `Router.push` and `Router.replace` but which accept a `string` as unique argument. Useful for escape hatches.
 
@@ -363,11 +347,11 @@ A quick example with a `Redirect` component:
 
 ```tsx
 const Redirect = ({ to }: { to: string }) => {
-  const location = Router.useLocation().toString();
+  const location = useLocation().toString();
 
   React.useLayoutEffect(() => {
     if (to !== location) {
-      Router.replaceUnsafe(to);
+      replaceUnsafe(to);
     }
   }, []);
 
@@ -375,7 +359,7 @@ const Redirect = ({ to }: { to: string }) => {
 };
 
 // usage
-<Redirect to={Router.createURL("Home")} />;
+<Redirect to={Router.Home()} />;
 ```
 
 ### createGroup
@@ -404,9 +388,9 @@ const Router = createRouter({
   }),
 });
 
-Router.createURL("User", { userName: "zoontek" });
-Router.createURL("RepositoryActions", { repositoryName: "valienv" });
-Router.createURL("RepositorySettingsBranches", { repositoryName: "valienv" });
+Router.User({ userName: "zoontek" });
+Router.RepositoryActions({ repositoryName: "valienv" });
+Router.RepositorySettingsBranches({ repositoryName: "valienv" });
 ```
 
 ## 👷‍♂️ Roadmap
