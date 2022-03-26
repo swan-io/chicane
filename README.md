@@ -1,12 +1,3 @@
-<br />
-<br />
-
-<p align="center">
-  <img width="450" alt="react-chicane logo" src="docs/logo.svg">
-</p>
-
-<br />
-
 # react-chicane
 
 [![mit licence](https://img.shields.io/dub/l/vibe-d.svg?style=for-the-badge)](https://github.com/zoontek/react-chicane/blob/main/LICENSE)
