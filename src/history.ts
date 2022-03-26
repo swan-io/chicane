@@ -52,7 +52,7 @@ history.listen(({ location }) => {
       }
     }
 
-    // We have to create a new location object instance to trigger a location update
+    // Create a new location object instance
     currentLocation = {
       path:
         nextLocation.raw.path !== currentLocation.raw.path
