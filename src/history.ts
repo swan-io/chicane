@@ -1,6 +1,7 @@
 // This module makes the different routes created with react-chicane listen to the same history instance
 import { createBrowserHistory, createPath } from "history";
 import { useSyncExternalStore } from "use-sync-external-store/shim";
+import { areArrayDifferent } from "./helpers";
 import { decodeLocation } from "./location";
 import { Location, Search, Subscription } from "./types";
 
@@ -31,17 +32,19 @@ history.listen(({ location }) => {
       for (const key in nextLocation.search) {
         if (Object.prototype.hasOwnProperty.call(nextLocation.search, key)) {
           const value = nextLocation.search[key];
-          const prevValue = currentLocation.search[key];
 
           if (value == null) {
             continue;
           }
 
+          const prevValue = currentLocation.search[key];
+
           if (
-            typeof value === "string" ||
             prevValue == null ||
+            typeof prevValue === "string" ||
+            typeof value === "string" ||
             value.length !== prevValue.length ||
-            JSON.stringify(value) !== JSON.stringify(prevValue)
+            areArrayDifferent(value, prevValue)
           ) {
             search[key] = value;
           } else {
