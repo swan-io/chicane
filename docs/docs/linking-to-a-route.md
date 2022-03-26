@@ -6,7 +6,7 @@ sidebar_label: Linking to a route
 Now that we have created our router, let's create our first link to our route:
 
 ```tsx {8,9} title="src/Header.tsx"
-import { Link } from "@swan-io/chicane/Link";
+import { Link } from "@swan-io/chicane";
 import { Router } from "./router";
 
 const Header = () => {
@@ -35,6 +35,7 @@ We provide a default `Link` component, but you can also create yours if needed u
 
 ```tsx {4} title="src/Link.tsx"
 import { useLink } from "@swan-io/chicane/useLink";
+import cx from "classnames";
 
 const Link = ({ className, activeClassName, to, ...props }) => {
   const { active, onClick } = useLink({ href: to, replace });
@@ -44,13 +45,7 @@ const Link = ({ className, activeClassName, to, ...props }) => {
       {...props}
       href={to}
       onClick={onClick}
-      className={
-        !active || activeClassName == null
-          ? className
-          : className == null
-          ? activeClassName
-          : `${className} ${activeClassName}`
-      }
+      className={cx(className, active && activeClassName)}
     />
   );
 };
