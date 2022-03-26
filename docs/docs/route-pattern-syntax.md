@@ -100,5 +100,5 @@ const Router = createRouter({
 ```
 
 :::info
-You can also do the same for the hash of the URL. Same syntax, just add it after a `#` character.
+You can also do the same for the hash of the URL. Same syntax, just add it after a `#` character. (e.g. `/users/:userId#:profile`)
 :::

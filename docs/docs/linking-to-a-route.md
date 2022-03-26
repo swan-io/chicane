@@ -51,7 +51,7 @@ const Link = ({ className, activeClassName, to, ...props }) => {
 };
 ```
 
-## Programmatic links
+## Programmatic navigation
 
 The router also provides two functions to navigate programmatically (from your JS code):
 

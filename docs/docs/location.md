@@ -10,6 +10,7 @@ Even though you'll mostly need to consume the location through the [Router](./ro
 - `path` (`Array<string>`): path split on `/`
 - `search`: (`Record<string | Array<string>>`)
 - `hash?`: (`string`)
+- `key`: (`string`): a hash for the location
 - `raw`:
   - `path`: `string`
   - `search`: `string`
@@ -61,5 +62,5 @@ Escape hatch. Similar to `Router.push` and `Router.replace` but accepts a unique
 import { pushUnsafe, replaceUnsafe } from "@swan-io/chicane";
 
 pushUnsafe("/");
-replaceUnsafe(someValue);
+replaceUnsafe("?foo=x");
 ```
