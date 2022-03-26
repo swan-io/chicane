@@ -4,7 +4,7 @@ const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 /** @type {import('@docusaurus/types').DocusaurusConfig} */
 module.exports = {
   title: "Chicane",
-  tagline: "A router for React that protects you",
+  tagline: "A safe router for React and TypeScript",
   url: "https://swan-io.github.io",
   baseUrl: "/chicane/",
   onBrokenLinks: "throw",

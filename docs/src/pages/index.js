@@ -58,7 +58,7 @@ const Home = () => {
   return (
     <Layout
       title={`Chicane: ${siteConfig.tagline}`}
-      description="A router for React that protects you"
+      description="A safe router for React and TypeScript"
     >
       <HomepageHeader />
       <main>
