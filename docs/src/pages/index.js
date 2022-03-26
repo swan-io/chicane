@@ -19,7 +19,7 @@ function HomepageHeader() {
             Get started
           </Link>
           <span className={styles.separator} />
-          <Link className="button button--lg" to="/option">
+          <Link className="button button--lg" to="/top-level-api">
             API reference
           </Link>
         </div>
