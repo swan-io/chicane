@@ -9,7 +9,7 @@
   "dependencies": {
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "ts-pattern": "^3.3.5"
+    "ts-pattern": "^4.0.1"
   },
   "devDependencies": {
     "@types/react": "^17.0.43",

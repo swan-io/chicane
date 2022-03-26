@@ -706,10 +706,10 @@ to-fast-properties@^2.0.0:
   resolved "https://registry.yarnpkg.com/to-fast-properties/-/to-fast-properties-2.0.0.tgz#dc5e698cbd079265bc73e0377681a4e4e83f616e"
   integrity sha1-3F5pjL0HkmW8c+A3doGk5Og/YW4=
 
-ts-pattern@^3.3.5:
-  version "3.3.5"
-  resolved "https://registry.yarnpkg.com/ts-pattern/-/ts-pattern-3.3.5.tgz#9a4bde1d44f9afe7e82409820f68790232c2544c"
-  integrity sha512-LD+wFR/RNckk1DrKV0LTH4KIT9wRqnnOjtEf77ovhKcVi8gf83Uf6U7OdywEua6KD9SbHadUdfolayfIUiPxzw==
+ts-pattern@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/ts-pattern/-/ts-pattern-4.0.1.tgz#3b395d6be7112a542d79443c2f577bd89bdba24e"
+  integrity sha512-UaEFiG0xvCAa0tXBi242rD2WU28RlurzQe27t7vc2+3difhtA58Q6BiFl3YQbDlDiWfantdP05YICJPpGo/ulg==
 
 typescript@^4.6.3:
   version "4.6.3"
