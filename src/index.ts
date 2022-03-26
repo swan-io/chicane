@@ -267,12 +267,11 @@ export const createRouter = <
     (
       {
         onClick: baseOnClick,
-        children,
-        to,
         className,
         replace,
         style,
         target,
+        to,
         activeClassName,
         activeStyle,
         ...props
@@ -281,34 +280,28 @@ export const createRouter = <
     ) => {
       const { active, onClick } = useLink({ href: to, replace, target });
 
-      return (
-        <a
-          {...props}
-          ref={forwardedRef}
-          href={to}
-          onClick={(event) => {
-            baseOnClick?.(event);
-            onClick(event);
-          }}
-          target={target}
-          className={
-            !active || activeClassName == null
-              ? className
-              : className == null
-              ? activeClassName
-              : `${className} ${activeClassName}`
-          }
-          style={
-            !active || activeStyle == null
-              ? style
-              : style == null
-              ? activeStyle
-              : { ...style, ...activeStyle }
-          }
-        >
-          {children}
-        </a>
-      );
+      return React.createElement("a", {
+        ...props,
+        ref: forwardedRef,
+        href: to,
+        onClick: (event: React.MouseEvent<HTMLAnchorElement>) => {
+          baseOnClick?.(event);
+          onClick(event);
+        },
+        target,
+        className:
+          !active || activeClassName == null
+            ? className
+            : className == null
+            ? activeClassName
+            : `${className} ${activeClassName}`,
+        style:
+          !active || activeStyle == null
+            ? style
+            : style == null
+            ? activeStyle
+            : { ...style, ...activeStyle },
+      });
     },
   );
 

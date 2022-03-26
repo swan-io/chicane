@@ -3,8 +3,8 @@
   "compilerOptions": {
     "module": "ESNext",
     "target": "ESNext",
-    "jsx": "react-jsx",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "jsx": "react-jsx",
     "moduleResolution": "Node",
     "outDir": "dist/",
 
