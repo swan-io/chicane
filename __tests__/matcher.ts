@@ -20,7 +20,6 @@ test("getMatcher returns a proper matcher structure for paths without params", (
     finite: true,
     ranking: 7,
     search: {},
-    pathParams: [],
     segments: [{ name: "groups", param: false }],
   });
 
@@ -28,7 +27,6 @@ test("getMatcher returns a proper matcher structure for paths without params", (
     finite: true,
     ranking: 14,
     search: {},
-    pathParams: [],
     segments: [
       { name: "groups", param: false },
       { name: "mine", param: false },
@@ -41,7 +39,6 @@ test("getMatcher returns a proper matcher structure for paths with params (in pa
     finite: true,
     ranking: 13,
     search: {},
-    pathParams: ["groupId"],
     segments: [
       { name: "group", param: false },
       { name: "groupId", param: true },
@@ -52,7 +49,6 @@ test("getMatcher returns a proper matcher structure for paths with params (in pa
     finite: true,
     ranking: 20,
     search: {},
-    pathParams: ["groupId"],
     segments: [
       { name: "groups", param: false },
       { name: "groupId", param: true },
@@ -67,7 +63,6 @@ test("getMatcher returns a proper matcher structure for paths with params (in pa
     ranking: 13,
     hash: "baz",
     search: { foo: "unique", bar: "multiple" },
-    pathParams: ["groupId"],
     segments: [
       { name: "group", param: false },
       { name: "groupId", param: true },
@@ -80,7 +75,6 @@ test("getMatcher decrements the ranking by 1 if the path is not finite", () => {
     finite: false,
     ranking: 19,
     search: {},
-    pathParams: ["groupId"],
     segments: [
       { name: "groups", param: false },
       { name: "groupId", param: true },
@@ -92,7 +86,6 @@ test("getMatcher decrements the ranking by 1 if the path is not finite", () => {
     finite: true,
     ranking: 20,
     search: {},
-    pathParams: ["groupId"],
     segments: [
       { name: "groups", param: false },
       { name: "groupId", param: true },

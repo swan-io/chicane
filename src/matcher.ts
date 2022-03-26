@@ -6,7 +6,6 @@ import { Location, Matcher, Params, Search } from "./types";
 // Kudos to https://reach.tech/router/ranking
 const extractFromPathname = (pathname: string) => {
   const parts = pathname.split("/").filter(isNonEmpty);
-  const pathParams: string[] = [];
   const segments: Matcher["segments"] = [];
 
   let ranking = parts.length > 0 ? parts.length * 4 : 5;
@@ -15,30 +14,28 @@ const extractFromPathname = (pathname: string) => {
     const param = isParam(part);
     const name = param ? part.substring(1) : encodeURIComponent(part);
 
-    param && pathParams.push(name);
     ranking += param ? 2 : 3;
     segments.push({ name, param });
   }
 
-  return { pathParams, ranking, segments };
+  return { ranking, segments };
 };
 
 export const getMatcher = (name: string, route: string): Matcher => {
   if (route.endsWith("*")) {
     const { pathname = "/" } = parsePath(route.slice(0, -1));
-    const { pathParams, ranking, segments } = extractFromPathname(pathname);
+    const { ranking, segments } = extractFromPathname(pathname);
 
     return {
       finite: false,
       name,
       ranking: ranking - 1, // penality due to wildcard
-      pathParams,
       segments,
       search: {},
     };
   } else {
     const { pathname = "/", search = "", hash = "" } = parsePath(route);
-    const { pathParams, ranking, segments } = extractFromPathname(pathname);
+    const { ranking, segments } = extractFromPathname(pathname);
 
     const searchMatchers: Matcher["search"] = {};
     const params = new URLSearchParams(search.substring(1));
@@ -55,7 +52,6 @@ export const getMatcher = (name: string, route: string): Matcher => {
       finite: true,
       name,
       ranking,
-      pathParams,
       segments,
       search: searchMatchers,
       ...(isParam(hash.substring(1)) && {

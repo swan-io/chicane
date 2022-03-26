@@ -5,7 +5,6 @@ export type Subscription = (location: Location) => void;
 export type Matcher = {
   name: string;
   segments: { name: string; param: boolean }[];
-  pathParams: string[];
   search: Record<string, "unique" | "multiple">;
   hash?: string;
   finite: boolean;
