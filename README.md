@@ -241,7 +241,7 @@ const Link = ({
 };
 
 // usage
-<Link to={Router.createURL("User", { userId: "zoontek" })}>Profile</Link>;
+<Link to={Router.User({ userId: "zoontek" })}>Profile</Link>;
 ```
 
 ### useLocation
