@@ -5,11 +5,11 @@ import { Router } from "./router";
 
 const EXAMPLE_DATA: Record<string, string[]> = {
   zoontek: [
-    "react-chicane",
-    "react-ux-form",
     "react-native-permissions",
     "react-native-bootsplash",
     "react-native-localize",
+    "valienv",
+    "react-atomic-state",
   ],
   bloodyowl: [
     "rescript-recoil",
@@ -18,12 +18,12 @@ const EXAMPLE_DATA: Record<string, string[]> = {
     "rescript-future",
     "rescript-asyncdata",
   ],
-  MoOx: [
-    "rescript-react-native",
-    "phenomic",
-    "pjax",
-    "postcss-cssnext",
-    "react-multiversal",
+  mbreton: [
+    "ember-router-example",
+    "git-dummy-test",
+    "hands-on-devoxx-fr-2015",
+    "clap-detector",
+    "dart_bootstrap",
   ],
 };
 

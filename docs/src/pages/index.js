@@ -33,18 +33,18 @@ export const Router = createRouter({
   Home: "/",
   UserList: "/users",
   UserDetail: "/users/:userId",
-})
+});
 
 const App = () => {
   const route = Router.useRoute(["UserList", "UserDetail"]);
 
   return match(route)
-    .with({name: "UserList"}, () => <UserList />)
-    .with({name: "UserDetail"}, ({params: {userId}}) =>
+    .with({ name: "UserList" }, () => <UserList />)
+    .with({ name: "UserDetail" }, ({ params: { userId } }) => (
       <UserDetail userId={userId} />
-    )
-    .otherwise(() => <NotFound />)
-}
+    ))
+    .otherwise(() => <NotFound />);
+};
 `}
         </CodeBlock>
       </div>

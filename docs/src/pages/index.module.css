@@ -26,6 +26,7 @@
   max-width: 150px;
   height: auto;
   align-self: center;
+  margin-right: 16px;
 }
 
 @media (max-width: 1000px) {

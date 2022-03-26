@@ -1,4 +1,4 @@
-// This module makes the different routes created with react-chicane listen to the same history instance
+// This module makes the different routes created with @swan-io/chicane listen to the same history instance
 import { createBrowserHistory, createPath, parsePath } from "history";
 import { useSyncExternalStore } from "use-sync-external-store/shim";
 import { areParamsArrayEqual } from "./helpers";

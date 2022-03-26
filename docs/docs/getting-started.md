@@ -16,12 +16,8 @@ sidebar_label: Getting started
 
 ## Install
 
-```console
+```bash
 $ yarn add @swan-io/chicane
-```
-
-or
-
-```console
+# --- or ---
 $ npm install --save @swan-io/chicane
 ```

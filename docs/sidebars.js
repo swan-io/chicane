@@ -34,7 +34,7 @@ module.exports = {
       type: "category",
       label: "API Reference",
       collapsed: false,
-      items: ["top-level-api", "router", "location", "hooks", "components"],
+      items: ["top-level-api", "router", "hooks", "components"],
     },
   ],
 };

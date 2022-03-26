@@ -19,12 +19,12 @@ Router.UserDetail({ userId: "123" }); // "/users/123"
 
 Takes an array of routes to listen to (a subset of the router), and returns the route and its params if one matches.
 
-- `routes` (**required**): `Array<RouteName>`
+- `routes` (**required**): `RouteName[]`
 
 Returns a route match (or `undefined` if nothing matches):
 
-- `name`: route name
-- `params` associated params
+- `name`: a route name
+- `params`: its associated params
 
 ```ts
 const route = Router.useRoute(["Home", "UserArea"]);
@@ -36,8 +36,8 @@ const route = Router.useRoute(["Home", "UserArea"]);
 
 Takes a route name and its associated params and navigates to it
 
-- `name`: route name
-- `params` associated params
+- `name`: a route name
+- `params`: its associated params
 
 ```ts
 Router.push("Home");
@@ -48,8 +48,8 @@ Router.push("UserDetail", { userId: "123" });
 
 Takes a route name and its associated params and navigates to it **without** creating a new entry in the browser history.
 
-- `name`: route name
-- `params` associated params
+- `name`: a route name
+- `params`: its associated params
 
 ```ts
 Router.replace("Home");
