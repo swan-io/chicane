@@ -1,5 +1,6 @@
 import * as React from "react";
 import { match } from "ts-pattern";
+import { Link, useRouteFocus } from "../../src";
 import { Router } from "./router";
 
 const EXAMPLE_DATA: Record<string, string[]> = {
@@ -30,7 +31,7 @@ export const App = () => {
   const route = Router.useRoute(["Home", "Users", "User", "RepositoriesArea"]);
   const containerRef = React.useRef(null);
 
-  Router.useRouteFocus({ containerRef, route });
+  useRouteFocus({ route, containerRef });
 
   return (
     <div style={{ display: "flex" }}>
@@ -42,19 +43,13 @@ export const App = () => {
           minWidth: 200,
         }}
       >
-        <Router.Link
-          to={Router.createURL("Home")}
-          activeStyle={{ fontWeight: 700 }}
-        >
+        <Link to={Router.createURL("Home")} activeStyle={{ fontWeight: 700 }}>
           Home
-        </Router.Link>
+        </Link>
 
-        <Router.Link
-          to={Router.createURL("Users")}
-          activeStyle={{ fontWeight: 700 }}
-        >
+        <Link to={Router.createURL("Users")} activeStyle={{ fontWeight: 700 }}>
           Users
-        </Router.Link>
+        </Link>
       </nav>
 
       <main
@@ -68,12 +63,9 @@ export const App = () => {
               <h1>Users</h1>
 
               {Object.keys(EXAMPLE_DATA).map((userId) => (
-                <Router.Link
-                  key={userId}
-                  to={Router.createURL("User", { userId })}
-                >
+                <Link key={userId} to={Router.createURL("User", { userId })}>
                   {userId}
-                </Router.Link>
+                </Link>
               ))}
             </>
           ))
@@ -82,9 +74,9 @@ export const App = () => {
               <h1>{userId}</h1>
               <p>{userId} homepage</p>
 
-              <Router.Link to={Router.createURL("Repositories", { userId })}>
+              <Link to={Router.createURL("Repositories", { userId })}>
                 His repositories
-              </Router.Link>
+              </Link>
             </>
           ))
           .with({ name: "RepositoriesArea" }, ({ params }) => (
@@ -101,7 +93,7 @@ const Repositories = ({ userId }: { userId: string }) => {
   const route = Router.useRoute(["Repositories", "Repository"]);
   const containerRef = React.useRef(null);
 
-  Router.useRouteFocus({ containerRef, route });
+  useRouteFocus({ route, containerRef });
 
   return (
     <div ref={containerRef}>
@@ -112,11 +104,11 @@ const Repositories = ({ userId }: { userId: string }) => {
           <ul>
             {EXAMPLE_DATA[userId]?.map((repositoryId) => (
               <li key={repositoryId}>
-                <Router.Link
+                <Link
                   to={Router.createURL("Repository", { userId, repositoryId })}
                 >
                   {repositoryId}
-                </Router.Link>
+                </Link>
               </li>
             ))}
           </ul>

@@ -13,6 +13,8 @@ export type Matcher = {
 };
 
 export type MutableLocation = {
+  key: string;
+
   path: readonly string[];
   search: Readonly<Search>;
   hash?: string;

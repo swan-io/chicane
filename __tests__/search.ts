@@ -1,4 +1,4 @@
-import { decodeSearch } from "../src/search";
+import { decodeSearch } from "../src";
 
 test("decodeSearch parses params starting with a `?`", () => {
   expect(decodeSearch("?foo=bar")).toStrictEqual({ foo: "bar" });

@@ -1,12 +1,11 @@
 // This module makes the different routes created with react-chicane listen to the same history instance
-import { createBrowserHistory, createPath } from "history";
+import { createBrowserHistory, createPath, parsePath } from "history";
 import { useSyncExternalStore } from "use-sync-external-store/shim";
 import { areParamsArrayEqual } from "./helpers";
 import { decodeLocation } from "./location";
 import { Location, Search, Subscription } from "./types";
 
 const subscriptions = new Set<Subscription>();
-
 export const history = createBrowserHistory();
 
 let currentLocation = decodeLocation(history.location, true);
@@ -56,6 +55,8 @@ history.listen(({ location }) => {
 
     // Create a new location object instance
     currentLocation = {
+      key: nextLocation.key,
+
       path:
         nextLocation.raw.path !== currentLocation.raw.path
           ? nextLocation.path
@@ -64,7 +65,9 @@ history.listen(({ location }) => {
       ...(nextLocation.hash != null && {
         hash: nextLocation.hash,
       }),
+
       raw: nextLocation.raw,
+
       toString: nextLocation.toString,
     };
 
@@ -72,7 +75,9 @@ history.listen(({ location }) => {
   }
 });
 
-export const subscribe = (subscription: Subscription): (() => void) => {
+export const subscribeToLocation = (
+  subscription: Subscription,
+): (() => void) => {
   subscriptions.add(subscription);
 
   return () => {
@@ -80,11 +85,21 @@ export const subscribe = (subscription: Subscription): (() => void) => {
   };
 };
 
-export const getCurrentLocation = () => currentLocation;
+export const getLocation = () => currentLocation;
 export const hasInitialLocationChanged = () => initialLocationHasChanged;
 
 export const useLocation = (): Location =>
-  useSyncExternalStore(subscribe, getCurrentLocation);
+  useSyncExternalStore(subscribeToLocation, getLocation);
+
+export const pushUnsafe = (url: string): void => {
+  const { pathname = "", search = "", hash = "" } = parsePath(url);
+  history.push({ pathname, search, hash });
+};
+
+export const replaceUnsafe = (url: string) => {
+  const { pathname = "", search = "", hash = "" } = parsePath(url);
+  history.replace({ pathname, search, hash });
+};
 
 // For testing purposes
 export const resetInitialHasLocationChanged = () => {

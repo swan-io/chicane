@@ -1,6 +1,6 @@
 import { act, render } from "@testing-library/react";
 import * as React from "react";
-import { createRouter } from "../src";
+import { createRouter, pushUnsafe, useRouteFocus } from "../src";
 import { resetInitialHasLocationChanged } from "../src/history";
 
 const routes = {
@@ -10,7 +10,7 @@ const routes = {
 } as const;
 
 describe("router", () => {
-  const { useRoute, pushUnsafe, useRouteFocus } = createRouter(routes);
+  const { useRoute } = createRouter(routes);
 
   type RouteName = keyof typeof routes;
 
@@ -62,7 +62,7 @@ describe("router", () => {
       const route = useRoute(routesToMatch);
       const containerRef = React.useRef(null);
 
-      useRouteFocus({ containerRef, route });
+      useRouteFocus({ route, containerRef });
 
       if (route === undefined) {
         return <div> Not found </div>;

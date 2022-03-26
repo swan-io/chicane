@@ -103,26 +103,31 @@ test("getMatcher decrements the ranking by 1 if the path is not finite", () => {
 
 test("match extract route params and matches against a matcher", () => {
   matchEqual("/groups", {
+    key: "d9j7z9-0",
     name: "Groups",
     params: {},
   });
 
   matchEqual("/groups/github", {
+    key: "d3rhd4-0",
     name: "Group",
     params: { groupId: "github" },
   });
 
   matchEqual("/groups/mine", {
+    key: "v7gf21-0",
     name: "MyGroup",
     params: {},
   });
 
   matchEqual("/groups/github/users/nested", {
+    key: "1ta6bzy-0",
     name: "UsersArea",
     params: { groupId: "github" },
   });
 
   matchEqual("/groups/github/users", {
+    key: "phoan7-0",
     name: "Users",
     params: { groupId: "github" },
   });

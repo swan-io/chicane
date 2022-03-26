@@ -138,7 +138,6 @@ const Router = createRouter(
   },
   {
     basePath: "/setup/basePath/here", // Will be prepend to all your paths (optional)
-    blockerMessage: "Are you sure you want to leave this page?", // A default navigation blocker message (optional)
   },
 );
 ```
@@ -319,7 +318,7 @@ const App = () => {
 
 #### Router.useBlocker
 
-Block the navigation and ask user for confirmation. Useful to avoid loosing a form state. It accepts a second paramater if you want to override the default `blockerMessage`.
+Block the navigation and ask user for confirmation. Useful to avoid loosing a form state.
 
 ```tsx
 const App = () => {

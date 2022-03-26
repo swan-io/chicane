@@ -7,10 +7,10 @@ export const areParamsArrayEqual = (arrayA: string[], arrayB: string[]) =>
   arrayA.length === arrayB.length &&
   arrayA.every((a, index) => a === arrayB[index]);
 
-export const areItemKeysEqual = (
-  valueA: { key: string },
-  valueB: { key: string },
-) => valueA.key === valueB.key;
+export const areRouteEqual = (
+  routeA?: { key: string },
+  routeB?: { key: string },
+) => routeA?.key === routeB?.key;
 
 export const isMultipleParam = (value: string): boolean =>
   value.startsWith(":") && value.endsWith("[]");

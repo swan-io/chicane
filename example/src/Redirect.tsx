@@ -1,12 +1,12 @@
 import * as React from "react";
-import { Router } from "./router";
+import { replaceUnsafe, useLocation } from "../../src";
 
 export const Redirect = ({ to }: { to: string }) => {
-  const location = Router.useLocation().toString();
+  const location = useLocation().toString();
 
   React.useLayoutEffect(() => {
     if (to !== location) {
-      Router.replaceUnsafe(to);
+      replaceUnsafe(to);
     }
   }, []);
 
