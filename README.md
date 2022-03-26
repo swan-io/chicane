@@ -248,17 +248,27 @@ const App = () => {
 };
 ```
 
+#### Router.Link
+
+The only component provided by this library. It renders `a` elements that allow the user to navigate through your website.
+
+```tsx
+<Router.Link to={Router.createURL("User", { userId: "zoontek" })}>
+  @zoontek profile
+</Router.Link>
+```
+
 #### Router.useLink
 
-As this library doesn't provide a single component, we expose this hook to create your own customized `Link`.
+We expose this hook to help you creating your own customized `Link`.
 
 ```tsx
 type Props = {
   to: string;
   children?: React.ReactNode;
-  onClick?: React.MouseEventHandler<HTMLAnchorElement>;
   replace?: boolean;
   target?: React.HTMLAttributeAnchorTarget;
+  onClick?: React.MouseEventHandler<HTMLAnchorElement>;
 };
 
 const Link = ({
