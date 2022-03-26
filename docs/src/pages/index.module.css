@@ -1,16 +1,14 @@
 .hero {
-  background: rgba(0, 0, 0, 0.1);
-  color: #222;
-}
-
-:global([data-theme="dark"]) .hero {
-  background: rgba(0, 0, 0, 0.1);
+  background: linear-gradient(
+    to bottom right,
+    #8266c4 0%,
+    rgba(217, 97, 81, 0.5) 70.75%
+  );
   color: #fff;
 }
 
-.hero a,
-.hero a:hover {
-  color: #d96151;
+.hero a {
+  color: #fff;
 }
 
 .heroTitle {
@@ -47,11 +45,11 @@
 .code {
   text-align: left;
   border-radius: 10px;
-  box-shadow: 0 20px 30px -10px #c0b3e1;
+  box-shadow: 0 20px 30px -10px #d96151;
 }
 
 :global([data-theme="dark"]) .code {
-  box-shadow: 0 20px 30px -10px #140d24;
+  box-shadow: 0 20px 30px -10px #572720;
 }
 
 .codeBlock {
