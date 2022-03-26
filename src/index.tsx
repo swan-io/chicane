@@ -16,6 +16,7 @@ import {
   ConcatPaths,
   ExtractRoutesParams,
   GetNestedRoutes,
+  LinkProps,
   Matcher,
   Params,
   ParamsArg,
@@ -262,18 +263,72 @@ export const createRouter = <
     }, [containerRef, updateKey]);
   };
 
+  const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
+    (
+      {
+        onClick: baseOnClick,
+        children,
+        to,
+        className,
+        replace,
+        style,
+        target,
+        activeClassName,
+        activeStyle,
+        ...props
+      },
+      forwardedRef,
+    ) => {
+      const { active, onClick } = useLink({ href: to, replace, target });
+
+      return (
+        <a
+          {...props}
+          ref={forwardedRef}
+          href={to}
+          onClick={(event) => {
+            baseOnClick?.(event);
+            onClick(event);
+          }}
+          target={target}
+          className={
+            !active || activeClassName == null
+              ? className
+              : className == null
+              ? activeClassName
+              : `${className} ${activeClassName}`
+          }
+          style={
+            !active || activeStyle == null
+              ? style
+              : style == null
+              ? activeStyle
+              : { ...style, ...activeStyle }
+          }
+        >
+          {children}
+        </a>
+      );
+    },
+  );
+
+  Link.displayName = "Link";
+
   return {
     getLocation: getCurrentLocation,
+    subscribe,
     back,
+    forward,
     createURL,
     decodeSearch,
     encodeSearch,
-    forward,
     push,
     pushUnsafe,
     replace,
     replaceUnsafe,
-    subscribe,
+
+    Link,
+
     useBlocker,
     useLink,
     useLocation,

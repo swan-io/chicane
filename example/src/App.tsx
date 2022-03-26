@@ -1,6 +1,5 @@
 import * as React from "react";
 import { match } from "ts-pattern";
-import { Link } from "./Link";
 import { Router } from "./router";
 
 const EXAMPLE_DATA: Record<string, string[]> = {
@@ -43,8 +42,19 @@ export const App = () => {
           minWidth: 200,
         }}
       >
-        <Link to={Router.createURL("root")}>Homepage</Link>
-        <Link to={Router.createURL("users")}>Users</Link>
+        <Router.Link
+          to={Router.createURL("root")}
+          activeStyle={{ fontWeight: 700 }}
+        >
+          Homepage
+        </Router.Link>
+
+        <Router.Link
+          to={Router.createURL("users")}
+          activeStyle={{ fontWeight: 700 }}
+        >
+          Users
+        </Router.Link>
       </nav>
 
       <main
@@ -58,9 +68,12 @@ export const App = () => {
               <h1>Users</h1>
 
               {Object.keys(EXAMPLE_DATA).map((userId) => (
-                <Link key={userId} to={Router.createURL("user", { userId })}>
+                <Router.Link
+                  key={userId}
+                  to={Router.createURL("user", { userId })}
+                >
                   {userId}
-                </Link>
+                </Router.Link>
               ))}
             </>
           ))
@@ -69,9 +82,9 @@ export const App = () => {
               <h1>{userId}</h1>
               <p>{userId} homepage</p>
 
-              <Link to={Router.createURL("repositories", { userId })}>
+              <Router.Link to={Router.createURL("repositories", { userId })}>
                 His repositories
-              </Link>
+              </Router.Link>
             </>
           ))
           .with({ name: "repositoriesArea" }, ({ params }) => (
@@ -99,11 +112,11 @@ const Repositories = ({ userId }: { userId: string }) => {
           <ul>
             {EXAMPLE_DATA[userId]?.map((repositoryId) => (
               <li key={repositoryId}>
-                <Link
+                <Router.Link
                   to={Router.createURL("repository", { userId, repositoryId })}
                 >
                   {repositoryId}
-                </Link>
+                </Router.Link>
               </li>
             ))}
           </ul>

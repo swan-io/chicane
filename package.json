@@ -9,7 +9,7 @@
     "type": "git",
     "url": "https://github.com/zoontek/react-chicane.git"
   },
-  "source": "src/index.ts",
+  "source": "src/index.tsx",
   "main": "dist/index.js",
   "files": [
     "dist"

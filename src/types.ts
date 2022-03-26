@@ -118,3 +118,17 @@ export type ParamsArg<Params> = Params extends EmptyRecord
   : NonOptionalProperties<Params> extends never
   ? [params?: { [K in keyof Params]: Params[K] }]
   : [params: { [K in keyof Params]: Params[K] }];
+
+type BaseLinkProps = Omit<
+  React.AnchorHTMLAttributes<HTMLAnchorElement>,
+  "href"
+>;
+
+export type LinkProps = BaseLinkProps & {
+  children?: React.ReactNode;
+  to: string;
+  replace?: boolean;
+  target?: React.HTMLAttributeAnchorTarget;
+  activeClassName?: BaseLinkProps["className"];
+  activeStyle?: BaseLinkProps["style"];
+};
