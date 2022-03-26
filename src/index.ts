@@ -43,14 +43,14 @@ export const createGroup = <
   routes: Readonly<Routes>,
 ): {
   [K in keyof Routes as K extends string
-    ? `${GroupName}.${K}`
+    ? `${GroupName}${K}`
     : never]: ConcatPaths<BasePath, Routes[K]>;
 } => {
   const output: Record<string, string> = {};
 
   for (const key in routes) {
     if (Object.prototype.hasOwnProperty.call(routes, key)) {
-      output[`${name}.${key}`] = concatPaths(basePath, routes[key]);
+      output[name + key] = concatPaths(basePath, routes[key]);
     }
   }
 

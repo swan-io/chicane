@@ -4,9 +4,9 @@ import { createRouter } from "../src";
 import { resetInitialHasLocationChanged } from "../src/history";
 
 const routes = {
-  home: "/",
-  profiles: "/profile/*",
-  profile: "/profile/:username",
+  Home: "/",
+  Profiles: "/profile/*",
+  Profile: "/profile/:username",
 } as const;
 
 describe("router", () => {
@@ -14,7 +14,7 @@ describe("router", () => {
 
   type RouteName = keyof typeof routes;
 
-  const routesToMatch: RouteName[] = ["home", "profiles", "profile"];
+  const routesToMatch: RouteName[] = ["Home", "Profiles", "Profile"];
 
   beforeEach(() => {
     pushUnsafe("/");
@@ -31,9 +31,9 @@ describe("router", () => {
 
       return (
         <>
-          {route.name === "home" ? (
+          {route.name === "Home" ? (
             <div> Home </div>
-          ) : route.name === "profile" ? (
+          ) : route.name === "Profile" ? (
             <div> Profile {route.params.username} </div>
           ) : null}
         </>
@@ -70,9 +70,9 @@ describe("router", () => {
 
       return (
         <div ref={containerRef} data-testid="routeContainer">
-          {route.name === "home" ? (
+          {route.name === "Home" ? (
             <div> Home </div>
-          ) : route.name === "profile" ? (
+          ) : route.name === "Profile" ? (
             <div> Profile {route.params.username} </div>
           ) : null}
         </div>

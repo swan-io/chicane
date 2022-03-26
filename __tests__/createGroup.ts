@@ -2,51 +2,51 @@ import { createGroup } from "../src";
 
 test("createGroup prefix routes keys / paths", () => {
   const routes = {
-    root: "/",
-    user: "/:userName",
+    Home: "/",
+    User: "/:userName",
 
-    ...createGroup("repository", "/:repositoryName", {
-      root: "/",
-      issues: "/issues",
-      pulls: "/pulls",
-      actions: "/actions",
-      projects: "/projects",
-      security: "/security",
+    ...createGroup("Repository", "/:repositoryName", {
+      Root: "/",
+      Issues: "/issues",
+      Pulls: "/pulls",
+      Actions: "/actions",
+      Projects: "/projects",
+      Security: "/security",
 
-      ...createGroup("settings", "/settings", {
-        root: "/",
-        collaborators: "/access",
-        branches: "/branches",
-        actions: "/actions",
-        webhooks: "/hooks",
-        pages: "/pages",
-        securityAnalysis: "/security_analysis",
-        deployKeys: "/keys",
-        secrets: "/secrets",
+      ...createGroup("Settings", "/settings", {
+        Root: "/",
+        Collaborators: "/access",
+        Branches: "/branches",
+        Actions: "/actions",
+        Webhooks: "/hooks",
+        Pages: "/pages",
+        SecurityAnalysis: "/security_analysis",
+        DeployKeys: "/keys",
+        Secrets: "/secrets",
       }),
     }),
   } as const;
 
   expect(routes).toEqual({
-    root: "/",
-    user: "/:userName",
+    Home: "/",
+    User: "/:userName",
 
-    "repository.root": "/:repositoryName",
-    "repository.issues": "/:repositoryName/issues",
-    "repository.pulls": "/:repositoryName/pulls",
-    "repository.actions": "/:repositoryName/actions",
-    "repository.projects": "/:repositoryName/projects",
-    "repository.security": "/:repositoryName/security",
+    RepositoryRoot: "/:repositoryName",
+    RepositoryIssues: "/:repositoryName/issues",
+    RepositoryPulls: "/:repositoryName/pulls",
+    RepositoryActions: "/:repositoryName/actions",
+    RepositoryProjects: "/:repositoryName/projects",
+    RepositorySecurity: "/:repositoryName/security",
 
-    "repository.settings.root": "/:repositoryName/settings",
-    "repository.settings.collaborators": "/:repositoryName/settings/access",
-    "repository.settings.branches": "/:repositoryName/settings/branches",
-    "repository.settings.actions": "/:repositoryName/settings/actions",
-    "repository.settings.webhooks": "/:repositoryName/settings/hooks",
-    "repository.settings.pages": "/:repositoryName/settings/pages",
-    "repository.settings.securityAnalysis":
+    RepositorySettingsRoot: "/:repositoryName/settings",
+    RepositorySettingsCollaborators: "/:repositoryName/settings/access",
+    RepositorySettingsBranches: "/:repositoryName/settings/branches",
+    RepositorySettingsActions: "/:repositoryName/settings/actions",
+    RepositorySettingsWebhooks: "/:repositoryName/settings/hooks",
+    RepositorySettingsPages: "/:repositoryName/settings/pages",
+    RepositorySettingsSecurityAnalysis:
       "/:repositoryName/settings/security_analysis",
-    "repository.settings.deployKeys": "/:repositoryName/settings/keys",
-    "repository.settings.secrets": "/:repositoryName/settings/secrets",
+    RepositorySettingsDeployKeys: "/:repositoryName/settings/keys",
+    RepositorySettingsSecrets: "/:repositoryName/settings/secrets",
   });
 });

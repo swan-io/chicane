@@ -27,7 +27,7 @@ const EXAMPLE_DATA: Record<string, string[]> = {
 };
 
 export const App = () => {
-  const route = Router.useRoute(["root", "users", "user", "repositoriesArea"]);
+  const route = Router.useRoute(["Home", "Users", "User", "RepositoriesArea"]);
   const containerRef = React.useRef(null);
 
   Router.useRouteFocus({ containerRef, route });
@@ -43,14 +43,14 @@ export const App = () => {
         }}
       >
         <Router.Link
-          to={Router.createURL("root")}
+          to={Router.createURL("Home")}
           activeStyle={{ fontWeight: 700 }}
         >
-          Homepage
+          Home
         </Router.Link>
 
         <Router.Link
-          to={Router.createURL("users")}
+          to={Router.createURL("Users")}
           activeStyle={{ fontWeight: 700 }}
         >
           Users
@@ -62,32 +62,32 @@ export const App = () => {
         style={{ display: "flex", flexDirection: "column" }}
       >
         {match(route)
-          .with({ name: "root" }, () => <h1>Homepage</h1>)
-          .with({ name: "users" }, () => (
+          .with({ name: "Home" }, () => <h1>Home</h1>)
+          .with({ name: "Users" }, () => (
             <>
               <h1>Users</h1>
 
               {Object.keys(EXAMPLE_DATA).map((userId) => (
                 <Router.Link
                   key={userId}
-                  to={Router.createURL("user", { userId })}
+                  to={Router.createURL("User", { userId })}
                 >
                   {userId}
                 </Router.Link>
               ))}
             </>
           ))
-          .with({ name: "user" }, ({ params: { userId } }) => (
+          .with({ name: "User" }, ({ params: { userId } }) => (
             <>
               <h1>{userId}</h1>
               <p>{userId} homepage</p>
 
-              <Router.Link to={Router.createURL("repositories", { userId })}>
+              <Router.Link to={Router.createURL("Repositories", { userId })}>
                 His repositories
               </Router.Link>
             </>
           ))
-          .with({ name: "repositoriesArea" }, ({ params }) => (
+          .with({ name: "RepositoriesArea" }, ({ params }) => (
             <Repositories userId={params.userId} />
           ))
           .with(undefined, () => <h1>404 - Page not found</h1>)
@@ -98,7 +98,7 @@ export const App = () => {
 };
 
 const Repositories = ({ userId }: { userId: string }) => {
-  const route = Router.useRoute(["repositories", "repository"]);
+  const route = Router.useRoute(["Repositories", "Repository"]);
   const containerRef = React.useRef(null);
 
   Router.useRouteFocus({ containerRef, route });
@@ -108,12 +108,12 @@ const Repositories = ({ userId }: { userId: string }) => {
       <h1>{userId} repositories</h1>
 
       {match(route)
-        .with({ name: "repositories" }, () => (
+        .with({ name: "Repositories" }, () => (
           <ul>
             {EXAMPLE_DATA[userId]?.map((repositoryId) => (
               <li key={repositoryId}>
                 <Router.Link
-                  to={Router.createURL("repository", { userId, repositoryId })}
+                  to={Router.createURL("Repository", { userId, repositoryId })}
                 >
                   {repositoryId}
                 </Router.Link>
@@ -122,7 +122,7 @@ const Repositories = ({ userId }: { userId: string }) => {
           </ul>
         ))
         .with(
-          { name: "repository" },
+          { name: "Repository" },
           ({ params: { userId, repositoryId } }) => (
             <h2>
               {userId}/{repositoryId}

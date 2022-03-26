@@ -39,13 +39,13 @@ This library exports a main function: `createRouter`. The goal behind this is to
 import { createRouter } from "react-chicane";
 
 const { useRoute } = createRouter({
-  root: "/",
-  users: "/users",
-  user: "/users/:userId",
+  Home: "/",
+  Users: "/users",
+  User: "/users/:userId",
 });
 
 const App = () => {
-  const route = useRoute(["root", "users", "user"]);
+  const route = useRoute(["Home", "Users", "User"]);
 
   if (!route) {
     return <h1>404</h1>;
@@ -53,11 +53,11 @@ const App = () => {
 
   // route object is a discriminated union
   switch (route.name) {
-    case "root":
-      return <h1>Homepage</h1>;
-    case "users":
+    case "Home":
+      return <h1>Home</h1>;
+    case "Users":
       return <h1>Users</h1>;
-    case "user":
+    case "User":
       // params are strongly typed
       return <h1>User {route.params.userId}</h1>;
   }
@@ -79,22 +79,22 @@ import { createRouter } from "react-chicane";
 import { match } from "ts-pattern";
 
 export const { useRoute } = createRouter({
-  groups: "/groups",
-  group: "/groups/:groupId?:foo&:bar[]#:baz",
-  users: "/groups/:groupId/users",
-  user: "/groups/:groupId/users/:userId",
+  Groups: "/groups",
+  Group: "/groups/:groupId?:foo&:bar[]#:baz",
+  Users: "/groups/:groupId/users",
+  User: "/groups/:groupId/users/:userId",
   // it also supports wildcard routes!
-  usersArea: "/groups/:groupId/users/*",
+  UsersArea: "/groups/:groupId/users/*",
 });
 
 const App = () => {
-  const route = useRoute(["groups", "group", "users", "user"]);
+  const route = useRoute(["Groups", "Group", "Users", "User"]);
 
   match(route)
-    .with({ name: "groups" }, ({ params }) => console.log(params)) // {}
-    .with({ name: "group" }, ({ params }) => console.log(params)) // { groupId: string, foo?: string, bar?: string[], baz?: string }
-    .with({ name: "users" }, ({ params }) => console.log(params)) // { groupId: string }
-    .with({ name: "user" }, ({ params }) => console.log(params)) // { groupId: string, userId: string }
+    .with({ name: "Groups" }, ({ params }) => console.log(params)) // {}
+    .with({ name: "Group" }, ({ params }) => console.log(params)) // { groupId: string, foo?: string, bar?: string[], baz?: string }
+    .with({ name: "Users" }, ({ params }) => console.log(params)) // { groupId: string }
+    .with({ name: "User" }, ({ params }) => console.log(params)) // { groupId: string, userId: string }
     .otherwise(() => <h1>404</h1>);
 
   // …
@@ -111,14 +111,14 @@ Because it's nice to create safe internal URLs, `createRouter` also returns `cre
 import { createRouter } from "react-chicane";
 
 const { createURL } = createRouter({
-  root: "/",
-  users: "/users",
-  user: "/users/:userId",
+  Home: "/",
+  Users: "/users",
+  User: "/users/:userId",
 });
 
-createURL("root"); // -> "/"
-createURL("users"); // -> "/users"
-createURL("user", { userId: "zoontek" }); // -> "/users/zoontek"
+createURL("Home"); // -> "/"
+createURL("Users"); // -> "/users"
+createURL("User", { userId: "zoontek" }); // -> "/users/zoontek"
 ```
 
 ## ⚙️ API
@@ -132,9 +132,9 @@ import { createRouter } from "react-chicane";
 
 const Router = createRouter(
   {
-    root: "/",
-    users: "/users",
-    user: "/users/:userId",
+    Home: "/",
+    Users: "/users",
+    User: "/users/:userId",
   },
   {
     basePath: "/setup/basePath/here", // Will be prepend to all your paths (optional)
@@ -152,7 +152,13 @@ type Location = {
   path: string[];
   search: Record<string, string | string[]>;
   hash?: string;
-  raw: { path: string; search: string; hash: string };
+
+  raw: {
+    path: string;
+    search: string;
+    hash: string;
+  };
+
   toString(): string;
 };
 
@@ -164,9 +170,9 @@ Router.getLocation(); // Location
 Push a given route in the browser history.
 
 ```tsx
-Router.push("root");
-Router.push("users");
-Router.push("user", { userId: "zoontek" });
+Router.push("Home");
+Router.push("Users");
+Router.push("User", { userId: "zoontek" });
 ```
 
 #### Router.replace
@@ -174,9 +180,9 @@ Router.push("user", { userId: "zoontek" });
 Same as `push`, but will replace the current route in the browser history.
 
 ```tsx
-Router.replace("root");
-Router.replace("users");
-Router.replace("user", { userId: "zoontek" });
+Router.replace("Home");
+Router.replace("Users");
+Router.replace("User", { userId: "zoontek" });
 ```
 
 #### Router.back
@@ -200,9 +206,9 @@ Router.forward();
 Safely create internal URLs.
 
 ```tsx
-Router.createURL("root"); // -> "/"
-Router.createURL("users"); // -> "/users"
-Router.createURL("user", { userId: "zoontek" }); // -> "/users/zoontek"
+Router.createURL("Home"); // -> "/"
+Router.createURL("Users"); // -> "/users"
+Router.createURL("User", { userId: "zoontek" }); // -> "/users/zoontek"
 ```
 
 #### Router.useRoute
@@ -214,12 +220,12 @@ import { match } from "ts-pattern";
 
 const App = () => {
   // The order isn't important, paths are ranked using https://reach.tech/router/ranking
-  const route = Router.useRoute(["root", "users", "user"]);
+  const route = Router.useRoute(["Home", "Users", "User"]);
 
   return match(route)
-    .with({ name: "root" }, () => <h1>root</h1>)
-    .with({ name: "users" }, () => <h1>users</h1>)
-    .with({ name: "user" }, ({ params: { userId } }) => <h1>user</h1>)
+    .with({ name: "Home" }, () => <h1>Home</h1>)
+    .with({ name: "Users" }, () => <h1>Users</h1>)
+    .with({ name: "User" }, ({ params: { userId } }) => <h1>User</h1>)
     .otherwise(() => <h1>404</h1>);
 };
 ```
@@ -230,7 +236,7 @@ Registers a component as a route container, so that the element receives focus o
 
 ```tsx
 const App = () => {
-  const route = Router.useRoute(["root", "users", "user"]);
+  const route = Router.useRoute(["Home", "Users", "User"]);
   const containerRef = React.useRef(null);
 
   Router.useRouteFocus({
@@ -248,25 +254,41 @@ As this library doesn't provide a single component, we expose this hook to creat
 
 ```tsx
 type Props = {
-  children?: React.ReactNode;
   to: string;
+  children?: React.ReactNode;
+  onClick?: React.MouseEventHandler<HTMLAnchorElement>;
   replace?: boolean;
   target?: React.HTMLAttributeAnchorTarget;
 };
 
-const Link = ({ children, to, replace, target }: Props) => {
+const Link = ({
+  to,
+  children,
+  replace,
+  target,
+  onClick: baseOnClick,
+}: Props) => {
   const { active, onClick } = useLink({ href: to, replace, target });
-  const style = { fontWeight: active ? 700 : 400 };
 
   return (
-    <a href={to} onClick={onClick} target={target} style={style}>
+    <a
+      href={to}
+      target={target}
+      onClick={(event: React.MouseEvent<HTMLAnchorElement>) => {
+        baseOnClick?.(event);
+        onClick(event);
+      }}
+      style={{
+        fontWeight: active ? 700 : 400,
+      }}
+    >
       {children}
     </a>
   );
 };
 
 // usage
-<Link to={Router.createURL("user", { userId: "zoontek" })}>Profile</Link>;
+<Link to={Router.createURL("User", { userId: "zoontek" })}>Profile</Link>;
 ```
 
 #### Router.useLocation
@@ -344,7 +366,7 @@ const Redirect = ({ to }: { to: string }) => {
 };
 
 // usage
-<Redirect to={Router.createURL("root")} />;
+<Redirect to={Router.createURL("Home")} />;
 ```
 
 ### createGroup
@@ -355,27 +377,27 @@ Reduce routes declaration repetitions by subpath grouping.
 import { createGroup, createRouter } from "react-chicane";
 
 const Router = createRouter({
-  root: "/",
-  user: "/:userName",
+  Home: "/",
+  User: "/:userName",
 
-  ...createGroup("repository", "/:repositoryName", {
-    root: "/",
-    issues: "/issues",
-    pulls: "/pulls",
-    actions: "/actions",
+  ...createGroup("Repository", "/:repositoryName", {
+    Root: "/",
+    Issues: "/issues",
+    Pulls: "/pulls",
+    Actions: "/actions",
 
     // Can be nested indefinitely
-    ...createGroup("settings", "/settings", {
-      root: "/",
-      collaborators: "/access",
-      branches: "/branches",
+    ...createGroup("Settings", "/settings", {
+      Root: "/",
+      Collaborators: "/access",
+      Branches: "/branches",
     }),
   }),
 });
 
-Router.createURL("user", { userName: "zoontek" });
-Router.createURL("repository.actions", { repositoryName: "valienv" });
-Router.createURL("repository.settings.branches", { repositoryName: "valienv" });
+Router.createURL("User", { userName: "zoontek" });
+Router.createURL("RepositoryActions", { repositoryName: "valienv" });
+Router.createURL("RepositorySettingsBranches", { repositoryName: "valienv" });
 ```
 
 ## 👷‍♂️ Roadmap
