@@ -312,7 +312,7 @@ const unsubscribe = Router.subscribe((location: Location) => {
 });
 ```
 
-### Router.encodeSearch / Router.decodeSearch
+#### Router.encodeSearch / Router.decodeSearch
 
 Encode and decode url search parameters.
 
