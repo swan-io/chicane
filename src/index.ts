@@ -11,6 +11,7 @@ import {
   useLocation,
 } from "./history";
 import { getMatcher, match, matchToHistoryPath } from "./matcher";
+import { decodeSearch, encodeSearch } from "./search";
 import {
   ConcatPaths,
   ExtractRoutesParams,
@@ -22,7 +23,6 @@ import {
   Simplify,
 } from "./types";
 
-export { decodeSearch, encodeSearch } from "./search";
 export type { Location, Search } from "./types";
 
 const focusableElements: Record<string, true> = {
@@ -268,6 +268,8 @@ export const createRouter = <
   return {
     getLocation: getCurrentLocation,
     createURL,
+    decodeSearch,
+    encodeSearch,
     goBack,
     goForward,
     navigate,
@@ -275,10 +277,10 @@ export const createRouter = <
     subscribe,
     unsafeNavigate,
     unsafeReplace,
+    useBlocker,
     useLink,
     useLocation,
     useRoute,
     useRouteFocus,
-    useBlocker,
   };
 };

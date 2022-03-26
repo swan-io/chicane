@@ -319,6 +319,18 @@ const unsubscribe = Router.subscribe((location: Location) => {
 });
 ```
 
+### Router.encodeSearch / Router.decodeSearch
+
+Encode and decode url search parameters.
+
+```tsx
+Router.encodeSearch({ invitation: "542022247745", users: ["frank", "chris"] });
+// -> "?invitation=542022247745&users=frank&users=chris"
+
+Router.decodeSearch("?invitation=542022247745&users=frank&users=chris");
+// -> { invitation: "542022247745", users: ["frank", "chris"] }
+```
+
 #### Router.unsafeNavigate and Router.unsafeReplace
 
 Two methods similar to `Router.navigate` and `Router.replace` but which accept a `string` as unique argument. Useful for escape hatches.
@@ -371,20 +383,6 @@ const Router = createRouter({
 Router.createURL("user", { userName: "zoontek" });
 Router.createURL("repository.actions", { repositoryName: "valienv" });
 Router.createURL("repository.settings.branches", { repositoryName: "valienv" });
-```
-
-### encodeSearch / decodeSearch
-
-Encode and decode url search parameters.
-
-```tsx
-import { decodeSearch, encodeSearch } from "react-chicane";
-
-encodeSearch({ invitation: "542022247745", users: ["frank", "chris"] });
-// -> "?invitation=542022247745&users=frank&users=chris"
-
-decodeSearch("?invitation=542022247745&users=frank&users=chris");
-// -> { invitation: "542022247745", users: ["frank", "chris"] }
 ```
 
 ## 👷‍♂️ Roadmap
