@@ -1,11 +1,11 @@
-import { groupRoutes } from "../src";
+import { createGroup } from "../src";
 
-test("groupRoutes prefix routes keys / paths", () => {
+test("createGroup prefix routes keys / paths", () => {
   const routes = {
     root: "/",
     user: "/:userName",
 
-    ...groupRoutes("repository", "/:repositoryName", {
+    ...createGroup("repository", "/:repositoryName", {
       root: "/",
       issues: "/issues",
       pulls: "/pulls",
@@ -13,7 +13,7 @@ test("groupRoutes prefix routes keys / paths", () => {
       projects: "/projects",
       security: "/security",
 
-      ...groupRoutes("settings", "/settings", {
+      ...createGroup("settings", "/settings", {
         root: "/",
         collaborators: "/access",
         branches: "/branches",

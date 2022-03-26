@@ -159,19 +159,19 @@ type Location = {
 Router.getLocation(); // Location
 ```
 
-#### Router.navigate
+#### Router.push
 
-Navigate to a given route.
+Push a given route in the browser history.
 
 ```tsx
-Router.navigate("root");
-Router.navigate("users");
-Router.navigate("user", { userId: "zoontek" });
+Router.push("root");
+Router.push("users");
+Router.push("user", { userId: "zoontek" });
 ```
 
 #### Router.replace
 
-Same as `navigate`, but will replace the current route in the browser history.
+Same as `push`, but will replace the current route in the browser history.
 
 ```tsx
 Router.replace("root");
@@ -179,20 +179,20 @@ Router.replace("users");
 Router.replace("user", { userId: "zoontek" });
 ```
 
-#### Router.goBack
+#### Router.back
 
 Go back in browser history.
 
 ```tsx
-Router.goBack();
+Router.back();
 ```
 
-#### Router.goForward
+#### Router.forward
 
 Go forward in browser history.
 
 ```tsx
-Router.goForward();
+Router.forward();
 ```
 
 #### Router.createURL
@@ -331,9 +331,9 @@ Router.decodeSearch("?invitation=542022247745&users=frank&users=chris");
 // -> { invitation: "542022247745", users: ["frank", "chris"] }
 ```
 
-#### Router.unsafeNavigate and Router.unsafeReplace
+#### Router.pushUnsafe and Router.replaceUnsafe
 
-Two methods similar to `Router.navigate` and `Router.replace` but which accept a `string` as unique argument. Useful for escape hatches.
+Two methods similar to `Router.push` and `Router.replace` but which accept a `string` as unique argument. Useful for escape hatches.
 
 A quick example with a `Redirect` component:
 
@@ -343,7 +343,7 @@ const Redirect = ({ to }: { to: string }) => {
 
   React.useLayoutEffect(() => {
     if (to !== location) {
-      Router.unsafeReplace(to);
+      Router.replaceUnsafe(to);
     }
   }, []);
 
@@ -354,25 +354,25 @@ const Redirect = ({ to }: { to: string }) => {
 <Redirect to={Router.createURL("root")} />;
 ```
 
-### groupRoutes
+### createGroup
 
 Reduce routes declaration repetitions by subpath grouping.
 
 ```tsx
-import { createRouter, groupRoutes } from "react-chicane";
+import { createGroup, createRouter } from "react-chicane";
 
 const Router = createRouter({
   root: "/",
   user: "/:userName",
 
-  ...groupRoutes("repository", "/:repositoryName", {
+  ...createGroup("repository", "/:repositoryName", {
     root: "/",
     issues: "/issues",
     pulls: "/pulls",
     actions: "/actions",
 
     // Can be nested indefinitely
-    ...groupRoutes("settings", "/settings", {
+    ...createGroup("settings", "/settings", {
       root: "/",
       collaborators: "/access",
       branches: "/branches",

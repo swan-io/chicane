@@ -32,7 +32,7 @@ const focusableElements: Record<string, true> = {
   TEXTAREA: true,
 };
 
-export const groupRoutes = <
+export const createGroup = <
   GroupName extends string,
   BasePath extends string,
   Routes extends Record<string, string>,
@@ -95,15 +95,15 @@ export const createRouter = <
     (matcherA, matcherB) => matcherB.ranking - matcherA.ranking,
   );
 
-  const goForward = (): void => history.forward();
-  const goBack = (): void => history.back();
+  const forward = (): void => history.forward();
+  const back = (): void => history.back();
 
-  const unsafeNavigate = (url: string): void => {
+  const pushUnsafe = (url: string): void => {
     const { pathname = "", search = "", hash = "" } = parsePath(url);
     history.push({ pathname, search, hash });
   };
 
-  const unsafeReplace = (url: string) => {
+  const replaceUnsafe = (url: string) => {
     const { pathname = "", search = "", hash = "" } = parsePath(url);
     history.replace({ pathname, search, hash });
   };
@@ -113,7 +113,7 @@ export const createRouter = <
     ...args: ParamsArg<FiniteRoutesParams[RouteName]>
   ): string => createPath(matchToHistoryPath(matchers[routeName], first(args)));
 
-  const navigate = <RouteName extends keyof FiniteRoutes>(
+  const push = <RouteName extends keyof FiniteRoutes>(
     routeName: RouteName,
     ...args: ParamsArg<FiniteRoutesParams[RouteName]>
   ): void => history.push(matchToHistoryPath(matchers[routeName], first(args)));
@@ -188,9 +188,9 @@ export const createRouter = <
             event.preventDefault();
 
             if (shouldReplace) {
-              unsafeReplace(href);
+              replaceUnsafe(href);
             } else {
-              unsafeNavigate(href);
+              pushUnsafe(href);
             }
           }
         },
@@ -263,17 +263,17 @@ export const createRouter = <
   };
 
   return {
-    getLocation: getCurrentLocation,
+    back,
     createURL,
     decodeSearch,
     encodeSearch,
-    goBack,
-    goForward,
-    navigate,
+    forward,
+    getLocation: getCurrentLocation,
+    push,
+    pushUnsafe,
     replace,
+    replaceUnsafe,
     subscribe,
-    unsafeNavigate,
-    unsafeReplace,
     useBlocker,
     useLink,
     useLocation,

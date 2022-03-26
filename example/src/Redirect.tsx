@@ -6,7 +6,7 @@ export const Redirect = ({ to }: { to: string }) => {
 
   React.useLayoutEffect(() => {
     if (to !== location) {
-      Router.unsafeReplace(to);
+      Router.replaceUnsafe(to);
     }
   }, []);
 

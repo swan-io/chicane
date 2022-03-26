@@ -10,14 +10,14 @@ const routes = {
 } as const;
 
 describe("router", () => {
-  const { useRoute, unsafeNavigate, useRouteFocus } = createRouter(routes);
+  const { useRoute, pushUnsafe, useRouteFocus } = createRouter(routes);
 
   type RouteName = keyof typeof routes;
 
   const routesToMatch: RouteName[] = ["home", "profiles", "profile"];
 
   beforeEach(() => {
-    unsafeNavigate("/");
+    pushUnsafe("/");
     resetInitialHasLocationChanged();
   });
 
@@ -45,13 +45,13 @@ describe("router", () => {
     expect(container.textContent).toContain("Home");
 
     act(() => {
-      unsafeNavigate("/profile/zoontek");
+      pushUnsafe("/profile/zoontek");
     });
 
     expect(container.textContent).toContain("Profile zoontek");
 
     act(() => {
-      unsafeNavigate("/unknown");
+      pushUnsafe("/unknown");
     });
 
     expect(container.textContent).toContain("Not found");
@@ -87,7 +87,7 @@ describe("router", () => {
     expect(body).toHaveFocus();
 
     act(() => {
-      unsafeNavigate("/profile/zoontek");
+      pushUnsafe("/profile/zoontek");
     });
 
     // takes focus after a route change
@@ -102,13 +102,13 @@ describe("router", () => {
     expect(body).toHaveFocus();
 
     act(() => {
-      unsafeNavigate("/profile/zoontek");
+      pushUnsafe("/profile/zoontek");
     });
 
     expect(body).toHaveFocus();
 
     act(() => {
-      unsafeNavigate("/profile/bloodyowl");
+      pushUnsafe("/profile/bloodyowl");
     });
 
     // takes focus when only a param changes
