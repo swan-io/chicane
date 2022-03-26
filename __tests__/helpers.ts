@@ -1,5 +1,5 @@
 import {
-  areArrayDifferent,
+  areParamsArrayEqual,
   concatPaths,
   first,
   isMultipleParam,
@@ -42,17 +42,17 @@ describe("isParam", () => {
   });
 });
 
-describe("areArrayDifferent", () => {
-  test("returns false with identical arrays", () => {
-    expect(areArrayDifferent([], [])).toBe(false);
-    expect(areArrayDifferent(["foo"], ["foo"])).toBe(false);
-    expect(areArrayDifferent(["foo", "bar"], ["foo", "bar"])).toBe(false);
+describe("areParamsArrayEqual", () => {
+  test("returns true with identical arrays", () => {
+    expect(areParamsArrayEqual([], [])).toBe(true);
+    expect(areParamsArrayEqual(["foo"], ["foo"])).toBe(true);
+    expect(areParamsArrayEqual(["foo", "bar"], ["foo", "bar"])).toBe(true);
   });
 
-  test("returns true with different arrays", () => {
-    expect(areArrayDifferent(["foo"], [])).toBe(true);
-    expect(areArrayDifferent(["foo"], ["bar"])).toBe(true);
-    expect(areArrayDifferent(["foo", "bar"], ["bar", "foo"])).toBe(true);
+  test("returns false with different arrays", () => {
+    expect(areParamsArrayEqual(["foo"], [])).toBe(false);
+    expect(areParamsArrayEqual(["foo"], ["bar"])).toBe(false);
+    expect(areParamsArrayEqual(["foo", "bar"], ["bar", "foo"])).toBe(false);
   });
 });
 

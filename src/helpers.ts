@@ -3,9 +3,16 @@ export const identity = <T>(value: T): T => value;
 export const isNonEmpty = (value: string): boolean => value !== "";
 export const isParam = (value: string): boolean => value.startsWith(":");
 
-export const areArrayDifferent = (arrayA: string[], arrayB: string[]) =>
-  arrayA.length !== arrayB.length ||
-  arrayA.findIndex((value, index) => value !== arrayB[index]) !== -1;
+export const areParamsArrayEqual = (arrayA: string[], arrayB: string[]) =>
+  !(
+    arrayA.length !== arrayB.length ||
+    arrayA.findIndex((value, index) => value !== arrayB[index]) !== -1
+  );
+
+export const areItemKeysEqual = (
+  valueA: { key: string },
+  valueB: { key: string },
+) => valueA.key === valueB.key;
 
 export const isMultipleParam = (value: string): boolean =>
   value.startsWith(":") && value.endsWith("[]");

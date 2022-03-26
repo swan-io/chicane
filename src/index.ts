@@ -2,7 +2,7 @@ import { createPath, parsePath } from "history";
 import * as React from "react";
 import { useSyncExternalStore } from "use-sync-external-store/shim";
 import { useSyncExternalStoreWithSelector } from "use-sync-external-store/shim/with-selector";
-import { concatPaths, first, identity } from "./helpers";
+import { areItemKeysEqual, concatPaths, first, identity } from "./helpers";
 import {
   getCurrentLocation,
   hasInitialLocationChanged,
@@ -154,7 +154,7 @@ export const createRouter = <
       },
       undefined,
       identity,
-      (prevRoutes, nextRoutes) => prevRoutes.key === nextRoutes.key,
+      areItemKeysEqual,
     );
 
     // @ts-expect-error
@@ -186,7 +186,7 @@ export const createRouter = <
       },
       undefined,
       identity,
-      (prevRoute, nextRoute) => prevRoute.key === nextRoute.key,
+      areItemKeysEqual,
     );
 
     // @ts-expect-error
