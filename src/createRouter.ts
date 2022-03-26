@@ -8,6 +8,7 @@ import {
   ExtractRoutesParams,
   GetNestedRoutes,
   Matcher,
+  Params,
   ParamsArg,
   PrependBasePath,
   Simplify,
@@ -30,8 +31,6 @@ export const createRouter = <
   type FiniteRoutesParams = ExtractRoutesParams<FiniteRoutes>;
   type RoutesParams = NestedRoutesParams & FiniteRoutesParams;
 
-  // const toto = {} as FiniteRoutes;
-
   const { basePath = "" } = options;
 
   const matchers = {} as Record<keyof Routes, Matcher>;
@@ -53,29 +52,30 @@ export const createRouter = <
     (matcherA, matcherB) => matcherB.ranking - matcherA.ranking,
   );
 
-  const createURL = <RouteName extends keyof FiniteRoutes>(
-    routeName: RouteName,
-    ...args: ParamsArg<FiniteRoutesParams[RouteName]>
-  ): string => createPath(matchToHistoryPath(matchers[routeName], first(args)));
+  const createURLFunctions = {} as {
+    [RouteName in keyof FiniteRoutes]: (
+      ...args: ParamsArg<FiniteRoutesParams[RouteName]>
+    ) => string;
+  };
 
-  const push = <RouteName extends keyof FiniteRoutes>(
-    routeName: RouteName,
-    ...args: ParamsArg<FiniteRoutesParams[RouteName]>
-  ): void => history.push(matchToHistoryPath(matchers[routeName], first(args)));
+  for (let index = 0; index < rankedMatchers.length; index++) {
+    const matcher = rankedMatchers[index];
 
-  const replace = <RouteName extends keyof FiniteRoutes>(
-    routeName: RouteName,
-    ...args: ParamsArg<FiniteRoutesParams[RouteName]>
-  ): void =>
-    history.replace(matchToHistoryPath(matchers[routeName], first(args)));
+    if (matcher?.finite) {
+      const routeName = matcher.name as keyof FiniteRoutes;
+
+      createURLFunctions[routeName] = (params?: Params) =>
+        createPath(matchToHistoryPath(matchers[routeName], params));
+    }
+  }
 
   const useRoute = <RouteName extends keyof FiniteRoutes | keyof NestedRoutes>(
     routeNames: ReadonlyArray<RouteName>,
   ): RouteName extends string
     ?
         | {
-            name: RouteName;
             key: string;
+            name: RouteName;
             params: Simplify<RoutesParams[RouteName]>;
           }
         | undefined
@@ -98,11 +98,21 @@ export const createRouter = <
     );
   };
 
+  const push = <RouteName extends keyof FiniteRoutes>(
+    routeName: RouteName,
+    ...args: ParamsArg<FiniteRoutesParams[RouteName]>
+  ): void => history.push(matchToHistoryPath(matchers[routeName], first(args)));
+
+  const replace = <RouteName extends keyof FiniteRoutes>(
+    routeName: RouteName,
+    ...args: ParamsArg<FiniteRoutesParams[RouteName]>
+  ): void =>
+    history.replace(matchToHistoryPath(matchers[routeName], first(args)));
+
   return {
-    createURL,
+    useRoute,
     push,
     replace,
-    useRoute,
-    // ...toto,
+    ...createURLFunctions,
   };
 };

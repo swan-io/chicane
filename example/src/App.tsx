@@ -43,11 +43,11 @@ export const App = () => {
           minWidth: 200,
         }}
       >
-        <Link to={Router.createURL("Home")} activeStyle={{ fontWeight: 700 }}>
+        <Link to={Router.Home()} activeStyle={{ fontWeight: 700 }}>
           Home
         </Link>
 
-        <Link to={Router.createURL("Users")} activeStyle={{ fontWeight: 700 }}>
+        <Link to={Router.Users()} activeStyle={{ fontWeight: 700 }}>
           Users
         </Link>
       </nav>
@@ -63,7 +63,7 @@ export const App = () => {
               <h1>Users</h1>
 
               {Object.keys(EXAMPLE_DATA).map((userId) => (
-                <Link key={userId} to={Router.createURL("User", { userId })}>
+                <Link key={userId} to={Router.User({ userId })}>
                   {userId}
                 </Link>
               ))}
@@ -74,9 +74,7 @@ export const App = () => {
               <h1>{userId}</h1>
               <p>{userId} homepage</p>
 
-              <Link to={Router.createURL("Repositories", { userId })}>
-                His repositories
-              </Link>
+              <Link to={Router.Repositories({ userId })}>His repositories</Link>
             </>
           ))
           .with({ name: "RepositoriesArea" }, ({ params }) => (
@@ -104,9 +102,7 @@ const Repositories = ({ userId }: { userId: string }) => {
           <ul>
             {EXAMPLE_DATA[userId]?.map((repositoryId) => (
               <li key={repositoryId}>
-                <Link
-                  to={Router.createURL("Repository", { userId, repositoryId })}
-                >
+                <Link to={Router.Repository({ userId, repositoryId })}>
                   {repositoryId}
                 </Link>
               </li>

@@ -131,6 +131,6 @@ export type LinkProps = BaseLinkProps & {
   to: string;
   replace?: boolean;
   target?: React.HTMLAttributeAnchorTarget;
-  activeClassName?: BaseLinkProps["className"];
   activeStyle?: BaseLinkProps["style"];
+  activeClassName?: BaseLinkProps["className"];
 };
