@@ -1,6 +1,6 @@
 import { act, render } from "@testing-library/react";
 import * as React from "react";
-import { createRouter, pushUnsafe, useRouteFocus } from "../src";
+import { createRouter, pushUnsafe, useFocusReset } from "../src";
 import { resetInitialHasLocationChanged } from "../src/history";
 
 const routes = {
@@ -57,12 +57,12 @@ describe("router", () => {
     expect(container.textContent).toContain("Not found");
   });
 
-  test("useRouteFocus: should focus the correct element", () => {
+  test("useFocusReset: should focus the correct element", () => {
     const App = () => {
       const route = useRoute(routesToMatch);
       const containerRef = React.useRef(null);
 
-      useRouteFocus({ route, containerRef });
+      useFocusReset({ route, containerRef });
 
       if (route === undefined) {
         return <div> Not found </div>;

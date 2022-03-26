@@ -10,6 +10,6 @@ export {
 export { Link } from "./Link";
 export { decodeSearch, encodeSearch } from "./search";
 export type { Location, Search } from "./types";
-export { useBlocker } from "./useBlocker";
-export { useLink } from "./useLink";
-export { useRouteFocus } from "./useRouteFocus";
+export { useFocusReset } from "./useFocusReset";
+export { useLinkProps } from "./useLinkProps";
+export { useNavigationBlocker } from "./useNavigationBlocker";

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { match } from "ts-pattern";
-import { Link, useRouteFocus } from "../../src";
+import { Link, useFocusReset } from "../../src";
 import { Router } from "./router";
 
 const EXAMPLE_DATA: Record<string, string[]> = {
@@ -31,7 +31,7 @@ export const App = () => {
   const route = Router.useRoute(["Home", "Users", "User", "RepositoriesArea"]);
   const containerRef = React.useRef(null);
 
-  useRouteFocus({ route, containerRef });
+  useFocusReset({ route, containerRef });
 
   return (
     <div style={{ display: "flex" }}>
@@ -91,7 +91,7 @@ const Repositories = ({ userId }: { userId: string }) => {
   const route = Router.useRoute(["Repositories", "Repository"]);
   const containerRef = React.useRef(null);
 
-  useRouteFocus({ route, containerRef });
+  useFocusReset({ route, containerRef });
 
   return (
     <div ref={containerRef}>

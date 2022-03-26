@@ -9,7 +9,7 @@ import {
 } from "./history";
 
 // Kudos to https://github.com/remix-run/react-router/pull/7998
-export const useLink = ({
+export const useLinkProps = ({
   href,
   replace = false,
   target,

@@ -9,7 +9,7 @@ const focusableElements: Record<string, true> = {
   TEXTAREA: true,
 };
 
-export const useRouteFocus = ({
+export const useFocusReset = ({
   route,
   containerRef,
 }: {

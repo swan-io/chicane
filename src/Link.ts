@@ -1,6 +1,6 @@
 import * as React from "react";
 import { LinkProps } from "./types";
-import { useLink } from "./useLink";
+import { useLinkProps } from "./useLinkProps";
 
 export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
   (
@@ -17,7 +17,7 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
     },
     forwardedRef,
   ) => {
-    const { active, onClick } = useLink({ href: to, replace, target });
+    const { active, onClick } = useLinkProps({ href: to, replace, target });
 
     return React.createElement("a", {
       ...props,
