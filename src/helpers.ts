@@ -4,10 +4,8 @@ export const isNonEmpty = (value: string): boolean => value !== "";
 export const isParam = (value: string): boolean => value.startsWith(":");
 
 export const areParamsArrayEqual = (arrayA: string[], arrayB: string[]) =>
-  !(
-    arrayA.length !== arrayB.length ||
-    arrayA.findIndex((value, index) => value !== arrayB[index]) !== -1
-  );
+  arrayA.length === arrayB.length &&
+  arrayA.every((a, index) => a === arrayB[index]);
 
 export const areItemKeysEqual = (
   valueA: { key: string },
