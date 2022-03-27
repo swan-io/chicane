@@ -1,8 +1,17 @@
 import * as React from "react";
-import { LinkProps } from "./types";
 import { useLinkProps } from "./useLinkProps";
 
-export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
+type BaseProps = Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "href">;
+
+type Props = BaseProps & {
+  to: string;
+  children?: React.ReactNode;
+  replace?: boolean;
+  activeStyle?: BaseProps["style"];
+  activeClassName?: BaseProps["className"];
+};
+
+export const Link = React.forwardRef<HTMLAnchorElement, Props>(
   (
     {
       onClick: baseOnClick,
