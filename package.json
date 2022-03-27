@@ -4,7 +4,7 @@
   "license": "MIT",
   "description": "A simple and safe router for React and TypeScript",
   "author": "Mathieu Acthernoene <mathieu.acthernoene@swan.io>",
-  "homepage": "https://github.com/swan-io/chicane#readme",
+  "homepage": "https://swan-io.github.io/chicane",
   "repository": {
     "type": "git",
     "url": "https://github.com/swan-io/chicane.git"
