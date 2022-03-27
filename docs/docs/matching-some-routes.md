@@ -24,13 +24,14 @@ import { Router } from "./router";
 import { UserArea } from "./UserArea";
 
 export const App = () => {
-  // Then pass the route subset this component should listen to
+  // Then pass the route subset this component should listen to (the order isn't important)
   const route = Router.useRoute(["Home", "UserArea"]);
 
   // And then, simply make each route return its component
   return (
     <>
       <Header />
+
       {match(route)
         .with({ name: "Home" }, () => <Home />)
         .with({ name: "UserArea" }, () => <UserArea />)

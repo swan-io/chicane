@@ -31,7 +31,7 @@ module.exports = {
           position: "left",
         },
         {
-          href: "https://github.com/zoontek/react-chicane/example",
+          href: "https://github.com/swan-io/chicane/tree/main/example",
           label: "Example app",
           position: "left",
         },

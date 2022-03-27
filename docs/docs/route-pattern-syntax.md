@@ -88,7 +88,7 @@ const Router = createRouter({
 });
 ```
 
-If you expect an array (which could be useful for filters, e.g. `/users?status=Active&status=Inactive`), you can suffix the param with `[]` to indicate to Chicane that it needs to treat this parameter as an array. The following will result in a **nullable `status` `Array<string>`** in its `params` object.
+If you expect an array (which could be useful for filters, e.g. `/users?status=Active&status=Inactive`), you can suffix the param with `[]` to indicate to Chicane that it needs to treat this parameter as an array. The following will result in a **nullable `status` `string[]`** in its `params` object.
 
 ```ts {4}
 const Router = createRouter({

@@ -48,7 +48,7 @@ const route = Router.useRoute(["UserList", "UserDetail"]);
 
 You can call `useRoute` in any React component in your application!
 
-## push/replace
+## push / replace
 
 The router also provides two functions to navigate programmatically (from your JS code):
 

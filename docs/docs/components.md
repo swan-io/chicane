@@ -17,5 +17,5 @@ Creates a link to a given URL and forces it to be handled by the router.
 
 ```tsx
 <Link to={Router.Home()}>Home</Link>
-<Link to={Router.UseDetail({userId: "123"})}>User</Link>
+<Link to={Router.UseDetail({ userId: "123" })}>User</Link>
 ```

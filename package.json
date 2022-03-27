@@ -1,13 +1,13 @@
 {
-  "name": "react-chicane",
-  "version": "0.8.0",
+  "name": "@swan-io/chicane",
+  "version": "1.0.0",
   "license": "MIT",
   "description": "A simple and safe router for React and TypeScript",
   "author": "Mathieu Acthernoene <mathieu.acthernoene@swan.io>",
-  "homepage": "https://github.com/zoontek/react-chicane#readme",
+  "homepage": "https://github.com/swan-io/chicane#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/zoontek/react-chicane.git"
+    "url": "https://github.com/swan-io/chicane.git"
   },
   "source": "src/index.ts",
   "main": "dist/index.js",
@@ -24,7 +24,7 @@
     "build": "yarn clean && microbundle -f cjs,es",
     "clean": "rm -rf dist",
     "dev": "microbundle watch",
-    "format": "prettier '**/*.{js,md,ts,tsx}' --write",
+    "format": "prettier '**/*' -u -w",
     "test": "jest",
     "test:watch": "jest --watch",
     "tscheck": "tsc --noEmit",

@@ -1,5 +1,5 @@
 {
-  "name": "react-chicane-example",
+  "name": "@swan-io/chicane-example",
   "private": true,
   "scripts": {
     "build": "tsc && vite build",

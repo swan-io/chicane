@@ -33,7 +33,7 @@ The `Link` component takes a few props:
 
 We provide a default `Link` component, but you can also create yours if needed using the `useLink` hook:
 
-```tsx {4} title="src/Link.tsx"
+```tsx {5} title="src/Link.tsx"
 import { useLink } from "@swan-io/chicane/useLink";
 import cx from "classnames";
 
