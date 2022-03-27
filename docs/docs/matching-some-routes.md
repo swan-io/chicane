@@ -31,6 +31,7 @@ export const App = () => {
   return (
     <>
       <Header />
+
       {match(route)
         .with({ name: "Home" }, () => <Home />)
         .with({ name: "UserArea" }, () => <UserArea />)

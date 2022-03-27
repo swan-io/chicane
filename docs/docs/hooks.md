@@ -40,6 +40,7 @@ export const App = () => {
   return (
     <>
       <Header />
+
       <div ref={containerRef}>
         {match(route)
           .with({ name: "Home" }, () => <Home />)
