@@ -8,12 +8,12 @@
 
 A simple and safe router for React and TypeScript.
 
-## Features
+## Design principles
 
-- Fully-typed routes 😌
-- Keyboard accessibility
-- Safe URLs creation
-- Navigation blocking
+- **Typed routes**: improving the DX, and making sure all your params are here!
+- **Component-friendly**: the router nicely fits in your React app.
+- **Easy-to-use**: naming routes instead of moving around unsafe URLs.
+- **Performant**: avoids any unnecessary render.
 
 ## Installation
 
