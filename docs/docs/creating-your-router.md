@@ -41,9 +41,9 @@ Second, you have the **useRoute** React hook. It takes an **array of routes you 
 
 ```ts
 const route = Router.useRoute(["UserList", "UserDetail"]);
-// {name: "UserList"}
-// {name: "UserDetail", params: { userId: "1" }}
-// undefined
+// { name: "UserList" };
+// { name: "UserDetail", params: { userId: "1" } };
+// undefined;
 ```
 
 You can call `useRoute` in any React component in your application!
@@ -66,8 +66,8 @@ export const Router = createRouter({
   Home: "/",
   About: "/about",
   ...createGroup("User", "/users", {
-    List: "/",
-    Detail: "/users/:userId",
+    List: "/", // UserList: /users
+    Detail: "/:userId", // UserDetail: /users/:userId
   }),
 });
 ```
