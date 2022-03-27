@@ -34,11 +34,11 @@ The `Link` component takes a few props:
 We provide a default `Link` component, but you can also create yours if needed using the `useLink` hook:
 
 ```tsx {5} title="src/Link.tsx"
-import { useLink } from "@swan-io/chicane/useLink";
+import { useLinkProps } from "@swan-io/chicane";
 import cx from "classnames";
 
 const Link = ({ className, activeClassName, to, ...props }) => {
-  const { active, onClick } = useLink({ href: to, replace });
+  const { active, onClick } = useLinkProps({ href: to, replace });
 
   return (
     <a
