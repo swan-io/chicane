@@ -5,6 +5,7 @@ import { concatRoutes, extractRoute } from "./concatRoutes";
 import { areRouteEqual, first, identity } from "./helpers";
 import { getLocation, history, subscribeToLocation } from "./history";
 import { getMatcher, match, matchToHistoryPath } from "./matcher";
+import { ServerContext } from "./server";
 import {
   ExtractRoutesParams,
   GetAreaRoutes,
@@ -96,11 +97,16 @@ export const createRouter = <
         ),
       [JSON.stringify(routeNames)],
     );
+    const ssrLocation = React.useContext(ServerContext);
 
     // @ts-expect-error
     return useSyncExternalStoreWithSelector(
       subscribeToLocation,
-      () => match(getLocation(), matchers),
+      () =>
+        match(
+          ssrLocation !== undefined ? ssrLocation : getLocation(),
+          matchers,
+        ),
       undefined,
       identity,
       areRouteEqual,

@@ -7,6 +7,7 @@ import {
   replaceUnsafe,
   subscribeToLocation,
 } from "./history";
+import { ServerContext } from "./server";
 
 // Kudos to https://github.com/remix-run/react-router/pull/7998
 export const useLinkProps = ({
@@ -18,10 +19,14 @@ export const useLinkProps = ({
   replace?: boolean | undefined;
   target?: React.HTMLAttributeAnchorTarget | undefined;
 }) => {
+  const ssrLocation = React.useContext(ServerContext);
   const hrefPath = React.useMemo(() => parsePath(href).pathname, [href]);
 
   const active = useSyncExternalStore(subscribeToLocation, () => {
-    return hrefPath === getLocation().raw.path;
+    return (
+      hrefPath ===
+      (ssrLocation !== undefined ? ssrLocation : getLocation()).raw.path
+    );
   });
 
   const shouldReplace = replace || active;
