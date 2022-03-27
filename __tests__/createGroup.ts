@@ -6,7 +6,7 @@ test("createGroup prefix routes keys / paths", () => {
     User: "/:userName",
 
     ...createGroup("Repository", "/:repositoryName", {
-      Root: "/",
+      List: "/",
       Issues: "/issues",
       Pulls: "/pulls",
       Actions: "/actions",
@@ -14,7 +14,7 @@ test("createGroup prefix routes keys / paths", () => {
       Security: "/security",
 
       ...createGroup("Settings", "/settings", {
-        Root: "/",
+        List: "/",
         Collaborators: "/access",
         Branches: "/branches",
         Actions: "/actions",
@@ -31,14 +31,14 @@ test("createGroup prefix routes keys / paths", () => {
     Home: "/",
     User: "/:userName",
 
-    RepositoryRoot: "/:repositoryName",
+    RepositoryList: "/:repositoryName",
     RepositoryIssues: "/:repositoryName/issues",
     RepositoryPulls: "/:repositoryName/pulls",
     RepositoryActions: "/:repositoryName/actions",
     RepositoryProjects: "/:repositoryName/projects",
     RepositorySecurity: "/:repositoryName/security",
 
-    RepositorySettingsRoot: "/:repositoryName/settings",
+    RepositorySettingsList: "/:repositoryName/settings",
     RepositorySettingsCollaborators: "/:repositoryName/settings/access",
     RepositorySettingsBranches: "/:repositoryName/settings/branches",
     RepositorySettingsActions: "/:repositoryName/settings/actions",

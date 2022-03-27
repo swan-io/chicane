@@ -16,6 +16,12 @@ Creates a link to a given URL and forces it to be handled by the router.
 ### Usage
 
 ```tsx
-<Link to={Router.Home()}>Home</Link>
-<Link to={Router.UseDetail({ userId: "123" })}>User</Link>
+import { Link } from "@swan-io/chicane";
+
+const App = () => (
+  <>
+    <Link to={Router.Home()}>Home</Link>
+    <Link to={Router.UseDetail({ userId: "123" })}>User</Link>
+  </>
+);
 ```

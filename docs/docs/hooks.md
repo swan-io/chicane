@@ -78,6 +78,8 @@ const App = () => {
 Block the navigation and ask user for confirmation. Useful to avoid loosing a form state.
 
 ```tsx
+import { useNavigationBlocker } from "@swan-io/chicane";
+
 const App = () => {
   const { formStatus } = useForm(/* … */);
 

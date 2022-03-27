@@ -30,13 +30,13 @@ Spread a `createGroup` in your routes if you want to avoid repetition with neste
 - `subroutes` (**required**): Takes an object with your **route names** as keys, and their [**pattern**](./route-pattern-syntax) as values.
 
 ```ts
-import { createRouter } from "@swan-io/chicane";
+import { createRouter, createGroup } from "@swan-io/chicane";
 
 export const Router = createRouter({
   Home: "/",
   ...createGroup("User", "/users", {
-    List: "/users",
-    Detail: "/users/:userId",
+    List: "/", // UserList: "/users"
+    Detail: "/:userId", // UserDetail: "/users/:userId"
   }),
 });
 ```

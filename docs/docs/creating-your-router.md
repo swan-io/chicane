@@ -41,9 +41,10 @@ Second, you have the **useRoute** React hook. It takes an **array of routes you 
 
 ```ts
 const route = Router.useRoute(["UserList", "UserDetail"]);
-// { name: "UserList" };
-// { name: "UserDetail", params: { userId: "1" } };
-// undefined;
+
+// -> { name: "UserList", params: {} }
+//  | { name: "UserDetail", params: { userId: "1" } }
+//  | undefined
 ```
 
 You can call `useRoute` in any React component in your application!
@@ -60,14 +61,14 @@ The router also provides two functions to navigate programmatically (from your J
 If you want to avoid repetitions when having lots of subroutes, you can use a little helper called `createGroup`:
 
 ```ts title="src/router.ts"
-import { createRouter } from "@swan-io/chicane";
+import { createRouter, createGroup } from "@swan-io/chicane";
 
 export const Router = createRouter({
   Home: "/",
   About: "/about",
   ...createGroup("User", "/users", {
-    List: "/", // UserList: /users
-    Detail: "/:userId", // UserDetail: /users/:userId
+    List: "/", // UserList: "/users"
+    Detail: "/:userId", // UserDetail: "/users/:userId"
   }),
 });
 ```

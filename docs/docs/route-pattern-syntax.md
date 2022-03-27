@@ -33,7 +33,7 @@ When building your React app, there's a fair chance you'll want to delegate to a
 ```ts {3}
 const Router = createRouter({
   Home: "/",
-  UserArea: "/users/*", // will match `/users` and `/users/:userId`
+  UserArea: "/users/*", // will match "/users" and "/users/:userId"
   UserList: "/users",
   UserDetail: "/users/:userId",
 });
