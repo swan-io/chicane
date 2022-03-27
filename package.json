@@ -20,6 +20,9 @@
     "router",
     "typescript"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "yarn clean && microbundle -f cjs,es",
     "clean": "rm -rf dist",
