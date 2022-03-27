@@ -1,40 +1,49 @@
-import { Location as HistoryLocation } from "history";
+import mumurhash from "@emotion/hash";
+import { Path as HistoryLocation } from "history";
 import { isNonEmpty } from "./helpers";
 import { decodeSearch, encodeSearch } from "./search";
-import { Location } from "./types";
-
-// As the `encodeSearch` function guarantees a stable sorting, we can rely on a simple URL comparison
-export const areLocationsEqual = (locationA: Location, locationB: Location) =>
-  locationA.url === locationB.url;
+import { MutableLocation } from "./types";
 
 export const decodeLocation = (
   { pathname, search, hash }: HistoryLocation,
   removeExtraSlashes: boolean,
-): Location => {
+): MutableLocation => {
   const path = pathname.substring(1);
 
-  const outputPath =
+  const parsedPath =
     path !== ""
       ? removeExtraSlashes
         ? path.split("/").filter(isNonEmpty).map(decodeURIComponent)
         : path.split("/").map(decodeURIComponent)
       : [];
 
-  const outputSearch = search !== "" ? decodeSearch(search) : {};
-  const outputHash = hash !== "" ? decodeURIComponent(hash.substring(1)) : null;
+  const parsedSearch = search !== "" ? decodeSearch(search) : {};
+  const parsedHash = hash !== "" ? decodeURIComponent(hash.substring(1)) : null;
 
-  const url =
-    "/" +
-    outputPath.map(encodeURIComponent).join("/") +
-    encodeSearch(outputSearch) +
-    (outputHash != null ? "#" + encodeURIComponent(outputHash) : "");
+  const rawPath = "/" + parsedPath.map(encodeURIComponent).join("/");
+  const rawSearch = encodeSearch(parsedSearch);
+  const rawHash =
+    parsedHash != null ? "#" + encodeURIComponent(parsedHash) : "";
+
+  const stringifiedLocation = rawPath + rawSearch + rawHash;
 
   return {
-    url,
-    path: outputPath,
-    search: outputSearch,
-    ...(outputHash !== null && {
-      hash: outputHash,
+    key: `${mumurhash(rawPath)}-${mumurhash(rawSearch + rawHash)}`,
+
+    path: parsedPath,
+    search: parsedSearch,
+    ...(parsedHash !== null && {
+      hash: parsedHash,
     }),
+
+    raw: {
+      path: rawPath,
+      search: rawSearch,
+      hash: rawHash,
+    },
+
+    toString() {
+      return stringifiedLocation;
+    },
   };
 };

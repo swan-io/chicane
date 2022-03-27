@@ -5,25 +5,25 @@ const getMatcherEqual = <E>(name: string, route: string, expected: E) =>
   expect(getMatcher(name, route)).toStrictEqual({ name, ...expected });
 
 const matchers = [
-  getMatcher("groups", "/groups"),
-  getMatcher("group", "/groups/:groupId"),
-  getMatcher("myGroup", "/groups/mine"),
-  getMatcher("usersArea", "/groups/:groupId/users/*"),
-  getMatcher("users", "/groups/:groupId/users"),
+  getMatcher("Groups", "/groups"),
+  getMatcher("Group", "/groups/:groupId"),
+  getMatcher("MyGroup", "/groups/mine"),
+  getMatcher("UsersArea", "/groups/:groupId/users/*"),
+  getMatcher("Users", "/groups/:groupId/users"),
 ].sort((a, b) => b.ranking - a.ranking); // we sort the matchers since match doesn't do it at each call
 
 const matchEqual = <E>(path: string, expected: E) =>
   expect(match(getLocation(path), matchers)).toStrictEqual(expected);
 
 test("getMatcher returns a proper matcher structure for paths without params", () => {
-  getMatcherEqual("groups", "/groups", {
+  getMatcherEqual("Groups", "/groups", {
     finite: true,
     ranking: 7,
     search: {},
     segments: [{ name: "groups", param: false }],
   });
 
-  getMatcherEqual("myGroup", "/groups/mine", {
+  getMatcherEqual("MyGroup", "/groups/mine", {
     finite: true,
     ranking: 14,
     search: {},
@@ -35,7 +35,7 @@ test("getMatcher returns a proper matcher structure for paths without params", (
 });
 
 test("getMatcher returns a proper matcher structure for paths with params (in path only)", () => {
-  getMatcherEqual("group", "/group/:groupId", {
+  getMatcherEqual("Group", "/group/:groupId", {
     finite: true,
     ranking: 13,
     search: {},
@@ -45,7 +45,7 @@ test("getMatcher returns a proper matcher structure for paths with params (in pa
     ],
   });
 
-  getMatcherEqual("users", "/groups/:groupId/users", {
+  getMatcherEqual("Users", "/groups/:groupId/users", {
     finite: true,
     ranking: 20,
     search: {},
@@ -58,7 +58,7 @@ test("getMatcher returns a proper matcher structure for paths with params (in pa
 });
 
 test("getMatcher returns a proper matcher structure for paths with params (in path, search and hash)", () => {
-  getMatcherEqual("group", "/group/:groupId?:foo&:bar[]#:baz", {
+  getMatcherEqual("Group", "/group/:groupId?:foo&:bar[]#:baz", {
     finite: true,
     ranking: 13,
     hash: "baz",
@@ -71,7 +71,7 @@ test("getMatcher returns a proper matcher structure for paths with params (in pa
 });
 
 test("getMatcher decrements the ranking by 1 if the path is not finite", () => {
-  getMatcherEqual("usersArea", "/groups/:groupId/users/*", {
+  getMatcherEqual("UsersArea", "/groups/:groupId/users/*", {
     finite: false,
     ranking: 19,
     search: {},
@@ -82,7 +82,7 @@ test("getMatcher decrements the ranking by 1 if the path is not finite", () => {
     ],
   });
 
-  getMatcherEqual("users", "/groups/:groupId/users", {
+  getMatcherEqual("Users", "/groups/:groupId/users", {
     finite: true,
     ranking: 20,
     search: {},
@@ -96,27 +96,32 @@ test("getMatcher decrements the ranking by 1 if the path is not finite", () => {
 
 test("match extract route params and matches against a matcher", () => {
   matchEqual("/groups", {
-    name: "groups",
+    key: "d9j7z9-0",
+    name: "Groups",
     params: {},
   });
 
   matchEqual("/groups/github", {
-    name: "group",
+    key: "d3rhd4-0",
+    name: "Group",
     params: { groupId: "github" },
   });
 
   matchEqual("/groups/mine", {
-    name: "myGroup",
+    key: "v7gf21-0",
+    name: "MyGroup",
     params: {},
   });
 
   matchEqual("/groups/github/users/nested", {
-    name: "usersArea",
+    key: "1ta6bzy-0",
+    name: "UsersArea",
     params: { groupId: "github" },
   });
 
   matchEqual("/groups/github/users", {
-    name: "users",
+    key: "phoan7-0",
+    name: "Users",
     params: { groupId: "github" },
   });
 });

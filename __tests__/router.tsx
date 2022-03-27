@@ -1,24 +1,23 @@
 import { act, render } from "@testing-library/react";
 import * as React from "react";
-import { createRouter } from "../src";
+import { createRouter, pushUnsafe, useFocusReset } from "../src";
 import { resetInitialHasLocationChanged } from "../src/history";
 
 const routes = {
-  home: "/",
-  profiles: "/profile/*",
-  profile: "/profile/:username",
+  Home: "/",
+  Profiles: "/profile/*",
+  Profile: "/profile/:username",
 } as const;
 
 describe("router", () => {
-  const { useRoute, useRoutes, unsafeNavigate, useRouteFocus } =
-    createRouter(routes);
+  const { useRoute } = createRouter(routes);
 
   type RouteName = keyof typeof routes;
 
-  const routesToMatch: RouteName[] = ["home", "profiles", "profile"];
+  const routesToMatch: RouteName[] = ["Home", "Profiles", "Profile"];
 
   beforeEach(() => {
-    unsafeNavigate("/");
+    pushUnsafe("/");
     resetInitialHasLocationChanged();
   });
 
@@ -32,9 +31,9 @@ describe("router", () => {
 
       return (
         <>
-          {route.name === "home" ? (
+          {route.name === "Home" ? (
             <div> Home </div>
-          ) : route.name === "profile" ? (
+          ) : route.name === "Profile" ? (
             <div> Profile {route.params.username} </div>
           ) : null}
         </>
@@ -46,54 +45,24 @@ describe("router", () => {
     expect(container.textContent).toContain("Home");
 
     act(() => {
-      unsafeNavigate("/profile/zoontek");
+      pushUnsafe("/profile/zoontek");
     });
 
     expect(container.textContent).toContain("Profile zoontek");
 
     act(() => {
-      unsafeNavigate("/unknown");
+      pushUnsafe("/unknown");
     });
 
     expect(container.textContent).toContain("Not found");
   });
 
-  test("useRoutes: should match multiple routes (desc order)", () => {
-    const App = () => {
-      const routes = useRoutes(routesToMatch, { orderBy: "desc" });
-      return <>{routes.map((item) => `[${item.name}]`).join("")}</>;
-    };
-
-    const { container } = render(<App />);
-
-    act(() => {
-      unsafeNavigate("/profile/zoontek");
-    });
-
-    expect(container.textContent).toContain("[profile][profiles]");
-  });
-
-  test("useRoutes: should match multiple routes (asc order)", () => {
-    const App = () => {
-      const routes = useRoutes(routesToMatch, { orderBy: "asc" });
-      return <>{routes.map((item) => `[${item.name}]`).join("")}</>;
-    };
-
-    const { container } = render(<App />);
-
-    act(() => {
-      unsafeNavigate("/profile/zoontek");
-    });
-
-    expect(container.textContent).toContain("[profiles][profile]");
-  });
-
-  test("useRouteFocus: should focus the correct element", () => {
+  test("useFocusReset: should focus the correct element", () => {
     const App = () => {
       const route = useRoute(routesToMatch);
       const containerRef = React.useRef(null);
 
-      useRouteFocus({ containerRef, route });
+      useFocusReset({ route, containerRef });
 
       if (route === undefined) {
         return <div> Not found </div>;
@@ -101,9 +70,9 @@ describe("router", () => {
 
       return (
         <div ref={containerRef} data-testid="routeContainer">
-          {route.name === "home" ? (
+          {route.name === "Home" ? (
             <div> Home </div>
-          ) : route.name === "profile" ? (
+          ) : route.name === "Profile" ? (
             <div> Profile {route.params.username} </div>
           ) : null}
         </div>
@@ -118,7 +87,7 @@ describe("router", () => {
     expect(body).toHaveFocus();
 
     act(() => {
-      unsafeNavigate("/profile/zoontek");
+      pushUnsafe("/profile/zoontek");
     });
 
     // takes focus after a route change
@@ -133,13 +102,13 @@ describe("router", () => {
     expect(body).toHaveFocus();
 
     act(() => {
-      unsafeNavigate("/profile/zoontek");
+      pushUnsafe("/profile/zoontek");
     });
 
     expect(body).toHaveFocus();
 
     act(() => {
-      unsafeNavigate("/profile/bloodyowl");
+      pushUnsafe("/profile/bloodyowl");
     });
 
     // takes focus when only a param changes

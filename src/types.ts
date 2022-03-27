@@ -2,26 +2,32 @@ export type Search = Record<string, string | string[]>;
 export type Params = Record<string, string | string[] | undefined>;
 export type Subscription = (location: Location) => void;
 
-export type Segment = {
-  name: string;
-  param: boolean;
-};
-
 export type Matcher = {
   name: string;
-  segments: Segment[];
+  segments: { name: string; param: boolean }[];
   search: Record<string, "unique" | "multiple">;
   hash?: string;
   finite: boolean;
   ranking: number;
 };
 
-export type Location = Readonly<{
-  url: string;
+export type MutableLocation = {
+  key: string;
+
   path: readonly string[];
   search: Readonly<Search>;
   hash?: string;
-}>;
+
+  raw: Readonly<{
+    path: string;
+    search: string;
+    hash: string;
+  }>;
+
+  toString(): string;
+};
+
+export type Location = Readonly<MutableLocation>;
 
 type Split<
   Value extends string,

@@ -1,5 +1,5 @@
 {
-  "name": "react-chicane-example",
+  "name": "@swan-io/chicane-example",
   "private": true,
   "scripts": {
     "build": "tsc && vite build",
@@ -9,13 +9,13 @@
   "dependencies": {
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "ts-pattern": "^3.3.5"
+    "ts-pattern": "^4.0.1"
   },
   "devDependencies": {
-    "@types/react": "^17.0.40",
-    "@types/react-dom": "^17.0.13",
+    "@types/react": "^17.0.43",
+    "@types/react-dom": "^17.0.14",
     "@vitejs/plugin-react": "^1.2.0",
-    "typescript": "^4.6.2",
+    "typescript": "^4.6.3",
     "vite": "^2.8.6"
   }
 }

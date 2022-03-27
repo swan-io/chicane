@@ -1,15 +1,15 @@
 import * as React from "react";
 import { match } from "ts-pattern";
-import { Link } from "./Link";
-import { createURL, useRoute, useRouteFocus } from "./router";
+import { Link, useFocusReset } from "../../src";
+import { Router } from "./router";
 
 const EXAMPLE_DATA: Record<string, string[]> = {
   zoontek: [
-    "react-chicane",
-    "react-ux-form",
     "react-native-permissions",
     "react-native-bootsplash",
     "react-native-localize",
+    "valienv",
+    "react-atomic-state",
   ],
   bloodyowl: [
     "rescript-recoil",
@@ -18,20 +18,20 @@ const EXAMPLE_DATA: Record<string, string[]> = {
     "rescript-future",
     "rescript-asyncdata",
   ],
-  MoOx: [
-    "rescript-react-native",
-    "phenomic",
-    "pjax",
-    "postcss-cssnext",
-    "react-multiversal",
+  mbreton: [
+    "ember-router-example",
+    "git-dummy-test",
+    "hands-on-devoxx-fr-2015",
+    "clap-detector",
+    "dart_bootstrap",
   ],
 };
 
 export const App = () => {
-  const route = useRoute(["root", "users", "user", "repositoriesArea"]);
+  const route = Router.useRoute(["Home", "Users", "User", "RepositoriesArea"]);
   const containerRef = React.useRef(null);
 
-  useRouteFocus({ containerRef, route });
+  useFocusReset({ route, containerRef });
 
   return (
     <div style={{ display: "flex" }}>
@@ -43,8 +43,13 @@ export const App = () => {
           minWidth: 200,
         }}
       >
-        <Link to={createURL("root")}>Homepage</Link>
-        <Link to={createURL("users")}>Users</Link>
+        <Link to={Router.Home()} activeStyle={{ fontWeight: 700 }}>
+          Home
+        </Link>
+
+        <Link to={Router.Users()} activeStyle={{ fontWeight: 700 }}>
+          Users
+        </Link>
       </nav>
 
       <main
@@ -52,29 +57,27 @@ export const App = () => {
         style={{ display: "flex", flexDirection: "column" }}
       >
         {match(route)
-          .with({ name: "root" }, () => <h1>Homepage</h1>)
-          .with({ name: "users" }, () => (
+          .with({ name: "Home" }, () => <h1>Home</h1>)
+          .with({ name: "Users" }, () => (
             <>
               <h1>Users</h1>
 
               {Object.keys(EXAMPLE_DATA).map((userId) => (
-                <Link key={userId} to={createURL("user", { userId })}>
+                <Link key={userId} to={Router.User({ userId })}>
                   {userId}
                 </Link>
               ))}
             </>
           ))
-          .with({ name: "user" }, ({ params: { userId } }) => (
+          .with({ name: "User" }, ({ params: { userId } }) => (
             <>
               <h1>{userId}</h1>
               <p>{userId} homepage</p>
 
-              <Link to={createURL("repositories", { userId })}>
-                His repositories
-              </Link>
+              <Link to={Router.Repositories({ userId })}>His repositories</Link>
             </>
           ))
-          .with({ name: "repositoriesArea" }, ({ params }) => (
+          .with({ name: "RepositoriesArea" }, ({ params }) => (
             <Repositories userId={params.userId} />
           ))
           .with(undefined, () => <h1>404 - Page not found</h1>)
@@ -85,21 +88,21 @@ export const App = () => {
 };
 
 const Repositories = ({ userId }: { userId: string }) => {
-  const route = useRoute(["repositories", "repository"]);
+  const route = Router.useRoute(["Repositories", "Repository"]);
   const containerRef = React.useRef(null);
 
-  useRouteFocus({ containerRef, route });
+  useFocusReset({ route, containerRef });
 
   return (
     <div ref={containerRef}>
       <h1>{userId} repositories</h1>
 
       {match(route)
-        .with({ name: "repositories" }, () => (
+        .with({ name: "Repositories" }, () => (
           <ul>
             {EXAMPLE_DATA[userId]?.map((repositoryId) => (
               <li key={repositoryId}>
-                <Link to={createURL("repository", { userId, repositoryId })}>
+                <Link to={Router.Repository({ userId, repositoryId })}>
                   {repositoryId}
                 </Link>
               </li>
@@ -107,7 +110,7 @@ const Repositories = ({ userId }: { userId: string }) => {
           </ul>
         ))
         .with(
-          { name: "repository" },
+          { name: "Repository" },
           ({ params: { userId, repositoryId } }) => (
             <h2>
               {userId}/{repositoryId}

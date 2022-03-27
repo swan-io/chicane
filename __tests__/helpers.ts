@@ -1,4 +1,5 @@
 import {
+  areParamsArrayEqual,
   concatPaths,
   first,
   isMultipleParam,
@@ -38,6 +39,20 @@ describe("isParam", () => {
   test("returns false if the value is not a well-formed route param", () => {
     expect(isParam(" :test")).toBe(false);
     expect(isParam("test")).toBe(false);
+  });
+});
+
+describe("areParamsArrayEqual", () => {
+  test("returns true with identical arrays", () => {
+    expect(areParamsArrayEqual([], [])).toBe(true);
+    expect(areParamsArrayEqual(["foo"], ["foo"])).toBe(true);
+    expect(areParamsArrayEqual(["foo", "bar"], ["foo", "bar"])).toBe(true);
+  });
+
+  test("returns false with different arrays", () => {
+    expect(areParamsArrayEqual(["foo"], [])).toBe(false);
+    expect(areParamsArrayEqual(["foo"], ["bar"])).toBe(false);
+    expect(areParamsArrayEqual(["foo", "bar"], ["bar", "foo"])).toBe(false);
   });
 });
 

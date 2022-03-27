@@ -1,12 +1,13 @@
 import { parsePath, Path as HistoryPath } from "history";
 import { isMultipleParam, isNonEmpty, isParam } from "./helpers";
 import { encodeSearch } from "./search";
-import { Location, Matcher, Params, Search, Segment } from "./types";
+import { Location, Matcher, Params, Search } from "./types";
 
 // Kudos to https://reach.tech/router/ranking
-export const getRankingAndSegments = (route: string) => {
-  const parts = route.split("/").filter(isNonEmpty);
-  const segments: Segment[] = [];
+const extractFromPathname = (pathname: string) => {
+  const parts = pathname.split("/").filter(isNonEmpty);
+  const segments: Matcher["segments"] = [];
+
   let ranking = parts.length > 0 ? parts.length * 4 : 5;
 
   for (const part of parts) {
@@ -23,18 +24,18 @@ export const getRankingAndSegments = (route: string) => {
 export const getMatcher = (name: string, route: string): Matcher => {
   if (route.endsWith("*")) {
     const { pathname = "/" } = parsePath(route.slice(0, -1));
-    const { ranking, segments } = getRankingAndSegments(pathname);
+    const { ranking, segments } = extractFromPathname(pathname);
 
     return {
       finite: false,
       name,
       ranking: ranking - 1, // penality due to wildcard
-      search: {},
       segments,
+      search: {},
     };
   } else {
     const { pathname = "/", search = "", hash = "" } = parsePath(route);
-    const { ranking, segments } = getRankingAndSegments(pathname);
+    const { ranking, segments } = extractFromPathname(pathname);
 
     const searchMatchers: Matcher["search"] = {};
     const params = new URLSearchParams(search.substring(1));
@@ -51,8 +52,8 @@ export const getMatcher = (name: string, route: string): Matcher => {
       finite: true,
       name,
       ranking,
-      search: searchMatchers,
       segments,
+      search: searchMatchers,
       ...(isParam(hash.substring(1)) && {
         hash: hash.substring(2),
       }),
@@ -134,35 +135,17 @@ export const extractLocationParams = (
   return params;
 };
 
-export const matchAll = (
-  location: Location,
-  matchers: Matcher[],
-): { name: string; params: Params }[] => {
-  const routes = [];
-  for (const matcher of matchers) {
-    const params = extractLocationParams(location, matcher);
-
-    if (params != null) {
-      routes.push({ name: matcher.name, params });
-    }
-  }
-
-  return routes;
-};
-
 export const match = (
   location: Location,
   matchers: Matcher[],
-): { name: string; params: Params } | undefined => {
+): { key: string; name: string; params: Params } | undefined => {
   for (const matcher of matchers) {
     const params = extractLocationParams(location, matcher);
 
     if (params != null) {
-      return { name: matcher.name, params };
+      return { key: location.key, name: matcher.name, params };
     }
   }
-
-  return;
 };
 
 export const matchToHistoryPath = (
