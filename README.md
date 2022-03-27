@@ -13,7 +13,7 @@ A simple and safe router for React and TypeScript.
 - Fully-typed routes 😌
 - Keyboard accessibility
 - Safe URLs creation
-- Navigation blockers
+- Navigation blocking
 
 ## Installation
 
