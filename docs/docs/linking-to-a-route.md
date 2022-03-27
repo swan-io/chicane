@@ -31,7 +31,7 @@ The `Link` component takes a few props:
 
 ## Creating your own Link component
 
-We provide a default `Link` component, but you can also create yours if needed using the `useLink` hook:
+We provide a default `Link` component, but you can also create yours if needed using the `useLinkProps` hook:
 
 ```tsx {5} title="src/Link.tsx"
 import { useLinkProps } from "@swan-io/chicane";
