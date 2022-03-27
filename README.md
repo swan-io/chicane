@@ -1,4 +1,4 @@
-<img align="left" width="75" alt="@swan-io/chicane logo" src="docs/static/img/logo.svg">
+<img width="108" alt="@swan-io/chicane logo" src="docs/static/img/logo.svg">
 
 # @swan-io/chicane
 
