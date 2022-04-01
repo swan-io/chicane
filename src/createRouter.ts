@@ -21,7 +21,6 @@ export const createRouter = <
   routes: Readonly<Routes>,
   options: {
     basePath?: BasePath;
-    blockerMessage?: string;
   } = {},
 ) => {
   type RoutesWithBasePath = PrependBasePath<Routes, BasePath>;
