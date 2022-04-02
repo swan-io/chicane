@@ -21,7 +21,8 @@
     "typescript"
   ],
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
   },
   "scripts": {
     "build": "yarn clean && microbundle -f cjs,es",
