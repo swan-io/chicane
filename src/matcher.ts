@@ -6,38 +6,35 @@ import { Location, Matcher, Params, Search } from "./types";
 // Kudos to https://reach.tech/router/ranking
 const extractFromPathname = (pathname: string) => {
   const parts = pathname.split("/").filter(isNonEmpty);
-  const segments: Matcher["segments"] = [];
+  const path: Matcher["path"] = [];
 
   let ranking = parts.length > 0 ? parts.length * 4 : 5;
 
   for (const part of parts) {
     const param = isParam(part);
-
     ranking += param ? 2 : 3;
-    segments.push(
-      param ? { name: part.substring(1) } : encodeURIComponent(part),
-    );
+    path.push(param ? { name: part.substring(1) } : encodeURIComponent(part));
   }
 
-  return { ranking, segments };
+  return { ranking, path };
 };
 
 export const getMatcher = (name: string, route: string): Matcher => {
   if (route.endsWith("*")) {
     const { pathname = "/" } = parsePath(route.slice(0, -1));
-    const { ranking, segments } = extractFromPathname(pathname);
+    const { ranking, path } = extractFromPathname(pathname);
 
     return {
       finite: false,
       name,
       ranking: ranking - 1, // penality due to wildcard
-      segments,
+      path,
       search: {},
       hash: undefined,
     };
   } else {
     const { pathname = "/", search = "", hash = "" } = parsePath(route);
-    const { ranking, segments } = extractFromPathname(pathname);
+    const { ranking, path } = extractFromPathname(pathname);
 
     const searchMatchers: Matcher["search"] = {};
     const params = new URLSearchParams(search.substring(1));
@@ -54,7 +51,7 @@ export const getMatcher = (name: string, route: string): Matcher => {
       finite: true,
       name,
       ranking,
-      segments,
+      path,
       search: searchMatchers,
       hash: isParam(hash.substring(1)) ? hash.substring(2) : undefined,
     };
@@ -65,35 +62,35 @@ export const extractLocationParams = (
   location: Location,
   matcher: Matcher,
 ): Params | undefined => {
-  const { path } = location;
-  const { finite, segments } = matcher;
+  const { path: locationPath } = location;
+  const { finite, path: matcherPath } = matcher;
 
   if (
-    (finite && path.length !== segments.length) ||
-    (!finite && path.length < segments.length)
+    (finite && locationPath.length !== matcherPath.length) ||
+    (!finite && locationPath.length < matcherPath.length)
   ) {
     return;
   }
 
   const params: Params = {};
 
-  for (let index = 0; index < segments.length; index++) {
-    const part = path[index];
-    const segment = segments[index];
+  for (let index = 0; index < matcherPath.length; index++) {
+    const locationPart = locationPath[index];
+    const matcherPart = matcherPath[index];
 
-    if (segment == null) {
+    if (matcherPart == null) {
       continue;
     }
 
-    if (typeof segment !== "string") {
-      if (part == null) {
+    if (typeof matcherPart !== "string") {
+      if (locationPart == null) {
         return;
       } else {
-        params[segment.name] = part;
+        params[matcherPart.name] = locationPart;
         continue;
       }
     } else {
-      if (segment === part) {
+      if (matcherPart === locationPart) {
         continue;
       } else {
         return;
@@ -154,16 +151,16 @@ export const matchToHistoryPath = (
 ): HistoryPath => {
   const pathname =
     "/" +
-    matcher.segments
-      .map((segment) => {
-        if (typeof segment === "string") {
-          return encodeURIComponent(segment);
+    matcher.path
+      .map((part) => {
+        if (typeof part === "string") {
+          return encodeURIComponent(part);
         }
 
-        const value = params[segment.name];
+        const value = params[part.name];
 
         return typeof value !== "string"
-          ? segment.name
+          ? part.name
           : encodeURIComponent(value);
       })
       .join("/");
