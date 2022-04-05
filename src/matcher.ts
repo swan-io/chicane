@@ -12,10 +12,11 @@ const extractFromPathname = (pathname: string) => {
 
   for (const part of parts) {
     const param = isParam(part);
-    const name = param ? part.substring(1) : encodeURIComponent(part);
 
     ranking += param ? 2 : 3;
-    segments.push({ name, param });
+    segments.push(
+      param ? { name: part.substring(1) } : encodeURIComponent(part),
+    );
   }
 
   return { ranking, segments };
@@ -84,7 +85,7 @@ export const extractLocationParams = (
       continue;
     }
 
-    if (segment.param) {
+    if (typeof segment !== "string") {
       if (part == null) {
         return;
       } else {
@@ -92,7 +93,7 @@ export const extractLocationParams = (
         continue;
       }
     } else {
-      if (segment.name === part) {
+      if (segment === part) {
         continue;
       } else {
         return;
@@ -154,12 +155,16 @@ export const matchToHistoryPath = (
   const pathname =
     "/" +
     matcher.segments
-      .map(({ name, param }) => {
-        const value = params[name];
+      .map((segment) => {
+        if (typeof segment === "string") {
+          return encodeURIComponent(segment);
+        }
 
-        return encodeURIComponent(
-          param && typeof value === "string" ? value : name,
-        );
+        const value = params[segment.name];
+
+        return typeof value !== "string"
+          ? segment.name
+          : encodeURIComponent(value);
       })
       .join("/");
 
