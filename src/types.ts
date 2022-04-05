@@ -6,7 +6,7 @@ export type Matcher = {
   name: string;
   segments: { name: string; param: boolean }[];
   search: Record<string, "unique" | "multiple">;
-  hash?: string;
+  hash: string | undefined;
   finite: boolean;
   ranking: number;
 };

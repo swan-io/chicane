@@ -32,6 +32,7 @@ export const getMatcher = (name: string, route: string): Matcher => {
       ranking: ranking - 1, // penality due to wildcard
       segments,
       search: {},
+      hash: undefined,
     };
   } else {
     const { pathname = "/", search = "", hash = "" } = parsePath(route);
@@ -54,9 +55,7 @@ export const getMatcher = (name: string, route: string): Matcher => {
       ranking,
       segments,
       search: searchMatchers,
-      ...(isParam(hash.substring(1)) && {
-        hash: hash.substring(2),
-      }),
+      hash: isParam(hash.substring(1)) ? hash.substring(2) : undefined,
     };
   }
 };
