@@ -11,7 +11,7 @@ export type Matcher = {
   ranking: number;
 };
 
-export type MutableLocation = {
+export type Location = Readonly<{
   key: string;
 
   path: readonly string[];
@@ -25,9 +25,7 @@ export type MutableLocation = {
   }>;
 
   toString(): string;
-};
-
-export type Location = Readonly<MutableLocation>;
+}>;
 
 type Split<
   Value extends string,

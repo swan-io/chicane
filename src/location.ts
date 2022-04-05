@@ -2,12 +2,12 @@ import mumurhash from "@emotion/hash";
 import { Path as HistoryLocation } from "history";
 import { isNonEmpty } from "./helpers";
 import { decodeSearch, encodeSearch } from "./search";
-import { MutableLocation } from "./types";
+import { Location } from "./types";
 
 export const decodeLocation = (
   { pathname, search, hash }: HistoryLocation,
   removeExtraSlashes: boolean,
-): MutableLocation => {
+): Location => {
   const path = pathname.substring(1);
 
   const parsedPath =
