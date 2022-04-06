@@ -152,17 +152,11 @@ export const matchToHistoryPath = (
   const pathname =
     "/" +
     matcher.path
-      .map((part) => {
-        if (typeof part === "string") {
-          return encodeURIComponent(part);
-        }
-
-        const value = params[part.name];
-
-        return typeof value !== "string"
-          ? part.name
-          : encodeURIComponent(value);
-      })
+      .map((part) =>
+        encodeURIComponent(
+          typeof part === "string" ? part : String(params[part.name]),
+        ),
+      )
       .join("/");
 
   // https://github.com/remix-run/history/issues/859
