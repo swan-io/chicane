@@ -4,14 +4,14 @@ export type Subscription = (location: Location) => void;
 
 export type Matcher = {
   name: string;
-  segments: { name: string; param: boolean }[];
+  path: (string | { name: string })[];
   search: Record<string, "unique" | "multiple">;
-  hash?: string;
+  hash: string | undefined;
   finite: boolean;
   ranking: number;
 };
 
-export type MutableLocation = {
+export type Location = Readonly<{
   key: string;
 
   path: readonly string[];
@@ -25,22 +25,22 @@ export type MutableLocation = {
   }>;
 
   toString(): string;
-};
+}>;
 
-export type Location = Readonly<MutableLocation>;
-
-type Split<
+type SplitAndFilterEmpty<
   Value extends string,
   Separator extends string,
 > = Value extends `${infer Head}${Separator}${infer Tail}`
-  ? [Head, ...Split<Tail, Separator>]
-  : Value extends Separator
+  ? Head extends ""
+    ? SplitAndFilterEmpty<Tail, Separator>
+    : [Head, ...SplitAndFilterEmpty<Tail, Separator>]
+  : Value extends Separator | ""
   ? []
   : [Value];
 
 type ExtractPathParams<
   Path extends string,
-  Parts = Split<Path, "/">,
+  Parts = SplitAndFilterEmpty<Path, "/">,
 > = Parts extends [infer Head, ...infer Tail]
   ? Head extends `:${infer Name}`
     ? { [K in Name]: string } & ExtractPathParams<Path, Tail>
@@ -49,7 +49,7 @@ type ExtractPathParams<
 
 type ExtractSearchParams<
   Search extends string,
-  Parts = Split<Search, "&">,
+  Parts = SplitAndFilterEmpty<Search, "&">,
 > = Parts extends [infer Head, ...infer Tail]
   ? Head extends `:${infer Name}[]`
     ? { [K in Name]?: string[] } & ExtractSearchParams<Search, Tail>
