@@ -70,7 +70,7 @@ type ExtractRouteParams<Route extends string> =
     : Route extends `${infer Path}?${infer Search}`
     ? ExtractPathParams<Path> & ExtractSearchParams<Search>
     : Route extends `${infer Path}#${infer Hash}`
-    ? ExtractPathParams<Path> & ExtractSearchParams<Hash>
+    ? ExtractPathParams<Path> & ExtractHashParam<Hash>
     : ExtractPathParams<Route>;
 
 export type PrefixWithSlash<Path extends string> = Path extends `/${infer _}`
