@@ -5,17 +5,18 @@ import { areRouteEqual, concatPaths, first, identity } from "./helpers";
 import { getLocation, history, subscribeToLocation } from "./history";
 import { getMatcher, match, matchToHistoryPath } from "./matcher";
 import {
-  ExtractRoutesParams,
   GetNestedRoutes,
+  GetRoutesParams,
   Matcher,
   Params,
   ParamsArg,
   PrependBasePath,
+  RouteFromGroup,
   Simplify,
 } from "./types";
 
 export const createRouter = <
-  Routes extends Record<string, string>,
+  Routes extends Record<string, string | RouteFromGroup>,
   BasePath extends string = string,
 >(
   routes: Readonly<Routes>,
@@ -23,11 +24,11 @@ export const createRouter = <
     basePath?: BasePath;
   } = {},
 ) => {
-  type RoutesWithBasePath = PrependBasePath<Routes, BasePath>;
+  type RoutesWithBasePath = PrependBasePath<BasePath, Routes>;
   type NestedRoutes = GetNestedRoutes<RoutesWithBasePath>;
-  type NestedRoutesParams = ExtractRoutesParams<NestedRoutes>;
+  type NestedRoutesParams = GetRoutesParams<NestedRoutes>;
   type FiniteRoutes = Omit<RoutesWithBasePath, keyof NestedRoutes>;
-  type FiniteRoutesParams = ExtractRoutesParams<FiniteRoutes>;
+  type FiniteRoutesParams = GetRoutesParams<FiniteRoutes>;
   type RoutesParams = NestedRoutesParams & FiniteRoutesParams;
 
   const { basePath = "" } = options;

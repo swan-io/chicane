@@ -1,4 +1,5 @@
 export const first = <T>(value: T[]): T | undefined => value[0];
+export const last = <T>(value: T[]): T | undefined => value[value.length - 1];
 export const identity = <T>(value: T): T => value;
 export const isNonEmpty = (value: string): boolean => value !== "";
 export const isParam = (value: string): boolean => value.startsWith(":");

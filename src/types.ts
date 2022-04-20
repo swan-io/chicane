@@ -1,15 +1,23 @@
+type Last<T extends unknown[]> = T extends [...unknown[], infer R] ? R : never;
+type EmptyRecord = Record<string | number | symbol, never>;
+
+export type Simplify<T> = T extends EmptyRecord ? {} : { [K in keyof T]: T[K] };
+
 export type Search = Record<string, string | string[]>;
 export type Params = Record<string, string | string[] | undefined>;
 export type Subscription = (location: Location) => void;
 
 export type Matcher = {
+  finite: boolean;
   name: string;
+  ranking: number;
+
   path: (string | { name: string })[];
   search: Record<string, "unique" | "multiple">;
   hash: string | undefined;
-  finite: boolean;
-  ranking: number;
 };
+
+export type RouteFromGroup = Pick<Matcher, "path" | "search" | "hash">;
 
 export type Location = Readonly<{
   key: string;
@@ -38,76 +46,115 @@ type SplitAndFilterEmpty<
   ? []
   : [Value];
 
-type ExtractPathParams<
+type ExtractPath<
   Path extends string,
   Parts = SplitAndFilterEmpty<Path, "/">,
 > = Parts extends [infer Head, ...infer Tail]
   ? Head extends `:${infer Name}`
-    ? { [K in Name]: string } & ExtractPathParams<Path, Tail>
-    : ExtractPathParams<Path, Tail>
-  : {};
+    ? [{ name: Name }, ...ExtractPath<Path, Tail>]
+    : [Head, ...ExtractPath<Path, Tail>]
+  : [];
 
-type ExtractSearchParams<
+type ExtractSearch<
   Search extends string,
   Parts = SplitAndFilterEmpty<Search, "&">,
 > = Parts extends [infer Head, ...infer Tail]
   ? Head extends `:${infer Name}[]`
-    ? { [K in Name]?: string[] } & ExtractSearchParams<Search, Tail>
+    ? { [K in Name]: "multiple" } & ExtractSearch<Search, Tail>
     : Head extends `:${infer Name}`
-    ? { [K in Name]?: string } & ExtractSearchParams<Search, Tail>
-    : ExtractSearchParams<Search, Tail>
+    ? { [K in Name]: "unique" } & ExtractSearch<Search, Tail>
+    : ExtractSearch<Search, Tail>
   : {};
 
-type ExtractHashParam<Value extends string> = Value extends `:${infer Name}`
-  ? { [K in Name]?: string }
-  : {};
+type ExtractHash<Hash extends string> = Hash extends `:${infer Name}`
+  ? Name
+  : undefined;
 
-type ExtractRouteParams<Route extends string> =
+type ExtractRoute<Route extends string> =
   Route extends `${infer Path}?${infer Search}#${infer Hash}`
-    ? ExtractPathParams<Path> &
-        ExtractSearchParams<Search> &
-        ExtractHashParam<Hash>
+    ? {
+        path: ExtractPath<Path>;
+        search: ExtractSearch<Search>;
+        hash: ExtractHash<Hash>;
+      }
     : Route extends `${infer Path}?${infer Search}`
-    ? ExtractPathParams<Path> & ExtractSearchParams<Search>
+    ? {
+        path: ExtractPath<Path>;
+        search: ExtractSearch<Search>;
+        hash: undefined;
+      }
     : Route extends `${infer Path}#${infer Hash}`
-    ? ExtractPathParams<Path> & ExtractHashParam<Hash>
-    : ExtractPathParams<Route>;
+    ? { path: ExtractPath<Path>; search: {}; hash: ExtractHash<Hash> }
+    : { path: ExtractPath<Route>; search: {}; hash: undefined };
 
-export type PrefixWithSlash<Path extends string> = Path extends `/${infer _}`
-  ? Path
-  : `/${Path}`;
+type ConcatSearch<
+  SearchA extends RouteFromGroup["search"],
+  SearchB extends RouteFromGroup["search"],
+  KeysA extends keyof SearchA = keyof SearchA,
+  KeysB extends keyof SearchB = keyof SearchB,
+> = Simplify<
+  Omit<SearchA, KeysB> &
+    Omit<SearchB, KeysA> & {
+      [K in KeysA & KeysB]: SearchA[K] extends "multiple"
+        ? "multiple"
+        : SearchB[K] extends "multiple"
+        ? "multiple"
+        : "unique"; // mandatory
+    }
+>;
 
-export type ConcatPaths<
-  PathA extends string,
-  PathB extends string,
-  PrefixedPathA extends string = PrefixWithSlash<PathA>,
-  PrefixedPathB extends string = PrefixWithSlash<PathB>,
-> = PrefixedPathA extends "/"
-  ? PrefixedPathB
-  : PrefixedPathB extends "/"
-  ? PrefixedPathA
-  : `${PrefixedPathA}${PrefixedPathB}`;
+type ConcatRoutes<
+  RouteA extends RouteFromGroup,
+  RouteB extends RouteFromGroup,
+> = Simplify<{
+  path: [...RouteA["path"], ...RouteB["path"]];
+  search: ConcatSearch<RouteA["search"], RouteB["search"]>;
+  hash: RouteB["hash"] extends undefined ? RouteA["hash"] : RouteB["hash"];
+}>;
 
 export type PrependBasePath<
-  Routes extends Record<string, string>,
   BasePath extends string,
+  Routes extends Record<string, string | RouteFromGroup>,
+  ExtractedBasePath extends RouteFromGroup = ExtractRoute<BasePath>,
 > = {
-  [K in keyof Routes]: ConcatPaths<BasePath, Routes[K]>;
+  [K in keyof Routes]: ConcatRoutes<
+    ExtractedBasePath,
+    Routes[K] extends string
+      ? ExtractRoute<Routes[K]>
+      : Routes[K] extends RouteFromGroup
+      ? Routes[K]
+      : never // mandatory
+  >;
 };
 
-export type GetNestedRoutes<Routes extends Record<string, string>> = {
-  [K in keyof Routes as Routes[K] extends `${infer _}*`
+export type GetNestedRoutes<Routes extends Record<string, RouteFromGroup>> = {
+  [K in keyof Routes as Last<Routes[K]["path"]> extends "*"
     ? K
-    : never]: Routes[K] extends `${infer Rest}*` ? Rest : never;
+    : never]: Routes[K];
 };
 
-export type ExtractRoutesParams<Routes extends Record<string, string>> = {
-  [K in keyof Routes]: ExtractRouteParams<Routes[K]>;
+type GetPathParams<Path extends RouteFromGroup["path"]> = Exclude<
+  Path[number],
+  string
+>;
+
+type GetSearchParams<Search extends RouteFromGroup["search"]> = {
+  [K in keyof Search]: Search[K] extends "multiple" ? string[] : string;
 };
 
-type EmptyRecord = Record<string | number | symbol, never>;
+type GetHashParams<Hash extends RouteFromGroup["hash"]> = Hash extends string
+  ? { [K in Hash]: string }
+  : {};
 
-export type Simplify<T> = T extends EmptyRecord ? {} : { [K in keyof T]: T[K] };
+type GetRouteParams<Route extends RouteFromGroup> = Simplify<
+  GetPathParams<Route["path"]> &
+    GetSearchParams<Route["search"]> &
+    GetHashParams<Route["hash"]>
+>;
+
+export type GetRoutesParams<Routes extends Record<string, RouteFromGroup>> = {
+  [K in keyof Routes]: GetRouteParams<Routes[K]>;
+};
 
 type NonOptionalProperties<T> = Exclude<
   { [K in keyof T]: T extends Record<K, T[K]> ? K : never }[keyof T],
