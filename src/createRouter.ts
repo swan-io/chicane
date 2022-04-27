@@ -6,7 +6,7 @@ import { getLocation, history, subscribeToLocation } from "./history";
 import { getMatcher, match, matchToHistoryPath } from "./matcher";
 import {
   ExtractRoutesParams,
-  GetNestedRoutes,
+  GetAreaRoutes,
   Matcher,
   Params,
   ParamsArg,
@@ -24,11 +24,11 @@ export const createRouter = <
   } = {},
 ) => {
   type RoutesWithBasePath = PrependBasePath<Routes, BasePath>;
-  type NestedRoutes = GetNestedRoutes<RoutesWithBasePath>;
-  type NestedRoutesParams = ExtractRoutesParams<NestedRoutes>;
-  type FiniteRoutes = Omit<RoutesWithBasePath, keyof NestedRoutes>;
+  type AreaRoutes = GetAreaRoutes<RoutesWithBasePath>;
+  type AreaRoutesParams = ExtractRoutesParams<AreaRoutes>;
+  type FiniteRoutes = Omit<RoutesWithBasePath, keyof AreaRoutes>;
   type FiniteRoutesParams = ExtractRoutesParams<FiniteRoutes>;
-  type RoutesParams = NestedRoutesParams & FiniteRoutesParams;
+  type RoutesParams = AreaRoutesParams & FiniteRoutesParams;
 
   const { basePath = "" } = options;
 
@@ -60,7 +60,7 @@ export const createRouter = <
   for (let index = 0; index < rankedMatchers.length; index++) {
     const matcher = rankedMatchers[index];
 
-    if (matcher?.finite) {
+    if (matcher != null && !matcher.isArea) {
       const routeName = matcher.name as keyof FiniteRoutes;
 
       createURLFunctions[routeName] = (params?: Params) =>
@@ -68,7 +68,7 @@ export const createRouter = <
     }
   }
 
-  const useRoute = <RouteName extends keyof FiniteRoutes | keyof NestedRoutes>(
+  const useRoute = <RouteName extends keyof FiniteRoutes | keyof AreaRoutes>(
     routeNames: ReadonlyArray<RouteName>,
   ): RouteName extends string
     ?

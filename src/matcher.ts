@@ -25,7 +25,7 @@ export const getMatcher = (name: string, route: string): Matcher => {
     const { ranking, path } = extractFromPathname(pathname);
 
     return {
-      finite: false,
+      isArea: true,
       name,
       ranking: ranking - 1, // penality due to wildcard
       path,
@@ -48,7 +48,7 @@ export const getMatcher = (name: string, route: string): Matcher => {
     }
 
     return {
-      finite: true,
+      isArea: false,
       name,
       ranking,
       path,
@@ -63,11 +63,11 @@ export const extractLocationParams = (
   matcher: Matcher,
 ): Params | undefined => {
   const { path: locationPath } = location;
-  const { finite, path: matcherPath } = matcher;
+  const { isArea, path: matcherPath } = matcher;
 
   if (
-    (finite && locationPath.length !== matcherPath.length) ||
-    (!finite && locationPath.length < matcherPath.length)
+    (!isArea && locationPath.length !== matcherPath.length) ||
+    (isArea && locationPath.length < matcherPath.length)
   ) {
     return;
   }
@@ -98,8 +98,8 @@ export const extractLocationParams = (
     }
   }
 
-  if (!finite) {
-    return params; // don't extract search and hash on non-finite routes
+  if (isArea) {
+    return params; // don't extract area search and hash
   }
 
   for (const key in matcher.search) {

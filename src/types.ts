@@ -3,12 +3,13 @@ export type Params = Record<string, string | string[] | undefined>;
 export type Subscription = (location: Location) => void;
 
 export type Matcher = {
+  isArea: boolean;
   name: string;
+  ranking: number;
+
   path: (string | { name: string })[];
   search: Record<string, "unique" | "multiple">;
   hash: string | undefined;
-  finite: boolean;
-  ranking: number;
 };
 
 export type Location = Readonly<{
@@ -95,7 +96,7 @@ export type PrependBasePath<
   [K in keyof Routes]: ConcatPaths<BasePath, Routes[K]>;
 };
 
-export type GetNestedRoutes<Routes extends Record<string, string>> = {
+export type GetAreaRoutes<Routes extends Record<string, string>> = {
   [K in keyof Routes as Routes[K] extends `${infer _}*`
     ? K
     : never]: Routes[K] extends `${infer Rest}*` ? Rest : never;
