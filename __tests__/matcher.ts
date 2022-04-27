@@ -17,7 +17,7 @@ const matchEqual = <E>(path: string, expected: E) =>
 
 test("getMatcher returns a proper matcher structure for paths without params", () => {
   getMatcherEqual("Groups", "/groups", {
-    finite: true,
+    isArea: false,
     ranking: 7,
     path: ["groups"],
     search: {},
@@ -25,7 +25,7 @@ test("getMatcher returns a proper matcher structure for paths without params", (
   });
 
   getMatcherEqual("MyGroup", "/groups/mine", {
-    finite: true,
+    isArea: false,
     ranking: 14,
     path: ["groups", "mine"],
     search: {},
@@ -35,7 +35,7 @@ test("getMatcher returns a proper matcher structure for paths without params", (
 
 test("getMatcher returns a proper matcher structure for paths with params (in path only)", () => {
   getMatcherEqual("Group", "/group/:groupId", {
-    finite: true,
+    isArea: false,
     ranking: 13,
     path: ["group", { name: "groupId" }],
     search: {},
@@ -43,7 +43,7 @@ test("getMatcher returns a proper matcher structure for paths with params (in pa
   });
 
   getMatcherEqual("Users", "/groups/:groupId/users", {
-    finite: true,
+    isArea: false,
     ranking: 20,
     path: ["groups", { name: "groupId" }, "users"],
     search: {},
@@ -53,7 +53,7 @@ test("getMatcher returns a proper matcher structure for paths with params (in pa
 
 test("getMatcher returns a proper matcher structure for paths with params (in path, search and hash)", () => {
   getMatcherEqual("Group", "/group/:groupId?:foo&:bar[]#:baz", {
-    finite: true,
+    isArea: false,
     ranking: 13,
     path: ["group", { name: "groupId" }],
     search: { foo: "unique", bar: "multiple" },
@@ -61,9 +61,9 @@ test("getMatcher returns a proper matcher structure for paths with params (in pa
   });
 });
 
-test("getMatcher decrements the ranking by 1 if the path is not finite", () => {
+test("getMatcher decrements the ranking by 1 if the path is an area", () => {
   getMatcherEqual("UsersArea", "/groups/:groupId/users/*", {
-    finite: false,
+    isArea: true,
     ranking: 19,
     path: ["groups", { name: "groupId" }, "users"],
     search: {},
@@ -71,7 +71,7 @@ test("getMatcher decrements the ranking by 1 if the path is not finite", () => {
   });
 
   getMatcherEqual("Users", "/groups/:groupId/users", {
-    finite: true,
+    isArea: false,
     ranking: 20,
     path: ["groups", { name: "groupId" }, "users"],
     search: {},
