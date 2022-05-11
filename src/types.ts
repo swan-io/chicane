@@ -140,9 +140,9 @@ export type PrependBasePath<
 };
 
 export type GetAreaRoutes<Routes extends Record<string, string>> = {
-  [K in keyof Routes as Routes[K] extends `${infer _}*`
+  [K in keyof Routes as Routes[K] extends `${infer _}/*`
     ? K
-    : never]: Routes[K] extends `${infer Rest}*` ? Rest : never;
+    : never]: Routes[K] extends `${infer Rest}/*` ? Rest : never;
 };
 
 export type ExtractRoutesParams<Routes extends Record<string, string>> = {
