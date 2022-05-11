@@ -26,7 +26,11 @@ export const concatRouteObjects = (
       ? fixedPathA
       : fixedPathA + fixedPathB;
 
-  const search = routeA["search"] + addPrefixOnNonEmpty(routeB["search"], "&");
+  const search =
+    routeA["search"] === ""
+      ? routeB["search"]
+      : routeA["search"] + addPrefixOnNonEmpty(routeB["search"], "&");
+
   const hash = routeB["hash"] === "" ? routeA["hash"] : routeB["hash"];
 
   return (

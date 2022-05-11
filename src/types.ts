@@ -118,10 +118,12 @@ export type ConcatRoutes<
   RouteObjectB extends RouteObject = ExtractRoute<RouteB>,
 > = StringifyRouteObject<{
   path: ConcatPaths<RouteObjectA["path"], RouteObjectB["path"]>;
-  search: `${RouteObjectA["search"]}${AddPrefixOnNonEmpty<
-    RouteObjectB["search"],
-    "&"
-  >}`;
+  search: RouteObjectA["search"] extends ""
+    ? RouteObjectB["search"]
+    : `${RouteObjectA["search"]}${AddPrefixOnNonEmpty<
+        RouteObjectB["search"],
+        "&"
+      >}`;
   hash: RouteObjectB["hash"] extends ""
     ? RouteObjectA["hash"]
     : RouteObjectB["hash"];

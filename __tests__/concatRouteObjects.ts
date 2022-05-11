@@ -15,4 +15,6 @@ test("concatRouteObjects", () => {
   expect(concatRouteStrings("foo", "bar")).toBe("/foo/bar");
 
   expect(concatRouteStrings("/?", "/?")).toBe("/");
+  expect(concatRouteStrings("/?:foo", "/")).toBe("/?:foo");
+  expect(concatRouteStrings("/", "/?:bar")).toBe("/?:bar");
 });
