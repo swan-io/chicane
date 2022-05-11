@@ -90,15 +90,15 @@ type AddPrefixOnNonEmpty<
   Prefix extends string,
 > = Value extends "" ? Value : `${Prefix}${Value}`;
 
-type AddSlashPrefixIfNeeded<Value extends string> = Value extends `/${infer _}`
+type EnsureSlashPrefix<Value extends string> = Value extends `/${infer _}`
   ? Value
   : `/${Value}`;
 
 type ConcatPaths<
   PathA extends string,
   PathB extends string,
-  FixedPathA extends string = AddSlashPrefixIfNeeded<PathA>,
-  FixedPathB extends string = AddSlashPrefixIfNeeded<PathB>,
+  FixedPathA extends string = EnsureSlashPrefix<PathA>,
+  FixedPathB extends string = EnsureSlashPrefix<PathB>,
 > = FixedPathA extends "/"
   ? FixedPathB
   : FixedPathB extends "/"
