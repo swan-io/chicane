@@ -23,7 +23,7 @@ export const createRouter = <
     basePath?: BasePath;
   } = {},
 ) => {
-  type RoutesWithBasePath = PrependBasePath<Routes, BasePath>;
+  type RoutesWithBasePath = PrependBasePath<BasePath, Routes>;
   type AreaRoutes = GetAreaRoutes<RoutesWithBasePath>;
   type AreaRoutesParams = ExtractRoutesParams<AreaRoutes>;
   type FiniteRoutes = Omit<RoutesWithBasePath, keyof AreaRoutes>;

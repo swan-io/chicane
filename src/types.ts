@@ -28,6 +28,12 @@ export type Location = Readonly<{
   toString(): string;
 }>;
 
+export type RouteObject = {
+  path: string;
+  search: string;
+  hash: string;
+};
+
 type SplitAndFilterEmpty<
   Value extends string,
   Separator extends string,
@@ -59,41 +65,74 @@ type ExtractSearchParams<
     : ExtractSearchParams<Search, Tail>
   : {};
 
-type ExtractHashParam<Value extends string> = Value extends `:${infer Name}`
+type ExtractHashParams<Value extends string> = Value extends `:${infer Name}`
   ? { [K in Name]?: string }
   : {};
 
-type ExtractRouteParams<Route extends string> =
+type ExtractRoute<Route extends string> =
   Route extends `${infer Path}?${infer Search}#${infer Hash}`
-    ? ExtractPathParams<Path> &
-        ExtractSearchParams<Search> &
-        ExtractHashParam<Hash>
+    ? { path: Path; search: Search; hash: Hash }
     : Route extends `${infer Path}?${infer Search}`
-    ? ExtractPathParams<Path> & ExtractSearchParams<Search>
+    ? { path: Path; search: Search; hash: "" }
     : Route extends `${infer Path}#${infer Hash}`
-    ? ExtractPathParams<Path> & ExtractHashParam<Hash>
-    : ExtractPathParams<Route>;
+    ? { path: Path; search: ""; hash: Hash }
+    : { path: Route; search: ""; hash: "" };
 
-export type PrefixWithSlash<Path extends string> = Path extends `/${infer _}`
-  ? Path
-  : `/${Path}`;
+type ExtractRouteParams<
+  Route extends string,
+  Extracted extends RouteObject = ExtractRoute<Route>,
+> = ExtractPathParams<Extracted["path"]> &
+  ExtractSearchParams<Extracted["search"]> &
+  ExtractHashParams<Extracted["hash"]>;
 
-export type ConcatPaths<
+type AddPrefixOnNonEmpty<
+  Value extends string,
+  Prefix extends string,
+> = Value extends "" ? Value : `${Prefix}${Value}`;
+
+type AddSlashPrefixIfNeeded<Value extends string> = Value extends `/${infer _}`
+  ? Value
+  : `/${Value}`;
+
+type ConcatPaths<
   PathA extends string,
   PathB extends string,
-  PrefixedPathA extends string = PrefixWithSlash<PathA>,
-  PrefixedPathB extends string = PrefixWithSlash<PathB>,
-> = PrefixedPathA extends "/"
-  ? PrefixedPathB
-  : PrefixedPathB extends "/"
-  ? PrefixedPathA
-  : `${PrefixedPathA}${PrefixedPathB}`;
+  FixedPathA extends string = AddSlashPrefixIfNeeded<PathA>,
+  FixedPathB extends string = AddSlashPrefixIfNeeded<PathB>,
+> = FixedPathA extends "/"
+  ? FixedPathB
+  : FixedPathB extends "/"
+  ? FixedPathA
+  : `${FixedPathA}${FixedPathB}`;
+
+type StringifyRouteObject<Route extends RouteObject> =
+  `${Route["path"]}${AddPrefixOnNonEmpty<
+    Route["search"],
+    "?"
+  >}${AddPrefixOnNonEmpty<Route["hash"], "#">}`;
+
+export type ConcatRoutes<
+  RouteA extends string,
+  RouteB extends string,
+  RouteObjectA extends RouteObject = ExtractRoute<RouteA>,
+  RouteObjectB extends RouteObject = ExtractRoute<RouteB>,
+> = StringifyRouteObject<{
+  path: ConcatPaths<RouteObjectA["path"], RouteObjectB["path"]>;
+  search: `${RouteObjectA["search"]}${AddPrefixOnNonEmpty<
+    RouteObjectB["search"],
+    "&"
+  >}`;
+  hash: RouteObjectB["hash"] extends ""
+    ? RouteObjectA["hash"]
+    : RouteObjectB["hash"];
+}>;
 
 export type PrependBasePath<
-  Routes extends Record<string, string>,
   BasePath extends string,
+  Routes extends Record<string, string>,
+  Extracted extends RouteObject = ExtractRoute<BasePath>,
 > = {
-  [K in keyof Routes]: ConcatPaths<BasePath, Routes[K]>;
+  [K in keyof Routes]: ConcatRoutes<Extracted["path"], Routes[K]>;
 };
 
 export type GetAreaRoutes<Routes extends Record<string, string>> = {
