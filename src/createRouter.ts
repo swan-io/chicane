@@ -36,7 +36,7 @@ export const createRouter = <
 
   const baseRoute: RouteObject = {
     path: extractRoute(basePath).path,
-    search: "",
+    search: "", // search and hash are not supported in basePath
     hash: "",
   };
 
