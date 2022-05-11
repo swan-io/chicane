@@ -9,7 +9,11 @@ export const createGroup = <
   name: GroupName,
   baseRoute: BaseRoute,
   routes: Readonly<Routes>,
-) => {
+): {
+  [K in keyof Routes as K extends string
+    ? `${GroupName}${K}`
+    : never]: ConcatRoutes<BaseRoute, Routes[K]>;
+} => {
   const baseRouteObject = extractRoute(baseRoute);
   const output: Record<string, string> = {};
 
@@ -22,9 +26,6 @@ export const createGroup = <
     }
   }
 
-  return output as {
-    [K in keyof Routes as K extends string
-      ? `${GroupName}${K}`
-      : never]: ConcatRoutes<BaseRoute, Routes[K]>;
-  };
+  // @ts-expect-error
+  return output;
 };
