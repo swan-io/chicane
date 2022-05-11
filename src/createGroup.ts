@@ -1,4 +1,4 @@
-import { concatRouteObjects, extractRoute } from "./concatRouteObjects";
+import { concatRoutes, extractRoute } from "./concatRoutes";
 import { ConcatRoutes } from "./types";
 
 export const createGroup = <
@@ -15,7 +15,7 @@ export const createGroup = <
 
   for (const key in routes) {
     if (Object.prototype.hasOwnProperty.call(routes, key)) {
-      output[name + key] = concatRouteObjects(
+      output[name + key] = concatRoutes(
         baseRouteObject,
         extractRoute(routes[key]),
       );

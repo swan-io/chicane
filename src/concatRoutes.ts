@@ -12,7 +12,7 @@ export const extractRoute = (route: string): RouteObject => {
   return { path, search: search.substring(1), hash: hash.substring(1) };
 };
 
-export const concatRouteObjects = (
+export const concatRoutes = (
   routeA: RouteObject,
   routeB: RouteObject,
 ): string => {
