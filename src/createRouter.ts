@@ -1,7 +1,7 @@
 import { createPath } from "history";
 import * as React from "react";
 import { useSyncExternalStoreWithSelector } from "use-sync-external-store/shim/with-selector";
-import { concatRoutes, extractRoute } from "./concatRoutes";
+import { concatRouteObjects, extractRoute } from "./concatRouteObjects";
 import { areRouteEqual, first, identity } from "./helpers";
 import { getLocation, history, subscribeToLocation } from "./history";
 import { getMatcher, match, matchToHistoryPath } from "./matcher";
@@ -48,7 +48,7 @@ export const createRouter = <
       const matcher = getMatcher(
         routeName,
         basePath !== ""
-          ? concatRoutes(baseRoute, extractRoute(routes[routeName]))
+          ? concatRouteObjects(baseRoute, extractRoute(routes[routeName]))
           : routes[routeName],
       );
 

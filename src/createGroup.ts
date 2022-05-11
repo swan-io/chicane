@@ -1,4 +1,4 @@
-import { concatRoutes, extractRoute } from "./concatRoutes";
+import { concatRouteObjects, extractRoute } from "./concatRouteObjects";
 import { ConcatRoutes } from "./types";
 
 export const createGroup = <
@@ -9,23 +9,22 @@ export const createGroup = <
   name: GroupName,
   baseRoute: BaseRoute,
   routes: Readonly<Routes>,
-): {
-  [K in keyof Routes as K extends string
-    ? `${GroupName}${K}`
-    : never]: ConcatRoutes<BaseRoute, Routes[K]>;
-} => {
+) => {
   const baseRouteObject = extractRoute(baseRoute);
   const output: Record<string, string> = {};
 
   for (const key in routes) {
     if (Object.prototype.hasOwnProperty.call(routes, key)) {
-      output[name + key] = concatRoutes(
+      output[name + key] = concatRouteObjects(
         baseRouteObject,
         extractRoute(routes[key]),
       );
     }
   }
 
-  // @ts-expect-error
-  return output;
+  return output as {
+    [K in keyof Routes as K extends string
+      ? `${GroupName}${K}`
+      : never]: ConcatRoutes<BaseRoute, Routes[K]>;
+  };
 };

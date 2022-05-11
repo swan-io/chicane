@@ -9,10 +9,10 @@ export const ensureSlashPrefix = (value: string): string =>
 
 export const extractRoute = (route: string): RouteObject => {
   const { pathname: path = "", search = "", hash = "" } = parsePath(route);
-  return { path, search, hash };
+  return { path, search: search.substring(1), hash: hash.substring(1) };
 };
 
-export const concatRoutes = (
+export const concatRouteObjects = (
   routeA: RouteObject,
   routeB: RouteObject,
 ): string => {

@@ -1,6 +1,5 @@
 import {
   areParamsArrayEqual,
-  concatPaths,
   first,
   isMultipleParam,
   isNonEmpty,
@@ -72,21 +71,5 @@ describe("isMultipleParam", () => {
     expect(isMultipleParam(":")).toBe(false);
     expect(isMultipleParam(":test")).toBe(false);
     expect(isMultipleParam("test")).toBe(false);
-  });
-});
-
-describe("concatPaths", () => {
-  test("returns a proper path concatenation with valid params", () => {
-    expect(concatPaths("/", "/")).toBe("/");
-    expect(concatPaths("/foo", "/")).toBe("/foo");
-    expect(concatPaths("/", "/bar")).toBe("/bar");
-    expect(concatPaths("/foo", "/bar")).toBe("/foo/bar");
-  });
-
-  test("returns a proper path concatenation with params with missing leading slashes", () => {
-    expect(concatPaths("", "")).toBe("/");
-    expect(concatPaths("foo", "")).toBe("/foo");
-    expect(concatPaths("", "bar")).toBe("/bar");
-    expect(concatPaths("foo", "bar")).toBe("/foo/bar");
   });
 });
