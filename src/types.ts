@@ -105,6 +105,13 @@ type ConcatPaths<
   ? FixedPathA
   : `${FixedPathA}${FixedPathB}`;
 
+type ConcatSearchs<
+  SearchA extends string,
+  SearchB extends string,
+> = SearchA extends ""
+  ? SearchB
+  : `${SearchA}${AddPrefixOnNonEmpty<SearchB, "&">}`;
+
 type StringifyRouteObject<Route extends RouteObject> =
   `${Route["path"]}${AddPrefixOnNonEmpty<
     Route["search"],
@@ -118,12 +125,7 @@ export type ConcatRoutes<
   RouteObjectB extends RouteObject = ExtractRoute<RouteB>,
 > = StringifyRouteObject<{
   path: ConcatPaths<RouteObjectA["path"], RouteObjectB["path"]>;
-  search: RouteObjectA["search"] extends ""
-    ? RouteObjectB["search"]
-    : `${RouteObjectA["search"]}${AddPrefixOnNonEmpty<
-        RouteObjectB["search"],
-        "&"
-      >}`;
+  search: ConcatSearchs<RouteObjectA["search"], RouteObjectB["search"]>;
   hash: RouteObjectB["hash"] extends ""
     ? RouteObjectA["hash"]
     : RouteObjectB["hash"];
