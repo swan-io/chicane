@@ -1,4 +1,4 @@
-import { concatPaths } from "./helpers";
+import { concatRoutes, extractRoute } from "./concatRoutes";
 import { ConcatRoutes } from "./types";
 
 export const createGroup = <
@@ -10,11 +10,15 @@ export const createGroup = <
   baseRoute: BaseRoute,
   routes: Readonly<Routes>,
 ) => {
+  const baseRouteObject = extractRoute(baseRoute);
   const output: Record<string, string> = {};
 
   for (const key in routes) {
     if (Object.prototype.hasOwnProperty.call(routes, key)) {
-      output[name + key] = concatPaths(baseRoute, routes[key]);
+      output[name + key] = concatRoutes(
+        baseRouteObject,
+        extractRoute(routes[key]),
+      );
     }
   }
 
