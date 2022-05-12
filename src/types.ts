@@ -59,14 +59,14 @@ type ExtractSearchParams<
   Parts = SplitAndFilterEmpty<Search, "&">,
 > = Parts extends [infer Head, ...infer Tail]
   ? Head extends `:${infer Name}[]`
-    ? { [K in Name]?: string[] } & ExtractSearchParams<Search, Tail>
+    ? { [K in Name]?: string[] | undefined } & ExtractSearchParams<Search, Tail>
     : Head extends `:${infer Name}`
-    ? { [K in Name]?: string } & ExtractSearchParams<Search, Tail>
+    ? { [K in Name]?: string | undefined } & ExtractSearchParams<Search, Tail>
     : ExtractSearchParams<Search, Tail>
   : {};
 
 type ExtractHashParams<Value extends string> = Value extends `:${infer Name}`
-  ? { [K in Name]?: string }
+  ? { [K in Name]?: string | undefined }
   : {};
 
 type ExtractRoute<Route extends string> =
