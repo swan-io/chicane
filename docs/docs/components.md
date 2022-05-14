@@ -9,9 +9,15 @@ Creates a link to a given URL and forces it to be handled by the router.
 
 ### Props
 
-- `to` (`string`): URL
-- `replace?` (`boolean`): Don't create a new browser history entry on navigation (defaults to `false`)
-- Any prop `<a>` takes
+```ts
+type LinkProps = {
+  to: string; // The route you're linking to (required)
+  replace?: boolean; // Replace instead of push (defaults to `false`)
+  activeClassName?: string;
+  activeStyle?: React.CSSProperties;
+  // …and any prop <a> takes
+};
+```
 
 ### Usage
 

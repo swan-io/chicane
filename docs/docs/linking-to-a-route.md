@@ -20,12 +20,15 @@ const Header = () => (
 
 The `Link` component takes a few props:
 
-- `to`: (**required**): The route you're linking to
-- `className`
-- `activeClassName`
-- `style`
-- `activeStyle`
-- `replace`: replace instead of push
+```ts
+type LinkProps = {
+  to: string; // The route you're linking to (required)
+  replace?: boolean; // Replace instead of push (defaults to `false`)
+  activeClassName?: string;
+  activeStyle?: React.CSSProperties;
+  // …and any prop <a> takes
+};
+```
 
 ## Creating your own Link component
 
