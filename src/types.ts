@@ -12,13 +12,13 @@ export type Matcher = {
   hash: string | undefined;
 };
 
-export type RawLocation = Readonly<{
+export type RouteObject = Readonly<{
   path: string;
   search: string;
   hash: string;
 }>;
 
-export type RouteObject = Readonly<{
+export type RawLocation = Readonly<{
   path: string;
   search: string;
   hash: string;
