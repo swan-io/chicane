@@ -12,6 +12,18 @@ export type Matcher = {
   hash: string | undefined;
 };
 
+export type RawLocation = Readonly<{
+  path: string;
+  search: string;
+  hash: string;
+}>;
+
+export type RouteObject = Readonly<{
+  path: string;
+  search: string;
+  hash: string;
+}>;
+
 export type Location = Readonly<{
   key: string;
 
@@ -19,20 +31,9 @@ export type Location = Readonly<{
   search: Readonly<Search>;
   hash?: string;
 
-  raw: Readonly<{
-    path: string;
-    search: string;
-    hash: string;
-  }>;
-
+  raw: RawLocation;
   toString(): string;
 }>;
-
-export type RouteObject = {
-  path: string;
-  search: string;
-  hash: string;
-};
 
 type SplitAndFilterEmpty<
   Value extends string,
