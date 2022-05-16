@@ -34,7 +34,7 @@ export const createRouter = <
 
   const { basePath = "" } = options;
 
-  const baseRoute: RouteObject = {
+  const basePathObject: RouteObject = {
     path: extractRoute(basePath).path,
     search: "", // search and hash are not supported in basePath
     hash: "",
@@ -48,7 +48,7 @@ export const createRouter = <
       const matcher = getMatcher(
         routeName,
         basePath !== ""
-          ? concatRoutes(baseRoute, extractRoute(routes[routeName]))
+          ? concatRoutes(basePathObject, extractRoute(routes[routeName]))
           : routes[routeName],
       );
 
