@@ -20,8 +20,8 @@ const extractFromPathname = (pathname: string) => {
 };
 
 export const getMatcher = (name: string, route: string): Matcher => {
-  if (route.endsWith("*")) {
-    const { pathname = "/" } = parsePath(route.slice(0, -1));
+  if (route.endsWith("/*")) {
+    const { pathname = "/" } = parsePath(route.slice(0, -2));
     const { ranking, path } = extractFromPathname(pathname);
 
     return {

@@ -12,6 +12,18 @@ export type Matcher = {
   hash: string | undefined;
 };
 
+export type RouteObject = Readonly<{
+  path: string;
+  search: string;
+  hash: string;
+}>;
+
+export type RawLocation = Readonly<{
+  path: string;
+  search: string;
+  hash: string;
+}>;
+
 export type Location = Readonly<{
   key: string;
 
@@ -19,12 +31,7 @@ export type Location = Readonly<{
   search: Readonly<Search>;
   hash?: string;
 
-  raw: Readonly<{
-    path: string;
-    search: string;
-    hash: string;
-  }>;
-
+  raw: RawLocation;
   toString(): string;
 }>;
 
@@ -53,53 +60,90 @@ type ExtractSearchParams<
   Parts = SplitAndFilterEmpty<Search, "&">,
 > = Parts extends [infer Head, ...infer Tail]
   ? Head extends `:${infer Name}[]`
-    ? { [K in Name]?: string[] } & ExtractSearchParams<Search, Tail>
+    ? { [K in Name]?: string[] | undefined } & ExtractSearchParams<Search, Tail>
     : Head extends `:${infer Name}`
-    ? { [K in Name]?: string } & ExtractSearchParams<Search, Tail>
+    ? { [K in Name]?: string | undefined } & ExtractSearchParams<Search, Tail>
     : ExtractSearchParams<Search, Tail>
   : {};
 
-type ExtractHashParam<Value extends string> = Value extends `:${infer Name}`
-  ? { [K in Name]?: string }
+type ExtractHashParams<Value extends string> = Value extends `:${infer Name}`
+  ? { [K in Name]?: string | undefined }
   : {};
 
-type ExtractRouteParams<Route extends string> =
+type ExtractRoute<Route extends string> =
   Route extends `${infer Path}?${infer Search}#${infer Hash}`
-    ? ExtractPathParams<Path> &
-        ExtractSearchParams<Search> &
-        ExtractHashParam<Hash>
+    ? { path: Path; search: Search; hash: Hash }
     : Route extends `${infer Path}?${infer Search}`
-    ? ExtractPathParams<Path> & ExtractSearchParams<Search>
+    ? { path: Path; search: Search; hash: "" }
     : Route extends `${infer Path}#${infer Hash}`
-    ? ExtractPathParams<Path> & ExtractHashParam<Hash>
-    : ExtractPathParams<Route>;
+    ? { path: Path; search: ""; hash: Hash }
+    : { path: Route; search: ""; hash: "" };
 
-export type PrefixWithSlash<Path extends string> = Path extends `/${infer _}`
-  ? Path
-  : `/${Path}`;
+type ExtractRouteParams<
+  Route extends string,
+  ExtractedRoute extends RouteObject = ExtractRoute<Route>,
+> = ExtractPathParams<ExtractedRoute["path"]> &
+  ExtractSearchParams<ExtractedRoute["search"]> &
+  ExtractHashParams<ExtractedRoute["hash"]>;
 
-export type ConcatPaths<
+type AddPrefixOnNonEmpty<
+  Value extends string,
+  Prefix extends string,
+> = Value extends "" ? Value : `${Prefix}${Value}`;
+
+type EnsureSlashPrefix<Value extends string> = Value extends `/${infer _}`
+  ? Value
+  : `/${Value}`;
+
+type ConcatPaths<
   PathA extends string,
   PathB extends string,
-  PrefixedPathA extends string = PrefixWithSlash<PathA>,
-  PrefixedPathB extends string = PrefixWithSlash<PathB>,
-> = PrefixedPathA extends "/"
-  ? PrefixedPathB
-  : PrefixedPathB extends "/"
-  ? PrefixedPathA
-  : `${PrefixedPathA}${PrefixedPathB}`;
+  FixedPathA extends string = EnsureSlashPrefix<PathA>,
+  FixedPathB extends string = EnsureSlashPrefix<PathB>,
+> = FixedPathA extends "/"
+  ? FixedPathB
+  : FixedPathB extends "/"
+  ? FixedPathA
+  : `${FixedPathA}${FixedPathB}`;
+
+type ConcatSearchs<
+  SearchA extends string,
+  SearchB extends string,
+> = SearchA extends ""
+  ? SearchB
+  : `${SearchA}${AddPrefixOnNonEmpty<SearchB, "&">}`;
+
+type StringifyRouteObject<Route extends RouteObject> =
+  `${Route["path"]}${AddPrefixOnNonEmpty<
+    Route["search"],
+    "?"
+  >}${AddPrefixOnNonEmpty<Route["hash"], "#">}`;
+
+export type ConcatRoutes<
+  RouteA extends string,
+  RouteB extends string,
+  ExtractedRouteA extends RouteObject = ExtractRoute<RouteA>,
+  ExtractedRouteB extends RouteObject = ExtractRoute<RouteB>,
+> = StringifyRouteObject<{
+  path: ConcatPaths<ExtractedRouteA["path"], ExtractedRouteB["path"]>;
+  search: ConcatSearchs<ExtractedRouteA["search"], ExtractedRouteB["search"]>;
+  hash: ExtractedRouteB["hash"] extends ""
+    ? ExtractedRouteA["hash"]
+    : ExtractedRouteB["hash"];
+}>;
 
 export type PrependBasePath<
-  Routes extends Record<string, string>,
   BasePath extends string,
+  Routes extends Record<string, string>,
+  ExtractedBase extends RouteObject = ExtractRoute<BasePath>,
 > = {
-  [K in keyof Routes]: ConcatPaths<BasePath, Routes[K]>;
+  [K in keyof Routes]: ConcatRoutes<ExtractedBase["path"], Routes[K]>;
 };
 
 export type GetAreaRoutes<Routes extends Record<string, string>> = {
-  [K in keyof Routes as Routes[K] extends `${infer _}*`
+  [K in keyof Routes as Routes[K] extends `${infer _}/*`
     ? K
-    : never]: Routes[K] extends `${infer Rest}*` ? Rest : never;
+    : never]: Routes[K] extends `${infer Rest}/*` ? Rest : never;
 };
 
 export type ExtractRoutesParams<Routes extends Record<string, string>> = {

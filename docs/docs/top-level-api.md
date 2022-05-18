@@ -23,7 +23,7 @@ export const Router = createRouter({
 
 ## createGroup
 
-Spread a `createGroup` in your routes if you want to avoid repetition with nested routes having the same prefix.
+Spread a `createGroup` in your routes if you want to avoid repetition with nested routes having the same prefix, search or hash params.
 
 - `routeName` (**required**): string
 - `routePath` (**required**): string
@@ -34,9 +34,15 @@ import { createRouter, createGroup } from "@swan-io/chicane";
 
 export const Router = createRouter({
   Home: "/",
+
   ...createGroup("User", "/users", {
     List: "/", // UserList: "/users"
     Detail: "/:userId", // UserDetail: "/users/:userId"
+  }),
+
+  ...createGroup("Book", "/books?:isEditor", {
+    List: "/?:byAuthor", // BookList: "/books?:isEditor&:byAuthor"
+    Detail: "/:bookId", // BookDetail: "/books/:bookId?:isEditor"
   }),
 });
 ```

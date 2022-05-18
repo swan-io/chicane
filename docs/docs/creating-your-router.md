@@ -66,6 +66,7 @@ import { createRouter, createGroup } from "@swan-io/chicane";
 export const Router = createRouter({
   Home: "/",
   About: "/about",
+
   ...createGroup("User", "/users", {
     List: "/", // UserList: "/users"
     Detail: "/:userId", // UserDetail: "/users/:userId"

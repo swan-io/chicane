@@ -1,7 +1,8 @@
 import { createPath } from "history";
 import * as React from "react";
 import { useSyncExternalStoreWithSelector } from "use-sync-external-store/shim/with-selector";
-import { areRouteEqual, concatPaths, first, identity } from "./helpers";
+import { concatRoutes, extractRoute } from "./concatRoutes";
+import { areRouteEqual, first, identity } from "./helpers";
 import { getLocation, history, subscribeToLocation } from "./history";
 import { getMatcher, match, matchToHistoryPath } from "./matcher";
 import {
@@ -11,6 +12,7 @@ import {
   Params,
   ParamsArg,
   PrependBasePath,
+  RouteObject,
   Simplify,
 } from "./types";
 
@@ -23,7 +25,7 @@ export const createRouter = <
     basePath?: BasePath;
   } = {},
 ) => {
-  type RoutesWithBasePath = PrependBasePath<Routes, BasePath>;
+  type RoutesWithBasePath = PrependBasePath<BasePath, Routes>;
   type AreaRoutes = GetAreaRoutes<RoutesWithBasePath>;
   type AreaRoutesParams = ExtractRoutesParams<AreaRoutes>;
   type FiniteRoutes = Omit<RoutesWithBasePath, keyof AreaRoutes>;
@@ -32,6 +34,12 @@ export const createRouter = <
 
   const { basePath = "" } = options;
 
+  const basePathObject: RouteObject = {
+    path: extractRoute(basePath).path,
+    search: "", // search and hash are not supported in basePath
+    hash: "",
+  };
+
   const matchers = {} as Record<keyof Routes, Matcher>;
   const rankedMatchers: Matcher[] = []; // higher to lower
 
@@ -39,7 +47,9 @@ export const createRouter = <
     if (Object.prototype.hasOwnProperty.call(routes, routeName)) {
       const matcher = getMatcher(
         routeName,
-        concatPaths(basePath, routes[routeName]),
+        basePath !== ""
+          ? concatRoutes(basePathObject, extractRoute(routes[routeName]))
+          : routes[routeName],
       );
 
       matchers[routeName] = matcher;
