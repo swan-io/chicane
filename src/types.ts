@@ -42,7 +42,7 @@ type SplitAndFilterEmpty<
   ? Head extends ""
     ? SplitAndFilterEmpty<Tail, Separator>
     : [Head, ...SplitAndFilterEmpty<Tail, Separator>]
-  : Value extends Separator | ""
+  : Value extends ""
   ? []
   : [Value];
 
