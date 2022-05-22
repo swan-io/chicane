@@ -1,13 +1,14 @@
 import { parsePath } from "history";
 import * as React from "react";
 import { useSyncExternalStore } from "use-sync-external-store/shim";
+import { canUseDOM } from "./helpers";
 import {
   getLocation,
   pushUnsafe,
   replaceUnsafe,
   subscribeToLocation,
 } from "./history";
-import { canUseDOM, useServerLocation } from "./server";
+import { ServerLocationContext } from "./serverLocationContext";
 
 // Kudos to https://github.com/remix-run/react-router/pull/7998
 export const useLinkProps = ({
@@ -19,7 +20,7 @@ export const useLinkProps = ({
   replace?: boolean | undefined;
   target?: React.HTMLAttributeAnchorTarget | undefined;
 }) => {
-  const serverLocation = useServerLocation();
+  const serverLocation = React.useContext(ServerLocationContext);
   const hrefPath = React.useMemo(() => parsePath(href).pathname, [href]);
 
   const active = useSyncExternalStore(

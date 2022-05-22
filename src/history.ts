@@ -5,10 +5,11 @@ import {
   createPath,
   parsePath,
 } from "history";
+import * as React from "react";
 import { useSyncExternalStore } from "use-sync-external-store/shim";
-import { areParamsArrayEqual } from "./helpers";
+import { areParamsArrayEqual, canUseDOM } from "./helpers";
 import { decodeLocation } from "./location";
-import { canUseDOM, useServerLocation } from "./server";
+import { ServerLocationContext } from "./serverLocationContext";
 import { Location, Search, Subscription } from "./types";
 
 const subscriptions = new Set<Subscription>();
@@ -97,7 +98,7 @@ export const getLocation = () => currentLocation;
 export const hasInitialLocationChanged = () => initialLocationHasChanged;
 
 export const useLocation = (): Location => {
-  const serverLocation = useServerLocation();
+  const serverLocation = React.useContext(ServerLocationContext);
 
   return useSyncExternalStore(
     subscribeToLocation,
