@@ -1,4 +1,4 @@
-import { Path as HistoryLocation } from "history";
+import { parsePath } from "history";
 import * as React from "react";
 import { createContext } from "react";
 import { decodeLocation } from "./location";
@@ -14,15 +14,18 @@ export const canUseDOM = !!(
 );
 
 type Props = {
-  value: HistoryLocation;
+  value: string;
   children: React.ReactNode;
 };
 
-export const ServerSideUrlProvider = ({ value, children }: Props) =>
-  React.createElement(ServerContext.Provider, {
-    value: decodeLocation(value, false),
+export const ServerSideUrlProvider = ({ value, children }: Props) => {
+  const { pathname = "/", search = "", hash = "" } = parsePath(value);
+
+  return React.createElement(ServerContext.Provider, {
+    value: decodeLocation({ pathname, search, hash }, false),
     children,
   });
+};
 
 const fallbackLocation = decodeLocation(
   { pathname: "/", search: "", hash: "" },

@@ -39,9 +39,7 @@ const App = () => {
 test("Should render correctly", () => {
   expect(
     ReactDOMServer.renderToString(
-      <ServerSideUrlProvider
-        value={{ pathname: "/users/123", search: "", hash: "" }}
-      >
+      <ServerSideUrlProvider value="/users/123">
         <App />
       </ServerSideUrlProvider>,
     ),
@@ -51,9 +49,7 @@ test("Should render correctly", () => {
 // Will test hydration later
 // test("Should hydrate correctly", () => {
 //   const rendered = ReactDOMServer.renderToString(
-//     <ServerSideUrlProvider
-//       value={{ pathname: "/users/123", search: "", hash: "" }}
-//     >
+//     <ServerSideUrlProvider value="/users/123">
 //       <App />
 //     </ServerSideUrlProvider>,
 //   );
