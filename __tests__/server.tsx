@@ -17,22 +17,24 @@ const App = () => {
   const route = Router.useRoute(["UserList", "UserDetail"]);
 
   return (
-    <>
+    <div>
       <Link to={Router.UserDetail({ userId: "123" })} activeClassName="active">
         User
       </Link>
 
-      {(() => {
-        switch (route?.name) {
-          case "UserList":
-            return "UserList";
-          case "UserDetail":
-            return "UserDetail";
-          default:
-            return "404";
-        }
-      })()}
-    </>
+      <div>
+        {(() => {
+          switch (route?.name) {
+            case "UserList":
+              return "UserList";
+            case "UserDetail":
+              return "UserDetail";
+            default:
+              return "404";
+          }
+        })()}
+      </div>
+    </div>
   );
 };
 
