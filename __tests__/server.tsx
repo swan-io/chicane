@@ -1,3 +1,7 @@
+/**
+ * @jest-environment node
+ */
+
 import * as React from "react";
 import * as ReactDOMServer from "react-dom/server";
 import { createRouter, Link } from "../src";
@@ -11,11 +15,13 @@ const Router = createRouter({
 
 const App = () => {
   const route = Router.useRoute(["UserList", "UserDetail"]);
+
   return (
     <>
       <Link to={Router.UserDetail({ userId: "123" })} activeClassName="active">
         User
       </Link>
+
       {(() => {
         switch (route?.name) {
           case "UserList":
