@@ -100,9 +100,8 @@ export const hasInitialLocationChanged = () => initialLocationHasChanged;
 export const useLocation = (): Location => {
   const serverLocation = React.useContext(ServerLocationContext);
 
-  return useSyncExternalStore(
-    subscribeToLocation,
-    canUseDOM ? getLocation : () => serverLocation,
+  return useSyncExternalStore(subscribeToLocation, () =>
+    canUseDOM ? getLocation() : serverLocation,
   );
 };
 
