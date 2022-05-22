@@ -6,23 +6,28 @@ import { Location } from "./types";
 
 const ServerContext = createContext<Location | undefined>(undefined);
 
-export const ServerSideUrlProvider = ({
-  value,
-  children,
-}: {
+// From https://github.com/facebook/fbjs/blob/v2.0.0/packages/fbjs/src/core/ExecutionEnvironment.js
+export const canUseDOM = !!(
+  typeof window !== "undefined" &&
+  window.document &&
+  window.document.createElement
+);
+
+type Props = {
   value: HistoryLocation;
   children: React.ReactNode;
-}) =>
+};
+
+export const ServerSideUrlProvider = ({ value, children }: Props) =>
   React.createElement(ServerContext.Provider, {
     value: decodeLocation(value, false),
     children,
   });
 
-export const useServerLocation = (): Location => {
-  const serverLocation = React.useContext(ServerContext);
+const fallbackLocation = decodeLocation(
+  { pathname: "/", search: "", hash: "" },
+  false,
+);
 
-  return (
-    serverLocation ??
-    decodeLocation({ pathname: "/", search: "", hash: "" }, false)
-  );
-};
+export const useServerLocation = (): Location =>
+  React.useContext(ServerContext) ?? fallbackLocation;

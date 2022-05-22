@@ -7,7 +7,7 @@ import {
   replaceUnsafe,
   subscribeToLocation,
 } from "./history";
-import { useServerLocation } from "./server";
+import { canUseDOM, useServerLocation } from "./server";
 
 // Kudos to https://github.com/remix-run/react-router/pull/7998
 export const useLinkProps = ({
@@ -24,8 +24,7 @@ export const useLinkProps = ({
 
   const active = useSyncExternalStore(
     subscribeToLocation,
-    () => hrefPath === getLocation().raw.path,
-    () => hrefPath === serverLocation.raw.path,
+    () => hrefPath === (canUseDOM ? getLocation() : serverLocation).raw.path,
   );
 
   const shouldReplace = replace || active;

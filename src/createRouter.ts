@@ -5,7 +5,7 @@ import { concatRoutes, extractRoute } from "./concatRoutes";
 import { areRouteEqual, first, identity } from "./helpers";
 import { getLocation, history, subscribeToLocation } from "./history";
 import { getMatcher, match, matchToHistoryPath } from "./matcher";
-import { useServerLocation } from "./server";
+import { canUseDOM, useServerLocation } from "./server";
 import {
   ExtractRoutesParams,
   GetAreaRoutes,
@@ -103,8 +103,11 @@ export const createRouter = <
     // @ts-expect-error
     return useSyncExternalStoreWithSelector(
       subscribeToLocation,
-      () => match(getLocation(), matchers),
-      () => match(serverLocation, matchers),
+      () =>
+        canUseDOM
+          ? match(getLocation(), matchers)
+          : match(serverLocation, matchers),
+      undefined,
       identity,
       areRouteEqual,
     );
