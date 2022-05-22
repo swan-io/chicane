@@ -1,10 +1,9 @@
 import { parsePath } from "history";
 import * as React from "react";
-import { createContext } from "react";
 import { decodeLocation } from "./location";
 import { Location } from "./types";
 
-const ServerContext = createContext<Location | undefined>(undefined);
+const ServerContext = React.createContext<Location | undefined>(undefined);
 
 // From https://github.com/facebook/fbjs/blob/v2.0.0/packages/fbjs/src/core/ExecutionEnvironment.js
 export const canUseDOM = !!(
