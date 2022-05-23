@@ -10,7 +10,7 @@
 /dist
 
 # server export
-server.*
+/server.*
 
 # misc
 .DS_Store
