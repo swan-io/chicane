@@ -9,6 +9,9 @@
 # production
 /dist
 
+# server export
+server.*
+
 # misc
 .DS_Store
 

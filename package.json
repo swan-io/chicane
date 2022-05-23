@@ -14,7 +14,8 @@
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "server.*"
   ],
   "keywords": [
     "hook",
@@ -27,9 +28,10 @@
     "registry": "https://registry.npmjs.org"
   },
   "scripts": {
-    "build": "yarn clean && microbundle -f cjs,es src/{index,server}.ts",
-    "clean": "rm -rf dist",
+    "build": "yarn clean && microbundle -f cjs,es src/{index,server}.ts && mv dist/server.* . && yarn fix-server-imports",
+    "clean": "rm -rf dist server.*",
     "dev": "microbundle watch",
+    "fix-server-imports": "replace-in-files --string='\"./' --replacement='\"./dist/' server.* && replace-in-files --string='\"../' --replacement='\"./' server.*",
     "format": "prettier '**/*' -u -w",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -75,6 +77,7 @@
     "prettier-plugin-organize-imports": "^2.3.4",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "replace-in-files-cli": "^2.0.0",
     "typescript": "^4.6.4"
   }
 }
