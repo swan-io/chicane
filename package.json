@@ -12,6 +12,7 @@
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
@@ -26,7 +27,7 @@
     "registry": "https://registry.npmjs.org"
   },
   "scripts": {
-    "build": "yarn clean && microbundle -f cjs,es",
+    "build": "yarn clean && microbundle -f cjs,es src/{index,server}.ts",
     "clean": "rm -rf dist",
     "dev": "microbundle watch",
     "format": "prettier '**/*' -u -w",
