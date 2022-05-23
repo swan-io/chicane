@@ -1,9 +1,10 @@
 {
   "include": ["./src"],
   "compilerOptions": {
-    "module": "ES2015",
-    "target": "ES2015",
-    "lib": ["DOM", "DOM.Iterable", "ES2015"],
+    "module": "ES2020",
+    "target": "ES2020",
+    "lib": ["DOM", "DOM.Iterable", "ES2020"],
+    "jsx": "react",
     "moduleResolution": "Node",
     "outDir": "dist/",
 
