@@ -5,7 +5,7 @@ sidebar_label: Server-side rendering
 
 To render your app server-side, wrap it with `ServerSideUrlProvider`:
 
-```tsx
+```tsx {1,11-13}
 import { ServerSideUrlProvider } from "@swan-io/chicane/server";
 import express from "express";
 import ReactDOMServer from "react-dom/server";

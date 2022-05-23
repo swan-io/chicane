@@ -5,7 +5,7 @@ sidebar_label: Linking to a route
 
 Now that we have created our router, let's create our first link to our route:
 
-```tsx {7,8} title="src/Header.tsx"
+```tsx {7-8} title="src/Header.tsx"
 import { Link } from "@swan-io/chicane";
 import { Router } from "./router";
 
