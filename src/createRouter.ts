@@ -103,10 +103,7 @@ export const createRouter = <
     // @ts-expect-error
     return useSyncExternalStoreWithSelector(
       subscribeToLocation,
-      () =>
-        canUseDOM
-          ? match(getLocation(), matchers)
-          : match(serverLocation, matchers),
+      () => match(canUseDOM ? getLocation() : serverLocation, matchers),
       undefined,
       identity,
       areRouteEqual,
