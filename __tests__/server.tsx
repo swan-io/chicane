@@ -48,14 +48,4 @@ test("Should render correctly", () => {
   ).toMatchSnapshot();
 });
 
-// Will test hydration later
-// test("Should hydrate correctly", () => {
-//   const rendered = ReactDOMServer.renderToString(
-//     <ServerSideUrlProvider value="/users/123">
-//       <App />
-//     </ServerSideUrlProvider>,
-//   );
-//   const div = document.createElement("div");
-//   div.innerHTML = rendered;
-//   expect(() => ReactDOM.hydrate(<App />, div)).not.toThrow();
-// });
+// TODO: Add an hydration test once this library targets React 18+
