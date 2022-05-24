@@ -22,6 +22,10 @@
   line-height: 1.2;
 }
 
+.heroButton {
+  border: 1px solid white;
+}
+
 .logo {
   max-width: 150px;
   height: auto;

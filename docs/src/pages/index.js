@@ -15,11 +15,17 @@ function HomepageHeader() {
         <h1 className={styles.heroTitle}>{siteConfig.title}</h1>
         <p className={styles.heroSubtitle}>{siteConfig.tagline}</p>
         <div>
-          <Link className="button button--lg" to="/getting-started">
+          <Link
+            className={`button button--lg ${styles.heroButton}`}
+            to="/getting-started"
+          >
             Get started
           </Link>
           <span className={styles.separator} />
-          <Link className="button button--lg" to="/top-level-api">
+          <Link
+            className={`button button--lg ${styles.heroButton}`}
+            to="/top-level-api"
+          >
             API reference
           </Link>
         </div>
