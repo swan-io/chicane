@@ -8,7 +8,7 @@ type Props = {
   value: string;
 };
 
-export const ServerSideUrlProvider = ({ children, value }: Props) => {
+export const ServerUrlProvider = ({ children, value }: Props) => {
   const { pathname = "/", search = "", hash = "" } = parsePath(value);
   const location = decodeLocation({ pathname, search, hash }, false);
 

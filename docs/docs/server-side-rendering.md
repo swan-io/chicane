@@ -3,10 +3,10 @@ title: Server-side rendering
 sidebar_label: Server-side rendering
 ---
 
-To render your app server-side, wrap it with `ServerSideUrlProvider`:
+To render your app server-side, wrap it with `ServerUrlProvider`:
 
 ```tsx {1,11-13}
-import { ServerSideUrlProvider } from "@swan-io/chicane/server";
+import { ServerUrlProvider } from "@swan-io/chicane";
 import express from "express";
 import ReactDOMServer from "react-dom/server";
 import { App } from "../client/App";
@@ -16,9 +16,9 @@ const app = express();
 app.use("*", (req, res) => {
   const html = ReactDOMServer.renderToString(
     <React.StrictMode>
-      <ServerSideUrlProvider value={req.originalUrl}>
+      <ServerUrlProvider value={req.originalUrl}>
         <App />
-      </ServerSideUrlProvider>
+      </ServerUrlProvider>
     </React.StrictMode>,
   );
 

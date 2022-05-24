@@ -4,8 +4,7 @@
 
 import * as React from "react";
 import * as ReactDOMServer from "react-dom/server";
-import { createRouter, Link } from "../src";
-import { ServerSideUrlProvider } from "../src/server";
+import { createRouter, Link, ServerUrlProvider } from "../src";
 
 const Router = createRouter({
   Home: "/",
@@ -41,9 +40,9 @@ const App = () => {
 test("Should render correctly", () => {
   expect(
     ReactDOMServer.renderToString(
-      <ServerSideUrlProvider value="/users/123">
+      <ServerUrlProvider value="/users/123">
         <App />
-      </ServerSideUrlProvider>,
+      </ServerUrlProvider>,
     ),
   ).toMatchSnapshot();
 });
