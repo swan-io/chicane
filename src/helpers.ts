@@ -6,13 +6,6 @@ export const isParam = (value: string): boolean => value.startsWith(":");
 export const isMultipleParam = (value: string): boolean =>
   value.startsWith(":") && value.endsWith("[]");
 
-// From https://github.com/facebook/fbjs/blob/v2.0.0/packages/fbjs/src/core/ExecutionEnvironment.js
-export const canUseDOM = !!(
-  typeof window !== "undefined" &&
-  window.document &&
-  window.document.createElement
-);
-
 export const areParamsArrayEqual = (arrayA: string[], arrayB: string[]) =>
   arrayA.length === arrayB.length &&
   arrayA.every((a, index) => a === arrayB[index]);

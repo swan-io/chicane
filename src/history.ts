@@ -7,12 +7,18 @@ import {
 } from "history";
 import * as React from "react";
 import { useSyncExternalStore } from "use-sync-external-store/shim";
-import { areParamsArrayEqual, canUseDOM } from "./helpers";
+import { areParamsArrayEqual } from "./helpers";
 import { decodeLocation } from "./location";
-import { ServerLocationContext } from "./serverLocationContext";
 import { Location, Search, Subscription } from "./types";
 
 const subscriptions = new Set<Subscription>();
+
+// From https://github.com/facebook/fbjs/blob/v2.0.0/packages/fbjs/src/core/ExecutionEnvironment.js
+const canUseDOM = !!(
+  typeof window !== "undefined" &&
+  window.document &&
+  window.document.createElement
+);
 
 export const history = canUseDOM
   ? createBrowserHistory()
@@ -94,15 +100,21 @@ export const subscribeToLocation = (
   };
 };
 
-export const getLocation = () => currentLocation;
 export const hasInitialLocationChanged = () => initialLocationHasChanged;
+export const getLocation = () => currentLocation;
+
+const GetUniversalLocationContext =
+  React.createContext<() => Location>(getLocation);
+
+export const GetUniversalLocationProvider =
+  GetUniversalLocationContext.Provider;
+
+export const useGetUniversalLocation = () =>
+  React.useContext(GetUniversalLocationContext);
 
 export const useLocation = (): Location => {
-  const serverLocation = React.useContext(ServerLocationContext);
-
-  return useSyncExternalStore(subscribeToLocation, () =>
-    canUseDOM ? getLocation() : serverLocation,
-  );
+  const getUniversalLocation = useGetUniversalLocation();
+  return useSyncExternalStore(subscribeToLocation, getUniversalLocation);
 };
 
 export const pushUnsafe = (url: string): void => {

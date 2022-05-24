@@ -1,18 +1,19 @@
 import { parsePath } from "history";
 import * as React from "react";
+import { GetUniversalLocationProvider } from "./history";
 import { decodeLocation } from "./location";
-import { ServerLocationContext } from "./serverLocationContext";
 
 type Props = {
-  value: string;
   children: React.ReactNode;
+  value: string;
 };
 
-export const ServerSideUrlProvider = ({ value, children }: Props) => {
+export const ServerSideUrlProvider = ({ children, value }: Props) => {
   const { pathname = "/", search = "", hash = "" } = parsePath(value);
+  const location = decodeLocation({ pathname, search, hash }, false);
 
-  return React.createElement(ServerLocationContext.Provider, {
-    value: decodeLocation({ pathname, search, hash }, false),
+  return React.createElement(GetUniversalLocationProvider, {
     children,
+    value: () => location,
   });
 };

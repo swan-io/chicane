@@ -2,10 +2,13 @@ import { createPath } from "history";
 import * as React from "react";
 import { useSyncExternalStoreWithSelector } from "use-sync-external-store/shim/with-selector";
 import { concatRoutes, extractRoute } from "./concatRoutes";
-import { areRouteEqual, canUseDOM, first, identity } from "./helpers";
-import { getLocation, history, subscribeToLocation } from "./history";
+import { areRouteEqual, first, identity } from "./helpers";
+import {
+  history,
+  subscribeToLocation,
+  useGetUniversalLocation,
+} from "./history";
 import { getMatcher, match, matchToHistoryPath } from "./matcher";
-import { ServerLocationContext } from "./serverLocationContext";
 import {
   ExtractRoutesParams,
   GetAreaRoutes,
@@ -90,7 +93,7 @@ export const createRouter = <
           }
         | undefined
     : never => {
-    const serverLocation = React.useContext(ServerLocationContext);
+    const getUniversalLocation = useGetUniversalLocation();
 
     const matchers = React.useMemo(
       () =>
@@ -103,7 +106,7 @@ export const createRouter = <
     // @ts-expect-error
     return useSyncExternalStoreWithSelector(
       subscribeToLocation,
-      () => match(canUseDOM ? getLocation() : serverLocation, matchers),
+      () => match(getUniversalLocation(), matchers),
       undefined,
       identity,
       areRouteEqual,
