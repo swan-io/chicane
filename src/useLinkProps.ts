@@ -2,10 +2,10 @@ import { parsePath } from "history";
 import * as React from "react";
 import { useSyncExternalStore } from "use-sync-external-store/shim";
 import {
-  getLocation,
   pushUnsafe,
   replaceUnsafe,
   subscribeToLocation,
+  useGetUniversalLocation,
 } from "./history";
 
 // Kudos to https://github.com/remix-run/react-router/pull/7998
@@ -18,11 +18,13 @@ export const useLinkProps = ({
   replace?: boolean | undefined;
   target?: React.HTMLAttributeAnchorTarget | undefined;
 }) => {
+  const getUniversalLocation = useGetUniversalLocation();
   const hrefPath = React.useMemo(() => parsePath(href).pathname, [href]);
 
-  const active = useSyncExternalStore(subscribeToLocation, () => {
-    return hrefPath === getLocation().raw.path;
-  });
+  const active = useSyncExternalStore(
+    subscribeToLocation,
+    () => hrefPath === getUniversalLocation().raw.path,
+  );
 
   const shouldReplace = replace || active;
   const shouldIgnoreTarget = !target || target === "_self";

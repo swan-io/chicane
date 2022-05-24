@@ -3,7 +3,11 @@ import * as React from "react";
 import { useSyncExternalStoreWithSelector } from "use-sync-external-store/shim/with-selector";
 import { concatRoutes, extractRoute } from "./concatRoutes";
 import { areRouteEqual, first, identity } from "./helpers";
-import { getLocation, history, subscribeToLocation } from "./history";
+import {
+  history,
+  subscribeToLocation,
+  useGetUniversalLocation,
+} from "./history";
 import { getMatcher, match, matchToHistoryPath } from "./matcher";
 import {
   ExtractRoutesParams,
@@ -89,6 +93,8 @@ export const createRouter = <
           }
         | undefined
     : never => {
+    const getUniversalLocation = useGetUniversalLocation();
+
     const matchers = React.useMemo(
       () =>
         rankedMatchers.filter(({ name }) =>
@@ -100,7 +106,7 @@ export const createRouter = <
     // @ts-expect-error
     return useSyncExternalStoreWithSelector(
       subscribeToLocation,
-      () => match(getLocation(), matchers),
+      () => match(getUniversalLocation(), matchers),
       undefined,
       identity,
       areRouteEqual,

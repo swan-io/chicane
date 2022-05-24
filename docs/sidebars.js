@@ -22,6 +22,7 @@ module.exports = {
         "route-pattern-syntax",
         "matching-some-routes",
         "linking-to-a-route",
+        "server-side-rendering",
       ],
     },
     {

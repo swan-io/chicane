@@ -1,12 +1,28 @@
 // This module makes the different routes created with @swan-io/chicane listen to the same history instance
-import { createBrowserHistory, createPath, parsePath } from "history";
+import {
+  createBrowserHistory,
+  createMemoryHistory,
+  createPath,
+  parsePath,
+} from "history";
+import * as React from "react";
 import { useSyncExternalStore } from "use-sync-external-store/shim";
 import { areParamsArrayEqual } from "./helpers";
 import { decodeLocation } from "./location";
 import { Location, Search, Subscription } from "./types";
 
 const subscriptions = new Set<Subscription>();
-export const history = createBrowserHistory();
+
+// From https://github.com/facebook/fbjs/blob/v2.0.0/packages/fbjs/src/core/ExecutionEnvironment.js
+const canUseDOM = !!(
+  typeof window !== "undefined" &&
+  window.document &&
+  window.document.createElement
+);
+
+export const history = canUseDOM
+  ? createBrowserHistory()
+  : createMemoryHistory();
 
 let currentLocation = decodeLocation(history.location, true);
 let initialLocationHasChanged = false;
@@ -84,11 +100,22 @@ export const subscribeToLocation = (
   };
 };
 
-export const getLocation = () => currentLocation;
+export const getLocation = (): Location => currentLocation;
 export const hasInitialLocationChanged = () => initialLocationHasChanged;
 
-export const useLocation = (): Location =>
-  useSyncExternalStore(subscribeToLocation, getLocation);
+const GetUniversalLocationContext =
+  React.createContext<() => Location>(getLocation);
+
+export const GetUniversalLocationProvider =
+  GetUniversalLocationContext.Provider;
+
+export const useGetUniversalLocation = () =>
+  React.useContext(GetUniversalLocationContext);
+
+export const useLocation = (): Location => {
+  const getUniversalLocation = useGetUniversalLocation();
+  return useSyncExternalStore(subscribeToLocation, getUniversalLocation);
+};
 
 export const pushUnsafe = (url: string): void => {
   const { pathname = "", search = "", hash = "" } = parsePath(url);
