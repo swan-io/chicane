@@ -7,7 +7,7 @@ When defining a route, you assign a **URL pattern** to it. Its syntax supports d
 
 ## Simple path
 
-```ts {2-3}
+```ts {2,3}
 const Router = createRouter({
   Home: "/",
   UserList: "/users",

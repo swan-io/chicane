@@ -100,8 +100,8 @@ export const subscribeToLocation = (
   };
 };
 
+export const getLocation = (): Location => currentLocation;
 export const hasInitialLocationChanged = () => initialLocationHasChanged;
-export const getLocation = () => currentLocation;
 
 const GetUniversalLocationContext =
   React.createContext<() => Location>(getLocation);
