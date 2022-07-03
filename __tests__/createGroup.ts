@@ -1,3 +1,4 @@
+import { expect, test } from "vitest";
 import { createGroup } from "../src";
 
 test("createGroup prefix routes keys / paths", () => {

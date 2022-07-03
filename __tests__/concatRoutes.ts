@@ -1,3 +1,4 @@
+import { expect, test } from "vitest";
 import { concatRoutes, extractRoute } from "../src/concatRoutes";
 
 const concatRouteStrings = (routeA: string, routeB: string): string =>

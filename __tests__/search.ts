@@ -1,3 +1,4 @@
+import { expect, test } from "vitest";
 import { decodeSearch } from "../src";
 
 test("decodeSearch parses params starting with a `?`", () => {
