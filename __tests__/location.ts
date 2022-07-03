@@ -1,3 +1,4 @@
+import { expect, test } from "vitest";
 import { decodeLocation } from "../src/location";
 import { getHistoryLocation } from "./utils";
 

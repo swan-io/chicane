@@ -1,9 +1,10 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  */
 
 import * as React from "react";
 import * as ReactDOMServer from "react-dom/server";
+import { expect, test } from "vitest";
 import { createRouter, Link, ServerUrlProvider } from "../src";
 
 const Router = createRouter({

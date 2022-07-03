@@ -1,5 +1,6 @@
 import { act, render } from "@testing-library/react";
 import * as React from "react";
+import { beforeEach, describe, expect, test } from "vitest";
 import { createRouter, pushUnsafe, useFocusReset } from "../src";
 import { resetInitialHasLocationChanged } from "../src/history";
 
@@ -8,6 +9,10 @@ const routes = {
   Profiles: "/profile/*",
   Profile: "/profile/:username",
 } as const;
+
+const expectToHaveFocus = (element: Element) => {
+  expect(element.ownerDocument.activeElement).toBe(element);
+};
 
 describe("router", () => {
   const { useRoute } = createRouter(routes);
@@ -84,14 +89,14 @@ describe("router", () => {
     const routeContainer = getByTestId("routeContainer");
 
     // doesn't take focus initially
-    expect(body).toHaveFocus();
+    expectToHaveFocus(body);
 
     act(() => {
       pushUnsafe("/profile/zoontek");
     });
 
     // takes focus after a route change
-    expect(routeContainer).toHaveFocus();
+    expectToHaveFocus(routeContainer);
 
     act(() => {
       // doesn't switch focus if route remains the same
@@ -99,19 +104,19 @@ describe("router", () => {
       body.focus();
     });
 
-    expect(body).toHaveFocus();
+    expectToHaveFocus(body);
 
     act(() => {
       pushUnsafe("/profile/zoontek");
     });
 
-    expect(body).toHaveFocus();
+    expectToHaveFocus(body);
 
     act(() => {
       pushUnsafe("/profile/bloodyowl");
     });
 
     // takes focus when only a param changes
-    expect(routeContainer).toHaveFocus();
+    expectToHaveFocus(routeContainer);
   });
 });

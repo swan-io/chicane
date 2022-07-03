@@ -1,3 +1,4 @@
+import { expect, test } from "vitest";
 import { getMatcher, match } from "../src/matcher";
 import { getLocation } from "./utils";
 
