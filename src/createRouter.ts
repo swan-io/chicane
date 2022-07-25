@@ -93,8 +93,6 @@ export const createRouter = <
           }
         | undefined
     : never => {
-    const getUniversalLocation = useGetUniversalLocation();
-
     const matchers = React.useMemo(
       () =>
         rankedMatchers.filter(({ name }) =>
@@ -103,11 +101,14 @@ export const createRouter = <
       [JSON.stringify(routeNames)],
     );
 
+    const getUniversalLocation = useGetUniversalLocation();
+    const getMatch = () => match(getUniversalLocation(), matchers);
+
     // @ts-expect-error
     return useSyncExternalStoreWithSelector(
       subscribeToLocation,
-      () => match(getUniversalLocation(), matchers),
-      undefined,
+      getMatch,
+      getMatch,
       identity,
       areRouteEqual,
     );

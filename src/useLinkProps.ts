@@ -18,13 +18,10 @@ export const useLinkProps = ({
   replace?: boolean | undefined;
   target?: React.HTMLAttributeAnchorTarget | undefined;
 }) => {
-  const getUniversalLocation = useGetUniversalLocation();
   const hrefPath = React.useMemo(() => parsePath(href).pathname, [href]);
-
-  const active = useSyncExternalStore(
-    subscribeToLocation,
-    () => hrefPath === getUniversalLocation().raw.path,
-  );
+  const getUniversalLocation = useGetUniversalLocation();
+  const getPath = () => hrefPath === getUniversalLocation().raw.path;
+  const active = useSyncExternalStore(subscribeToLocation, getPath, getPath);
 
   const shouldReplace = replace || active;
   const shouldIgnoreTarget = !target || target === "_self";

@@ -114,7 +114,12 @@ export const useGetUniversalLocation = () =>
 
 export const useLocation = (): Location => {
   const getUniversalLocation = useGetUniversalLocation();
-  return useSyncExternalStore(subscribeToLocation, getUniversalLocation);
+
+  return useSyncExternalStore(
+    subscribeToLocation,
+    getUniversalLocation,
+    getUniversalLocation,
+  );
 };
 
 export const pushUnsafe = (url: string): void => {

@@ -1,11 +1,7 @@
-/**
- * @vitest-environment node
- */
-
+import { render } from "@testing-library/react";
 import * as React from "react";
-import * as ReactDOMServer from "react-dom/server";
-import { expect, test } from "vitest";
-import { createRouter, Link, ServerUrlProvider } from "../src";
+import { test } from "vitest";
+import { createRouter, Link } from "../src";
 
 const Router = createRouter({
   Home: "/",
@@ -48,32 +44,13 @@ const App = () => {
   );
 };
 
-test("Should render home page correctly", () => {
-  expect(
-    ReactDOMServer.renderToString(
-      <ServerUrlProvider value="/">
-        <App />
-      </ServerUrlProvider>,
-    ),
-  ).toMatchSnapshot();
-});
+test("Should hydrate correctly", () => {
+  const container = document.createElement("div");
 
-test("Should render users page correctly", () => {
-  expect(
-    ReactDOMServer.renderToString(
-      <ServerUrlProvider value="/users">
-        <App />
-      </ServerUrlProvider>,
-    ),
-  ).toMatchSnapshot();
-});
+  // from server test snapshot
+  container.innerHTML =
+    '<div><a href="/" class="active">Home</a><a href="/users">Users</a><a href="/users/123">User</a><div>Home</div></div>';
 
-test("Should render user page correctly", () => {
-  expect(
-    ReactDOMServer.renderToString(
-      <ServerUrlProvider value="/users/123">
-        <App />
-      </ServerUrlProvider>,
-    ),
-  ).toMatchSnapshot();
+  document.body.appendChild(container);
+  render(<App />, { container, hydrate: true });
 });
