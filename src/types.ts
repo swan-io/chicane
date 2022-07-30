@@ -35,7 +35,7 @@ export type Location = Readonly<{
   toString(): string;
 }>;
 
-type SplitAndFilterEmpty<
+export type SplitAndFilterEmpty<
   Value extends string,
   Separator extends string,
 > = Value extends `${infer Head}${Separator}${infer Tail}`
