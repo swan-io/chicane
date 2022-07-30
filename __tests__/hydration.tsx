@@ -1,6 +1,6 @@
 import { render } from "@testing-library/react";
 import * as React from "react";
-import { test } from "vitest";
+import { afterEach, expect, test, vi } from "vitest";
 import { createRouter, Link } from "../src";
 
 const Router = createRouter({
@@ -44,13 +44,19 @@ const App = () => {
   );
 };
 
+afterEach(() => {
+  vi.resetAllMocks();
+});
+
 test("Should hydrate correctly", () => {
   const container = document.createElement("div");
 
-  // from server test snapshot
+  // from server.tsx test snapshot
   container.innerHTML =
     '<div><a href="/" class="active">Home</a><a href="/users">Users</a><a href="/users/123">User</a><div>Home</div></div>';
-
   document.body.appendChild(container);
+
+  const spy = vi.spyOn(console, "error").mockImplementationOnce(() => {});
   render(<App />, { container, hydrate: true });
+  expect(spy).not.toHaveBeenCalled();
 });
