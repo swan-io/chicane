@@ -85,20 +85,11 @@ type ExtractRouteParams<
   ExtractSearchParams<ExtractedRoute["search"]> &
   ExtractHashParams<ExtractedRoute["hash"]>;
 
-type RemovePrefix<
-  Value extends string,
-  Prefix extends string,
-> = Value extends `${Prefix}${infer Rest}` ? Rest : Value;
-
-type RemoveSuffix<
-  Value extends string,
-  Suffix extends string,
-> = Value extends `${infer Rest}${Suffix}` ? Rest : Value;
-
 type RemovePrefixAndSuffix<
   Value extends string,
   Char extends string,
-> = RemoveSuffix<RemovePrefix<Value, Char>, Char>;
+  NoSuffix extends string = Value extends `${infer Rest}${Char}` ? Rest : Value,
+> = NoSuffix extends `${Char}${infer Rest}` ? Rest : NoSuffix;
 
 type AddPrefixOnNonEmpty<
   Value extends string,

@@ -5,9 +5,9 @@ const addPrefixOnNonEmpty = (value: string, prefix: string) =>
   value === "" ? value : prefix + value;
 
 const removePrefixAndSuffix = (value: string, char: string) => {
-  const unsuffixed =
+  const noSuffix =
     value[value.length - 1] === char ? value.slice(0, -1) : value;
-  return unsuffixed[0] === char ? value.slice(1) : unsuffixed;
+  return noSuffix[0] === char ? value.slice(1) : noSuffix;
 };
 
 export const extractRoute = (route: string): RouteObject => {
