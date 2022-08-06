@@ -5,6 +5,10 @@
   width: 100%;
 }
 
+.feature {
+  padding-bottom: 1rem;
+}
+
 .svgContainer {
   width: 64px;
   height: 64px;
@@ -13,7 +17,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  align-self: center;
   margin: 0 auto 20px;
 }
 
