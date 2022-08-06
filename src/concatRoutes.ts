@@ -1,11 +1,14 @@
 import { parsePath } from "history";
 import { RouteObject } from "./types";
 
-export const ensurePrefix = (value: string, prefix: string): string =>
-  value[0] === prefix ? value : prefix + value;
+const ensurePrefixOnNonEmpty = (value: string, prefix: string) =>
+  value === "" ? value : prefix + value;
 
-export const ensurePrefixOnNonEmpty = (value: string, prefix: string) =>
-  value === "" ? value : ensurePrefix(value, prefix);
+const removePrefixAndSuffix = (value: string, char: string) => {
+  const unsuffixed =
+    value[value.length - 1] === char ? value.slice(0, -1) : value;
+  return unsuffixed[0] === char ? value.slice(1) : unsuffixed;
+};
 
 export const extractRoute = (route: string): RouteObject => {
   const { pathname: path = "", search = "", hash = "" } = parsePath(route);
@@ -16,20 +19,13 @@ export const concatRoutes = (
   routeA: RouteObject,
   routeB: RouteObject,
 ): string => {
-  const fixedPathA = ensurePrefix(routeA["path"], "/");
-  const fixedPathB = ensurePrefix(routeB["path"], "/");
+  const fixedPathA = removePrefixAndSuffix(routeA["path"], "/");
+  const fixedPathB = removePrefixAndSuffix(routeB["path"], "/");
+  const path = "/" + removePrefixAndSuffix(fixedPathA + "/" + fixedPathB, "/");
 
-  const path =
-    fixedPathA === "/"
-      ? fixedPathB
-      : fixedPathB === "/"
-      ? fixedPathA
-      : fixedPathA + fixedPathB;
-
-  const search =
-    routeA["search"] === ""
-      ? routeB["search"]
-      : routeA["search"] + ensurePrefixOnNonEmpty(routeB["search"], "&");
+  const fixedSearchA = removePrefixAndSuffix(routeA["search"], "&");
+  const fixedSearchB = removePrefixAndSuffix(routeB["search"], "&");
+  const search = removePrefixAndSuffix(fixedSearchA + "&" + fixedSearchB, "&");
 
   const hash = routeB["hash"] === "" ? routeA["hash"] : routeB["hash"];
 

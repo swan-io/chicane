@@ -98,7 +98,7 @@ type RemoveSuffix<
 type RemovePrefixAndSuffix<
   Value extends string,
   Char extends string,
-> = RemovePrefix<RemoveSuffix<Value, Char>, Char>;
+> = RemoveSuffix<RemovePrefix<Value, Char>, Char>;
 
 type EnsurePrefixOnNonEmpty<
   Value extends string,
