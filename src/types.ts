@@ -100,7 +100,7 @@ type RemovePrefixAndSuffix<
   Char extends string,
 > = RemoveSuffix<RemovePrefix<Value, Char>, Char>;
 
-type EnsurePrefixOnNonEmpty<
+type AddPrefixOnNonEmpty<
   Value extends string,
   Prefix extends string,
 > = Value extends "" ? Value : `${Prefix}${Value}`;
@@ -120,10 +120,10 @@ export type ConcatSearchs<
 > = RemovePrefixAndSuffix<`${FixedSearchA}&${FixedSearchB}`, "&">;
 
 type StringifyRouteObject<Route extends RouteObject> =
-  `${Route["path"]}${EnsurePrefixOnNonEmpty<
+  `${Route["path"]}${AddPrefixOnNonEmpty<
     Route["search"],
     "?"
-  >}${EnsurePrefixOnNonEmpty<Route["hash"], "#">}`;
+  >}${AddPrefixOnNonEmpty<Route["hash"], "#">}`;
 
 export type ConcatRoutes<
   RouteA extends string,

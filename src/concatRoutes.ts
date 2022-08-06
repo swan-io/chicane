@@ -1,7 +1,7 @@
 import { parsePath } from "history";
 import { RouteObject } from "./types";
 
-const ensurePrefixOnNonEmpty = (value: string, prefix: string) =>
+const addPrefixOnNonEmpty = (value: string, prefix: string) =>
   value === "" ? value : prefix + value;
 
 const removePrefixAndSuffix = (value: string, char: string) => {
@@ -30,8 +30,6 @@ export const concatRoutes = (
   const hash = routeB["hash"] === "" ? routeA["hash"] : routeB["hash"];
 
   return (
-    path +
-    ensurePrefixOnNonEmpty(search, "?") +
-    ensurePrefixOnNonEmpty(hash, "#")
+    path + addPrefixOnNonEmpty(search, "?") + addPrefixOnNonEmpty(hash, "#")
   );
 };
