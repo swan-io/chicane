@@ -4,10 +4,9 @@ import { RouteObject } from "./types";
 const addPrefixOnNonEmpty = (value: string, prefix: string) =>
   value === "" ? value : prefix + value;
 
-const removePrefixAndSuffix = (value: string, char: string) => {
-  const noSuffix =
-    value[value.length - 1] === char ? value.slice(0, -1) : value;
-  return noSuffix[0] === char ? value.slice(1) : noSuffix;
+const trimOneChar = (value: string, char: string) => {
+  const output = value[value.length - 1] === char ? value.slice(0, -1) : value;
+  return output[0] === char ? value.slice(1) : output;
 };
 
 export const extractRoute = (route: string): RouteObject => {
@@ -19,13 +18,13 @@ export const concatRoutes = (
   routeA: RouteObject,
   routeB: RouteObject,
 ): string => {
-  const fixedPathA = removePrefixAndSuffix(routeA["path"], "/");
-  const fixedPathB = removePrefixAndSuffix(routeB["path"], "/");
-  const path = "/" + removePrefixAndSuffix(fixedPathA + "/" + fixedPathB, "/");
+  const fixedPathA = trimOneChar(routeA["path"], "/");
+  const fixedPathB = trimOneChar(routeB["path"], "/");
+  const path = "/" + trimOneChar(fixedPathA + "/" + fixedPathB, "/");
 
-  const fixedSearchA = removePrefixAndSuffix(routeA["search"], "&");
-  const fixedSearchB = removePrefixAndSuffix(routeB["search"], "&");
-  const search = removePrefixAndSuffix(fixedSearchA + "&" + fixedSearchB, "&");
+  const fixedSearchA = trimOneChar(routeA["search"], "&");
+  const fixedSearchB = trimOneChar(routeB["search"], "&");
+  const search = trimOneChar(fixedSearchA + "&" + fixedSearchB, "&");
 
   const hash = routeB["hash"] === "" ? routeA["hash"] : routeB["hash"];
 
