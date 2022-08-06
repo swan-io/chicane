@@ -36,7 +36,7 @@ export const useFocusReset = ({
         }
 
         element.focus();
-      } catch (_error) {}
+      } catch {}
     }
   }, [containerRef, focusKey]);
 };
