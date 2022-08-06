@@ -46,7 +46,7 @@ export type SplitAndFilterEmpty<
   ? []
   : [Value];
 
-type ExtractPathParams<
+export type ExtractPathParams<
   Path extends string,
   Parts = SplitAndFilterEmpty<Path, "/">,
 > = Parts extends [infer Head, ...infer Tail]
@@ -55,7 +55,7 @@ type ExtractPathParams<
     : ExtractPathParams<Path, Tail>
   : {};
 
-type ExtractSearchParams<
+export type ExtractSearchParams<
   Search extends string,
   Parts = SplitAndFilterEmpty<Search, "&">,
 > = Parts extends [infer Head, ...infer Tail]
@@ -66,11 +66,10 @@ type ExtractSearchParams<
     : ExtractSearchParams<Search, Tail>
   : {};
 
-type ExtractHashParams<Value extends string> = Value extends `:${infer Name}`
-  ? { [K in Name]?: string | undefined }
-  : {};
+export type ExtractHashParams<Value extends string> =
+  Value extends `:${infer Name}` ? { [K in Name]?: string | undefined } : {};
 
-type ExtractRoute<Route extends string> =
+export type ExtractRoute<Route extends string> =
   Route extends `${infer Path}?${infer Search}#${infer Hash}`
     ? { path: Path; search: Search; hash: Hash }
     : Route extends `${infer Path}?${infer Search}`
@@ -86,38 +85,39 @@ type ExtractRouteParams<
   ExtractSearchParams<ExtractedRoute["search"]> &
   ExtractHashParams<ExtractedRoute["hash"]>;
 
-type AddPrefixOnNonEmpty<
+type EnsurePrefix<
   Value extends string,
   Prefix extends string,
-> = Value extends "" ? Value : `${Prefix}${Value}`;
+> = Value extends `${Prefix}${infer _}` ? Value : `${Prefix}${Value}`;
 
-type EnsureSlashPrefix<Value extends string> = Value extends `/${infer _}`
-  ? Value
-  : `/${Value}`;
+type EnsurePrefixOnNonEmpty<
+  Value extends string,
+  Prefix extends string,
+> = Value extends "" ? Value : EnsurePrefix<Value, Prefix>;
 
-type ConcatPaths<
+export type ConcatPaths<
   PathA extends string,
   PathB extends string,
-  FixedPathA extends string = EnsureSlashPrefix<PathA>,
-  FixedPathB extends string = EnsureSlashPrefix<PathB>,
+  FixedPathA extends string = EnsurePrefix<PathA, "/">,
+  FixedPathB extends string = EnsurePrefix<PathB, "/">,
 > = FixedPathA extends "/"
   ? FixedPathB
   : FixedPathB extends "/"
   ? FixedPathA
   : `${FixedPathA}${FixedPathB}`;
 
-type ConcatSearchs<
+export type ConcatSearchs<
   SearchA extends string,
   SearchB extends string,
 > = SearchA extends ""
   ? SearchB
-  : `${SearchA}${AddPrefixOnNonEmpty<SearchB, "&">}`;
+  : `${SearchA}${EnsurePrefixOnNonEmpty<SearchB, "&">}`;
 
 type StringifyRouteObject<Route extends RouteObject> =
-  `${Route["path"]}${AddPrefixOnNonEmpty<
+  `${Route["path"]}${EnsurePrefixOnNonEmpty<
     Route["search"],
     "?"
-  >}${AddPrefixOnNonEmpty<Route["hash"], "#">}`;
+  >}${EnsurePrefixOnNonEmpty<Route["hash"], "#">}`;
 
 export type ConcatRoutes<
   RouteA extends string,
