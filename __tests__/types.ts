@@ -11,97 +11,91 @@ import {
 } from "../src/types";
 
 // @ts-expect-error
-const identityType = <T>(): T => {};
-const compareTypes = <A, B extends A>() => expectType<B>(identityType<A>());
+const toBe = <T>(): T => {};
 
 test("ExtractRoute", () => {
-  compareTypes<
-    ExtractRoute<"/foo?bar#baz">,
-    { path: "/foo"; search: "bar"; hash: "baz" }
-  >();
+  expectType<ExtractRoute<"/foo?bar#baz">>(
+    toBe<{ path: "/foo"; search: "bar"; hash: "baz" }>(),
+  );
 
-  compareTypes<
-    ExtractRoute<"/foo?bar">,
-    { path: "/foo"; search: "bar"; hash: "" }
-  >();
+  expectType<ExtractRoute<"/foo?bar">>(
+    toBe<{ path: "/foo"; search: "bar"; hash: "" }>(),
+  );
 
-  compareTypes<
-    ExtractRoute<"/foo#baz">,
-    { path: "/foo"; search: ""; hash: "baz" }
-  >();
+  expectType<ExtractRoute<"/foo#baz">>(
+    toBe<{ path: "/foo"; search: ""; hash: "baz" }>(),
+  );
 
-  compareTypes<
-    ExtractRoute<"/foo/bar">,
-    { path: "/foo/bar"; search: ""; hash: "" }
-  >();
+  expectType<ExtractRoute<"/foo/bar">>(
+    toBe<{ path: "/foo/bar"; search: ""; hash: "" }>(),
+  );
 
-  compareTypes<
-    ExtractRoute<"/foo/bar?baz&qux">,
-    { path: "/foo/bar"; search: "baz&qux"; hash: "" }
-  >();
+  expectType<ExtractRoute<"/foo/bar?baz&qux">>(
+    toBe<{ path: "/foo/bar"; search: "baz&qux"; hash: "" }>(),
+  );
 
-  compareTypes<
-    ExtractRoute<"/foo/bar/baz#qux">,
-    { path: "/foo/bar/baz"; search: ""; hash: "qux" }
-  >();
+  expectType<ExtractRoute<"/foo/bar/baz#qux">>(
+    toBe<{ path: "/foo/bar/baz"; search: ""; hash: "qux" }>(),
+  );
 });
 
 test("SplitAndFilterEmpty", () => {
-  compareTypes<SplitAndFilterEmpty<"/foo", "/">, ["foo"]>();
-  compareTypes<SplitAndFilterEmpty<"foo", "&">, ["foo"]>();
+  expectType<SplitAndFilterEmpty<"/foo", "/">>(toBe<["foo"]>());
+  expectType<SplitAndFilterEmpty<"foo", "&">>(toBe<["foo"]>());
 
-  compareTypes<SplitAndFilterEmpty<"/foo/bar", "/">, ["foo", "bar"]>();
-  compareTypes<SplitAndFilterEmpty<"foo/bar/", "/">, ["foo", "bar"]>();
-  compareTypes<SplitAndFilterEmpty<"/foo/bar", "/">, ["foo", "bar"]>();
-  compareTypes<SplitAndFilterEmpty<"/foo//bar", "/">, ["foo", "bar"]>();
+  expectType<SplitAndFilterEmpty<"/foo/bar", "/">>(toBe<["foo", "bar"]>());
+  expectType<SplitAndFilterEmpty<"foo/bar/", "/">>(toBe<["foo", "bar"]>());
+  expectType<SplitAndFilterEmpty<"/foo/bar", "/">>(toBe<["foo", "bar"]>());
+  expectType<SplitAndFilterEmpty<"/foo//bar", "/">>(toBe<["foo", "bar"]>());
 
-  compareTypes<SplitAndFilterEmpty<"foo&bar", "&">, ["foo", "bar"]>();
-  compareTypes<SplitAndFilterEmpty<"foo&bar&", "&">, ["foo", "bar"]>();
-  compareTypes<SplitAndFilterEmpty<"&foo&bar", "&">, ["foo", "bar"]>();
-  compareTypes<SplitAndFilterEmpty<"foo&&bar", "&">, ["foo", "bar"]>();
+  expectType<SplitAndFilterEmpty<"foo&bar", "&">>(toBe<["foo", "bar"]>());
+  expectType<SplitAndFilterEmpty<"foo&bar&", "&">>(toBe<["foo", "bar"]>());
+  expectType<SplitAndFilterEmpty<"&foo&bar", "&">>(toBe<["foo", "bar"]>());
+  expectType<SplitAndFilterEmpty<"foo&&bar", "&">>(toBe<["foo", "bar"]>());
 });
 
 test("ExtractPathParams", () => {
-  compareTypes<ExtractPathParams<"/foo/bar">, {}>();
-  compareTypes<ExtractPathParams<"/foo/:bar">, { bar: string }>();
-  compareTypes<ExtractPathParams<"/:foo/:bar">, { foo: string; bar: string }>();
+  expectType<ExtractPathParams<"/foo/bar">>(toBe<{}>());
+  expectType<ExtractPathParams<"/foo/:bar">>(toBe<{ bar: string }>());
+
+  expectType<ExtractPathParams<"/:foo/:bar">>(
+    toBe<{ foo: string; bar: string }>(),
+  );
 });
 
 test("ExtractSearchParams", () => {
-  compareTypes<ExtractSearchParams<"foo&bar">, {}>(); // no params
+  expectType<ExtractSearchParams<"foo&bar">>(toBe<{}>()); // no params
 
-  compareTypes<
-    ExtractSearchParams<"foo&:bar&:baz">,
-    { bar?: string; baz?: string }
-  >();
+  expectType<ExtractSearchParams<"foo&:bar&:baz">>(
+    toBe<{ bar?: string; baz?: string }>(),
+  );
 
-  compareTypes<
-    ExtractSearchParams<":foo&:bar&:baz[]">,
-    { foo?: string; bar?: string; baz?: string[] }
-  >();
+  expectType<ExtractSearchParams<":foo&:bar&:baz[]">>(
+    toBe<{ foo?: string; bar?: string; baz?: string[] }>(),
+  );
 });
 
 test("ExtractHashParams", () => {
-  compareTypes<ExtractHashParams<"foo">, {}>(); // no param
-  compareTypes<ExtractSearchParams<":foo">, { foo?: string }>();
+  expectType<ExtractHashParams<"foo">>(toBe<{}>()); // no param
+  expectType<ExtractSearchParams<":foo">>(toBe<{ foo?: string }>());
 });
 
 test("ConcatPaths", () => {
-  compareTypes<ConcatPaths<"/foo", "/bar">, "/foo/bar">();
-  compareTypes<ConcatPaths<"/foo", "/">, "/foo">();
-  compareTypes<ConcatPaths<"/foo", "">, "/foo">();
-  compareTypes<ConcatPaths<"/", "/bar">, "/bar">();
-  compareTypes<ConcatPaths<"", "/bar">, "/bar">();
-  compareTypes<ConcatPaths<"/foo/bar", "/baz">, "/foo/bar/baz">();
+  expectType<ConcatPaths<"/foo", "/bar">>(toBe<"/foo/bar">());
+  expectType<ConcatPaths<"/foo", "/">>(toBe<"/foo">());
+  expectType<ConcatPaths<"/foo", "">>(toBe<"/foo">());
+  expectType<ConcatPaths<"/", "/bar">>(toBe<"/bar">());
+  expectType<ConcatPaths<"", "/bar">>(toBe<"/bar">());
+  expectType<ConcatPaths<"/foo/bar", "/baz">>(toBe<"/foo/bar/baz">());
 });
 
 test("ConcatSearchs", () => {
-  compareTypes<ConcatSearchs<":foo", ":bar">, ":foo&:bar">();
-  compareTypes<ConcatSearchs<":foo", "">, ":foo">();
-  compareTypes<ConcatSearchs<"", ":bar">, ":bar">();
-  compareTypes<ConcatSearchs<":foo", "&:bar">, ":foo&:bar">();
-  compareTypes<ConcatSearchs<":foo&:bar", ":baz">, ":foo&:bar&:baz">();
+  expectType<ConcatSearchs<":foo", ":bar">>(toBe<":foo&:bar">());
+  expectType<ConcatSearchs<":foo", "">>(toBe<":foo">());
+  expectType<ConcatSearchs<"", ":bar">>(toBe<":bar">());
+  expectType<ConcatSearchs<":foo", "&:bar">>(toBe<":foo&:bar">());
+  expectType<ConcatSearchs<":foo&:bar", ":baz">>(toBe<":foo&:bar&:baz">());
 
   // TODO: Handle the case for prefix in trailing position
-  // compareTypes<ConcatSearchs<":foo&", "&:bar">, ":foo&&:bar">();
+  // expectType<ConcatSearchs<":foo&", "&:bar">>(toBe<":foo&&:bar">());
 });
