@@ -85,33 +85,39 @@ type ExtractRouteParams<
   ExtractSearchParams<ExtractedRoute["search"]> &
   ExtractHashParams<ExtractedRoute["hash"]>;
 
-type EnsurePrefix<
+type RemovePrefix<
   Value extends string,
   Prefix extends string,
-> = Value extends `${Prefix}${infer _}` ? Value : `${Prefix}${Value}`;
+> = Value extends `${Prefix}${infer Rest}` ? Rest : Value;
+
+type RemoveSuffix<
+  Value extends string,
+  Suffix extends string,
+> = Value extends `${infer Rest}${Suffix}` ? Rest : Value;
+
+type RemovePrefixAndSuffix<
+  Value extends string,
+  Char extends string,
+> = RemovePrefix<RemoveSuffix<Value, Char>, Char>;
 
 type EnsurePrefixOnNonEmpty<
   Value extends string,
   Prefix extends string,
-> = Value extends "" ? Value : EnsurePrefix<Value, Prefix>;
+> = Value extends "" ? Value : `${Prefix}${Value}`;
 
 export type ConcatPaths<
   PathA extends string,
   PathB extends string,
-  FixedPathA extends string = EnsurePrefix<PathA, "/">,
-  FixedPathB extends string = EnsurePrefix<PathB, "/">,
-> = FixedPathA extends "/"
-  ? FixedPathB
-  : FixedPathB extends "/"
-  ? FixedPathA
-  : `${FixedPathA}${FixedPathB}`;
+  FixedPathA extends string = RemovePrefixAndSuffix<PathA, "/">,
+  FixedPathB extends string = RemovePrefixAndSuffix<PathB, "/">,
+> = `/${RemovePrefixAndSuffix<`${FixedPathA}/${FixedPathB}`, "/">}`;
 
 export type ConcatSearchs<
   SearchA extends string,
   SearchB extends string,
-> = SearchA extends ""
-  ? SearchB
-  : `${SearchA}${EnsurePrefixOnNonEmpty<SearchB, "&">}`;
+  FixedSearchA extends string = RemovePrefixAndSuffix<SearchA, "&">,
+  FixedSearchB extends string = RemovePrefixAndSuffix<SearchB, "&">,
+> = RemovePrefixAndSuffix<`${FixedSearchA}&${FixedSearchB}`, "&">;
 
 type StringifyRouteObject<Route extends RouteObject> =
   `${Route["path"]}${EnsurePrefixOnNonEmpty<

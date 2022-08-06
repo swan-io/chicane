@@ -94,8 +94,6 @@ test("ConcatSearchs", () => {
   expectType<ConcatSearchs<":foo", "">>(toBe<":foo">());
   expectType<ConcatSearchs<"", ":bar">>(toBe<":bar">());
   expectType<ConcatSearchs<":foo", "&:bar">>(toBe<":foo&:bar">());
+  expectType<ConcatSearchs<":foo&", "&:bar">>(toBe<":foo&:bar">());
   expectType<ConcatSearchs<":foo&:bar", ":baz">>(toBe<":foo&:bar&:baz">());
-
-  // TODO: Handle the case for prefix in trailing position
-  // expectType<ConcatSearchs<":foo&", "&:bar">>(toBe<":foo&&:bar">());
 });
