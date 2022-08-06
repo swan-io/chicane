@@ -49,6 +49,10 @@
   margin-bottom: 10px;
 }
 
+.heroButton:hover {
+  color: #fff;
+}
+
 .heroButtonSeparator {
   display: inline-block;
   width: 10px;
