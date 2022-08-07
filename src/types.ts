@@ -147,7 +147,7 @@ export type PrependBasePath<
 };
 
 export type GetAreaRoutes<Routes extends Record<string, string>> = {
-  [K in keyof Routes as Routes[K] extends `${infer _}/*`
+  [K in keyof Routes as Routes[K] extends `${string}/*`
     ? K
     : never]: Routes[K] extends `${infer Rest}/*` ? Rest : never;
 };
