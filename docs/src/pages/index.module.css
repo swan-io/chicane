@@ -1,4 +1,13 @@
-.hero {
+/**
+ * CSS files with the .module.css suffix will be treated as CSS modules
+ * and scoped locally.
+ */
+
+.heroBanner {
+  display: flex;
+  justify-content: space-between;
+  overflow: hidden;
+  position: relative;
   color: #fff;
   background: linear-gradient(
     to bottom right,
@@ -7,9 +16,16 @@
   );
 }
 
-.hero a,
-.hero a:hover {
-  color: #fff;
+.heroLeft {
+  display: flex;
+  flex-direction: row;
+}
+
+.heroLogo {
+  max-width: 150px;
+  height: auto;
+  align-self: center;
+  margin-right: 32px;
 }
 
 .heroTitle {
@@ -23,51 +39,56 @@
   line-height: 1.2;
 }
 
+.heroButtons {
+  text-align: center;
+}
+
 .heroButton {
   border: 1px solid white;
+  color: #fff;
   margin-bottom: 10px;
 }
 
-.separator {
+.heroButton:hover {
+  color: #fff;
+}
+
+.heroButtonSeparator {
   display: inline-block;
   width: 10px;
   height: 10px;
 }
 
-.logo {
-  max-width: 150px;
-  height: auto;
-  align-self: center;
-  margin-right: 16px;
-}
-
-.code {
-  border-radius: 10px;
+.heroCode {
   box-shadow: 0 20px 30px -10px #d96151;
   text-align: left;
 }
 
-:global([data-theme="dark"]) .code {
+:global([data-theme="dark"]) .heroCode {
   box-shadow: 0 20px 30px -10px #572720;
 }
 
-.codeBlock {
+.heroCodeBlock {
   margin-bottom: 0 !important;
 }
 
-@media (max-width: 1200px) {
-  .hero {
+@media screen and (max-width: 1200px) {
+  .heroBanner {
+    padding: 2rem;
+    padding-top: 3rem;
     flex-direction: column;
     text-align: center;
     align-items: stretch;
   }
 
-  .logo {
-    max-width: 100px;
+  .heroLeft {
+    flex-direction: column;
+    margin-bottom: 3rem;
   }
 
-  .code {
-    padding-top: 30px;
-    margin: 0 30px;
+  .heroLogo {
+    max-width: 100px;
+    margin-right: 0;
+    margin-bottom: 16px;
   }
 }

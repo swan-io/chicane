@@ -24,7 +24,7 @@ export const useLinkProps = ({
   const active = useSyncExternalStore(subscribeToLocation, getPath, getPath);
 
   const shouldReplace = replace || active;
-  const shouldIgnoreTarget = !target || target === "_self";
+  const shouldIgnoreTarget = target == null || target === "_self";
 
   return {
     active,

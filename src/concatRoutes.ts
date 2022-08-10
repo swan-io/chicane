@@ -1,11 +1,9 @@
 import { parsePath } from "history";
+import { trim } from "./helpers";
 import { RouteObject } from "./types";
 
-export const addPrefixOnNonEmpty = (value: string, prefix: string) =>
+const addPrefixOnNonEmpty = (value: string, prefix: string) =>
   value === "" ? value : prefix + value;
-
-export const ensureSlashPrefix = (value: string): string =>
-  value[0] === "/" ? value : `/${value}`;
 
 export const extractRoute = (route: string): RouteObject => {
   const { pathname: path = "", search = "", hash = "" } = parsePath(route);
@@ -16,20 +14,13 @@ export const concatRoutes = (
   routeA: RouteObject,
   routeB: RouteObject,
 ): string => {
-  const fixedPathA = ensureSlashPrefix(routeA["path"]);
-  const fixedPathB = ensureSlashPrefix(routeB["path"]);
+  const fixedPathA = trim(routeA["path"], "/");
+  const fixedPathB = trim(routeB["path"], "/");
+  const path = "/" + trim(fixedPathA + "/" + fixedPathB, "/");
 
-  const path =
-    fixedPathA === "/"
-      ? fixedPathB
-      : fixedPathB === "/"
-      ? fixedPathA
-      : fixedPathA + fixedPathB;
-
-  const search =
-    routeA["search"] === ""
-      ? routeB["search"]
-      : routeA["search"] + addPrefixOnNonEmpty(routeB["search"], "&");
+  const fixedSearchA = trim(routeA["search"], "&");
+  const fixedSearchB = trim(routeB["search"], "&");
+  const search = trim(fixedSearchA + "&" + fixedSearchB, "&");
 
   const hash = routeB["hash"] === "" ? routeA["hash"] : routeB["hash"];
 

@@ -1,14 +1,13 @@
-/* stylelint-disable docusaurus/copyright-header */
 /**
  * Any CSS included here will be global. The classic template
  * bundles Infima by default. Infima is a CSS framework designed to
  * work well for content-centric websites.
  */
+
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap");
 
 /* You can override the default Infima variables here. */
 :root {
-  --docusaurus-highlighted-code-line-bg: #e1e2e7;
   --ifm-color-primary: #6240b5;
   --ifm-navbar-link-hover-color: #8166c4;
   --ifm-color-primary-dark: #4e3391;
@@ -18,24 +17,23 @@
   --ifm-color-primary-lighter: #c0b3e1;
   --ifm-color-primary-lightest: #e0d9f0;
   --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.08);
+
   --ifm-font-family-base: Inter, system-ui, -apple-system, Segoe UI, Roboto,
     Ubuntu, Cantarell, Noto Sans, sans-serif, BlinkMacSystemFont, "Segoe UI",
     Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
     "Segoe UI Symbol";
 }
 
-html[data-theme="dark"] {
-  --docusaurus-highlighted-code-line-bg: #393a34;
-}
-
-.navbar {
-  height: 60px;
-}
-
-.footer {
-  height: 165px;
-}
-
-.main-wrapper {
-  min-height: calc(100vh - 60px - 165px);
+/* For readability concerns, you should choose a lighter palette in dark mode. */
+[data-theme="dark"] {
+  --ifm-color-primary: #af9ddc;
+  --ifm-navbar-link-hover-color: #c0b2e1;
+  --ifm-color-primary-dark: #a08ad6;
+  --ifm-color-primary-darker: #9278d0;
+  --ifm-color-primary-darkest: #8267c8;
+  --ifm-color-primary-light: #d0c5e8;
+  --ifm-color-primary-lighter: #dfd9ef;
+  --ifm-color-primary-lightest: #efecf7;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }

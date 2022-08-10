@@ -14,3 +14,17 @@ export const areRouteEqual = (
 
 export const isMultipleParam = (value: string): boolean =>
   value.startsWith(":") && value.endsWith("[]");
+
+export const trim = (value: string, char: string) => {
+  let start = 0;
+  let end = value.length - 1;
+
+  while (start <= end && value[start] === char) {
+    start++;
+  }
+  while (end > start && value[end] === char) {
+    end--;
+  }
+
+  return value.slice(start, end + 1);
+};
