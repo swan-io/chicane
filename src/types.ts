@@ -85,39 +85,32 @@ type ExtractRouteParams<
   ExtractSearchParams<ExtractedRoute["search"]> &
   ExtractHashParams<ExtractedRoute["hash"]>;
 
-type TrimStart<
-  Value extends string,
-  Char extends string,
-> = Value extends `${Char}${infer Rest}` ? TrimStart<Rest, Char> : Value;
-
-type TrimEnd<
-  Value extends string,
-  Char extends string,
-> = Value extends `${infer Rest}${Char}` ? TrimEnd<Rest, Char> : Value;
-
-export type Trim<Value extends string, Char extends string> = TrimStart<
-  TrimEnd<Value, Char>,
-  Char
->;
-
-export type ConcatPaths<
-  PathA extends string,
-  PathB extends string,
-  FixedPathA extends string = Trim<PathA, "/">,
-  FixedPathB extends string = Trim<PathB, "/">,
-> = `/${Trim<`${FixedPathA}/${FixedPathB}`, "/">}`;
-
-export type ConcatSearchs<
-  SearchA extends string,
-  SearchB extends string,
-  FixedSearchA extends string = Trim<SearchA, "&">,
-  FixedSearchB extends string = Trim<SearchB, "&">,
-> = Trim<`${FixedSearchA}&${FixedSearchB}`, "&">;
-
 type AddPrefixOnNonEmpty<
   Value extends string,
   Prefix extends string,
 > = Value extends "" ? Value : `${Prefix}${Value}`;
+
+type EnsureSlashPrefix<Value extends string> = Value extends `/${infer _}`
+  ? Value
+  : `/${Value}`;
+
+export type ConcatPaths<
+  PathA extends string,
+  PathB extends string,
+  FixedPathA extends string = EnsureSlashPrefix<PathA>,
+  FixedPathB extends string = EnsureSlashPrefix<PathB>,
+> = FixedPathA extends "/"
+  ? FixedPathB
+  : FixedPathB extends "/"
+  ? FixedPathA
+  : `${FixedPathA}${FixedPathB}`;
+
+export type ConcatSearchs<
+  SearchA extends string,
+  SearchB extends string,
+> = SearchA extends ""
+  ? SearchB
+  : `${SearchA}${AddPrefixOnNonEmpty<SearchB, "&">}`;
 
 type StringifyRouteObject<Route extends RouteObject> =
   `${Route["path"]}${AddPrefixOnNonEmpty<
@@ -147,7 +140,7 @@ export type PrependBasePath<
 };
 
 export type GetAreaRoutes<Routes extends Record<string, string>> = {
-  [K in keyof Routes as Routes[K] extends `${string}/*`
+  [K in keyof Routes as Routes[K] extends `${infer _}/*`
     ? K
     : never]: Routes[K] extends `${infer Rest}/*` ? Rest : never;
 };
