@@ -8,7 +8,6 @@ import {
   ExtractRoute,
   ExtractSearchParams,
   SplitAndFilterEmpty,
-  Trim,
 } from "../src/types";
 
 // @ts-expect-error
@@ -81,28 +80,6 @@ test("ExtractHashParams", () => {
   expectType<ExtractSearchParams<":foo">>(toBe<{ foo?: string }>());
 });
 
-test("Trim", () => {
-  expectType<Trim<"abc", " ">>(toBe<"abc">());
-  expectType<Trim<" abc", " ">>(toBe<"abc">());
-  expectType<Trim<"abc ", " ">>(toBe<"abc">());
-  expectType<Trim<" abc ", " ">>(toBe<"abc">());
-  expectType<Trim<" a b c ", " ">>(toBe<"a b c">());
-
-  expectType<Trim<"", " ">>(toBe<"">());
-  expectType<Trim<" ", " ">>(toBe<"">());
-  expectType<Trim<"  ", " ">>(toBe<"">());
-
-  expectType<Trim<"abc", "/">>(toBe<"abc">());
-  expectType<Trim<"/abc", "/">>(toBe<"abc">());
-  expectType<Trim<"abc/", "/">>(toBe<"abc">());
-  expectType<Trim<"/abc/", "/">>(toBe<"abc">());
-  expectType<Trim<"/a/b/c/", "/">>(toBe<"a/b/c">());
-
-  expectType<Trim<"", "/">>(toBe<"">());
-  expectType<Trim<"/", "/">>(toBe<"">());
-  expectType<Trim<"//", "/">>(toBe<"">());
-});
-
 test("ConcatPaths", () => {
   expectType<ConcatPaths<"/foo", "/bar">>(toBe<"/foo/bar">());
   expectType<ConcatPaths<"/foo", "/">>(toBe<"/foo">());
@@ -116,7 +93,5 @@ test("ConcatSearchs", () => {
   expectType<ConcatSearchs<":foo", ":bar">>(toBe<":foo&:bar">());
   expectType<ConcatSearchs<":foo", "">>(toBe<":foo">());
   expectType<ConcatSearchs<"", ":bar">>(toBe<":bar">());
-  expectType<ConcatSearchs<":foo", "&:bar">>(toBe<":foo&:bar">());
-  expectType<ConcatSearchs<":foo&", "&:bar">>(toBe<":foo&:bar">());
   expectType<ConcatSearchs<":foo&:bar", ":baz">>(toBe<":foo&:bar&:baz">());
 });
