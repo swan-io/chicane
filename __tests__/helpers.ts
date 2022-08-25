@@ -5,7 +5,6 @@ import {
   isMultipleParam,
   isNonEmpty,
   isParam,
-  trim,
 } from "../src/helpers";
 
 describe("first", () => {
@@ -73,35 +72,5 @@ describe("isMultipleParam", () => {
     expect(isMultipleParam(":")).toBe(false);
     expect(isMultipleParam(":test")).toBe(false);
     expect(isMultipleParam("test")).toBe(false);
-  });
-});
-
-describe("trim", () => {
-  test("should behave correctly with empty space cases", () => {
-    expect(trim("abc", " ")).toBe("abc");
-    expect(trim(" abc", " ")).toBe("abc");
-    expect(trim("abc ", " ")).toBe("abc");
-    expect(trim(" abc ", " ")).toBe("abc");
-    expect(trim(" a b c ", " ")).toBe("a b c");
-  });
-
-  test("should behave correctly with odd empty space cases", () => {
-    expect(trim("", " ")).toBe("");
-    expect(trim(" ", " ")).toBe("");
-    expect(trim("  ", " ")).toBe("");
-  });
-
-  test("should behave correctly with slash cases", () => {
-    expect(trim("abc", "/")).toBe("abc");
-    expect(trim("/abc", "/")).toBe("abc");
-    expect(trim("abc/", "/")).toBe("abc");
-    expect(trim("/abc/", "/")).toBe("abc");
-    expect(trim("/a/b/c/", "/")).toBe("a/b/c");
-  });
-
-  test("should behave correctly with odd slash cases", () => {
-    expect(trim("", "/")).toBe("");
-    expect(trim("/", "/")).toBe("");
-    expect(trim("//", "/")).toBe("");
   });
 });
