@@ -1,5 +1,5 @@
+import { replaceUnsafe, useLocation } from "@swan-io/chicane";
 import * as React from "react";
-import { replaceUnsafe, useLocation } from "../../src";
 
 export const Redirect = ({ to }: { to: string }) => {
   const location = useLocation().toString();

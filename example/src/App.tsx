@@ -1,6 +1,6 @@
+import { Link, useFocusReset } from "@swan-io/chicane";
 import * as React from "react";
 import { match } from "ts-pattern";
-import { Link, useFocusReset } from "../../src";
 import { Router } from "./router";
 
 const EXAMPLE_DATA: Record<string, string[]> = {
