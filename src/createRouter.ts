@@ -1,7 +1,7 @@
 import { createPath } from "history";
 import * as React from "react";
 import { useSyncExternalStoreWithSelector } from "use-sync-external-store/shim/with-selector";
-import { concatRoutes, extractRoute } from "./concatRoutes";
+import { concatRoutes, parseRoute } from "./concatRoutes";
 import { areRouteEqual, first, identity } from "./helpers";
 import {
   history,
@@ -10,14 +10,14 @@ import {
 } from "./history";
 import { getMatcher, match, matchToHistoryPath } from "./matcher";
 import {
-  ExtractRoutes,
-  ExtractRoutesParams,
   GetAreaRoutes,
+  GetRoutesParams,
   Matcher,
   Params,
   ParamsArg,
+  ParsedRoute,
+  ParseRoutes,
   PrependBasePath,
-  RouteObject,
   Simplify,
 } from "./types";
 
@@ -30,17 +30,17 @@ export const createRouter = <
     basePath?: BasePath;
   } = {},
 ) => {
-  type RoutesWithBasePath = PrependBasePath<BasePath, ExtractRoutes<Routes>>;
+  type RoutesWithBasePath = PrependBasePath<BasePath, ParseRoutes<Routes>>;
   type AreaRoutes = GetAreaRoutes<RoutesWithBasePath>;
-  type AreaRoutesParams = ExtractRoutesParams<AreaRoutes>;
+  type AreaRoutesParams = GetRoutesParams<AreaRoutes>;
   type FiniteRoutes = Omit<RoutesWithBasePath, keyof AreaRoutes>;
-  type FiniteRoutesParams = ExtractRoutesParams<FiniteRoutes>;
+  type FiniteRoutesParams = GetRoutesParams<FiniteRoutes>;
   type RoutesParams = AreaRoutesParams & FiniteRoutesParams;
 
   const { basePath = "" } = options;
 
-  const basePathObject: RouteObject = {
-    path: extractRoute(basePath).path,
+  const basePathObject: ParsedRoute = {
+    path: parseRoute(basePath).path,
     search: "", // search and hash are not supported in basePath
     hash: "",
   };
@@ -53,7 +53,7 @@ export const createRouter = <
       const matcher = getMatcher(
         routeName,
         basePath !== ""
-          ? concatRoutes(basePathObject, extractRoute(routes[routeName]))
+          ? concatRoutes(basePathObject, parseRoute(routes[routeName]))
           : routes[routeName],
       );
 

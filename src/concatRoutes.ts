@@ -1,5 +1,5 @@
 import { parsePath } from "history";
-import { RouteObject } from "./types";
+import { ParsedRoute } from "./types";
 
 export const addPrefixOnNonEmpty = (value: string, prefix: string) =>
   value === "" ? value : prefix + value;
@@ -7,14 +7,14 @@ export const addPrefixOnNonEmpty = (value: string, prefix: string) =>
 export const ensureSlashPrefix = (value: string): string =>
   value[0] === "/" ? value : `/${value}`;
 
-export const extractRoute = (route: string): RouteObject => {
+export const parseRoute = (route: string): ParsedRoute => {
   const { pathname: path = "", search = "", hash = "" } = parsePath(route);
   return { path, search: search.substring(1), hash: hash.substring(1) };
 };
 
 export const concatRoutes = (
-  routeA: RouteObject,
-  routeB: RouteObject,
+  routeA: ParsedRoute,
+  routeB: ParsedRoute,
 ): string => {
   const fixedPathA = ensureSlashPrefix(routeA["path"]);
   const fixedPathB = ensureSlashPrefix(routeB["path"]);

@@ -1,8 +1,8 @@
 import { expect, test } from "vitest";
-import { concatRoutes, extractRoute } from "../src/concatRoutes";
+import { concatRoutes, parseRoute } from "../src/concatRoutes";
 
 const concatRouteStrings = (routeA: string, routeB: string): string =>
-  concatRoutes(extractRoute(routeA), extractRoute(routeB));
+  concatRoutes(parseRoute(routeA), parseRoute(routeB));
 
 test("concatRoutes perform proper routes concatenation", () => {
   expect(concatRouteStrings("/", "/")).toBe("/");
