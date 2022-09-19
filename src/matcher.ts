@@ -20,23 +20,16 @@ const extractFromPathname = (pathname: string) => {
 };
 
 export const getMatcher = (name: string, route: string): Matcher => {
-  if (route.endsWith("/*")) {
-    const { pathname = "/" } = parsePath(route.slice(0, -2));
-    const { ranking, path } = extractFromPathname(pathname);
+  const { pathname = "/", search, hash } = parsePath(route);
+  const isArea = pathname.endsWith("/*");
 
-    return {
-      isArea: true,
-      name,
-      ranking: ranking - 1, // penality due to wildcard
-      path,
-      search: {},
-      hash: undefined,
-    };
-  } else {
-    const { pathname = "/", search = "", hash = "" } = parsePath(route);
-    const { ranking, path } = extractFromPathname(pathname);
+  const { ranking, path } = extractFromPathname(
+    isArea ? pathname.slice(0, -2) : pathname,
+  );
 
-    const searchMatchers: Matcher["search"] = {};
+  const searchMatchers: Matcher["search"] = {};
+
+  if (search != null) {
     const params = new URLSearchParams(search.substring(1));
 
     for (const [key] of params) {
@@ -46,16 +39,20 @@ export const getMatcher = (name: string, route: string): Matcher => {
         searchMatchers[key.substring(1, key.length)] = "unique";
       }
     }
-
-    return {
-      isArea: false,
-      name,
-      ranking,
-      path,
-      search: searchMatchers,
-      hash: isParam(hash.substring(1)) ? hash.substring(2) : undefined,
-    };
   }
+
+  return {
+    isArea,
+    name,
+    // penality due to wildcard
+    ranking: isArea ? ranking - 1 : ranking,
+    path,
+    search: searchMatchers,
+    hash:
+      hash != null && isParam(hash.substring(1))
+        ? hash.substring(2)
+        : undefined,
+  };
 };
 
 export const extractLocationParams = (
@@ -96,10 +93,6 @@ export const extractLocationParams = (
         return;
       }
     }
-  }
-
-  if (isArea) {
-    return params; // don't extract area search and hash
   }
 
   for (const key in matcher.search) {

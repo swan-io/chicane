@@ -71,6 +71,14 @@ test("getMatcher decrements the ranking by 1 if the path is an area", () => {
     hash: undefined,
   });
 
+  getMatcherEqual("UsersArea", "/groups/:groupId/users/*?:foo&:bar[]", {
+    isArea: true,
+    ranking: 19,
+    path: ["groups", { name: "groupId" }, "users"],
+    search: { foo: "unique", bar: "multiple" },
+    hash: undefined,
+  });
+
   getMatcherEqual("Users", "/groups/:groupId/users", {
     isArea: false,
     ranking: 20,

@@ -3,38 +3,40 @@ import { test } from "vitest";
 import {
   ConcatPaths,
   ConcatSearchs,
-  ExtractHashParams,
-  ExtractPathParams,
-  ExtractRoute,
-  ExtractSearchParams,
+  GetAreaRoutes,
+  GetHashParams,
+  GetPathParams,
+  GetSearchParams,
+  ParseRoute,
+  ParseRoutes,
   SplitAndFilterEmpty,
 } from "../src/types";
 
 // @ts-expect-error
 const toBe = <T>(): T => {};
 
-test("ExtractRoute", () => {
-  expectType<ExtractRoute<"/foo?bar#baz">>(
+test("ParseRoute", () => {
+  expectType<ParseRoute<"/foo?bar#baz">>(
     toBe<{ path: "/foo"; search: "bar"; hash: "baz" }>(),
   );
 
-  expectType<ExtractRoute<"/foo?bar">>(
+  expectType<ParseRoute<"/foo?bar">>(
     toBe<{ path: "/foo"; search: "bar"; hash: "" }>(),
   );
 
-  expectType<ExtractRoute<"/foo#baz">>(
+  expectType<ParseRoute<"/foo#baz">>(
     toBe<{ path: "/foo"; search: ""; hash: "baz" }>(),
   );
 
-  expectType<ExtractRoute<"/foo/bar">>(
+  expectType<ParseRoute<"/foo/bar">>(
     toBe<{ path: "/foo/bar"; search: ""; hash: "" }>(),
   );
 
-  expectType<ExtractRoute<"/foo/bar?baz&qux">>(
+  expectType<ParseRoute<"/foo/bar?baz&qux">>(
     toBe<{ path: "/foo/bar"; search: "baz&qux"; hash: "" }>(),
   );
 
-  expectType<ExtractRoute<"/foo/bar/baz#qux">>(
+  expectType<ParseRoute<"/foo/bar/baz#qux">>(
     toBe<{ path: "/foo/bar/baz"; search: ""; hash: "qux" }>(),
   );
 });
@@ -54,30 +56,28 @@ test("SplitAndFilterEmpty", () => {
   expectType<SplitAndFilterEmpty<"foo&&bar", "&">>(toBe<["foo", "bar"]>());
 });
 
-test("ExtractPathParams", () => {
-  expectType<ExtractPathParams<"/foo/bar">>(toBe<{}>());
-  expectType<ExtractPathParams<"/foo/:bar">>(toBe<{ bar: string }>());
+test("GetPathParams", () => {
+  expectType<GetPathParams<"/foo/bar">>(toBe<{}>());
+  expectType<GetPathParams<"/foo/:bar">>(toBe<{ bar: string }>());
 
-  expectType<ExtractPathParams<"/:foo/:bar">>(
-    toBe<{ foo: string; bar: string }>(),
-  );
+  expectType<GetPathParams<"/:foo/:bar">>(toBe<{ foo: string; bar: string }>());
 });
 
-test("ExtractSearchParams", () => {
-  expectType<ExtractSearchParams<"foo&bar">>(toBe<{}>()); // no params
+test("GetSearchParams", () => {
+  expectType<GetSearchParams<"foo&bar">>(toBe<{}>()); // no params
 
-  expectType<ExtractSearchParams<"foo&:bar&:baz">>(
+  expectType<GetSearchParams<"foo&:bar&:baz">>(
     toBe<{ bar?: string; baz?: string }>(),
   );
 
-  expectType<ExtractSearchParams<":foo&:bar&:baz[]">>(
+  expectType<GetSearchParams<":foo&:bar&:baz[]">>(
     toBe<{ foo?: string; bar?: string; baz?: string[] }>(),
   );
 });
 
-test("ExtractHashParams", () => {
-  expectType<ExtractHashParams<"foo">>(toBe<{}>()); // no param
-  expectType<ExtractSearchParams<":foo">>(toBe<{ foo?: string }>());
+test("GetHashParams", () => {
+  expectType<GetHashParams<"foo">>(toBe<{}>()); // no param
+  expectType<GetSearchParams<":foo">>(toBe<{ foo?: string }>());
 });
 
 test("ConcatPaths", () => {
@@ -94,4 +94,23 @@ test("ConcatSearchs", () => {
   expectType<ConcatSearchs<":foo", "">>(toBe<":foo">());
   expectType<ConcatSearchs<"", ":bar">>(toBe<":bar">());
   expectType<ConcatSearchs<":foo&:bar", ":baz">>(toBe<":foo&:bar&:baz">());
+});
+
+test("GetAreaRoutes", () => {
+  expectType<
+    GetAreaRoutes<
+      ParseRoutes<{
+        User: "/users/:userId";
+        RepositoriesArea: "/users/:userId/repositories/*?:foo&:bar[]#:baz";
+      }>
+    >
+  >(
+    toBe<{
+      RepositoriesArea: {
+        path: "/users/:userId/repositories";
+        hash: ":baz";
+        search: ":foo&:bar[]";
+      };
+    }>(),
+  );
 });
