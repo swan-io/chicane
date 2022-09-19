@@ -6,7 +6,9 @@ import {
   ExtractHashParams,
   ExtractPathParams,
   ExtractRoute,
+  ExtractRoutes,
   ExtractSearchParams,
+  GetAreaRoutes,
   SplitAndFilterEmpty,
 } from "../src/types";
 
@@ -94,4 +96,23 @@ test("ConcatSearchs", () => {
   expectType<ConcatSearchs<":foo", "">>(toBe<":foo">());
   expectType<ConcatSearchs<"", ":bar">>(toBe<":bar">());
   expectType<ConcatSearchs<":foo&:bar", ":baz">>(toBe<":foo&:bar&:baz">());
+});
+
+test("GetAreaRoutes", () => {
+  expectType<
+    GetAreaRoutes<
+      ExtractRoutes<{
+        User: "/users/:userId";
+        RepositoriesArea: "/users/:userId/repositories/*?:foo&:bar[]#:baz";
+      }>
+    >
+  >(
+    toBe<{
+      RepositoriesArea: {
+        path: "/users/:userId/repositories";
+        hash: ":baz";
+        search: ":foo&:bar[]";
+      };
+    }>(),
+  );
 });

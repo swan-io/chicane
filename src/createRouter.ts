@@ -10,6 +10,7 @@ import {
 } from "./history";
 import { getMatcher, match, matchToHistoryPath } from "./matcher";
 import {
+  ExtractRoutes,
   ExtractRoutesParams,
   GetAreaRoutes,
   Matcher,
@@ -29,7 +30,7 @@ export const createRouter = <
     basePath?: BasePath;
   } = {},
 ) => {
-  type RoutesWithBasePath = PrependBasePath<BasePath, Routes>;
+  type RoutesWithBasePath = PrependBasePath<BasePath, ExtractRoutes<Routes>>;
   type AreaRoutes = GetAreaRoutes<RoutesWithBasePath>;
   type AreaRoutesParams = ExtractRoutesParams<AreaRoutes>;
   type FiniteRoutes = Omit<RoutesWithBasePath, keyof AreaRoutes>;
