@@ -95,10 +95,6 @@ export const extractLocationParams = (
     }
   }
 
-  if (isArea) {
-    return params; // don't extract area search and hash
-  }
-
   for (const key in matcher.search) {
     if (Object.prototype.hasOwnProperty.call(matcher.search, key)) {
       const matcherValue = matcher.search[key];
