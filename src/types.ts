@@ -34,20 +34,20 @@ export type Location = Readonly<{
   toString(): string;
 }>;
 
-export type SplitAndFilterEmpty<
+export type NonEmptySplit<
   Value extends string,
   Separator extends string,
 > = Value extends `${infer Head}${Separator}${infer Tail}`
   ? Head extends ""
-    ? SplitAndFilterEmpty<Tail, Separator>
-    : [Head, ...SplitAndFilterEmpty<Tail, Separator>]
+    ? NonEmptySplit<Tail, Separator>
+    : [Head, ...NonEmptySplit<Tail, Separator>]
   : Value extends ""
   ? []
   : [Value];
 
 export type GetPathParams<
   Path extends string,
-  Parts = SplitAndFilterEmpty<Path, "/">,
+  Parts = NonEmptySplit<Path, "/">,
 > = Parts extends [infer Head, ...infer Tail]
   ? Head extends `:${infer Name}`
     ? { [K in Name]: string } & GetPathParams<Path, Tail>
@@ -56,7 +56,7 @@ export type GetPathParams<
 
 export type GetSearchParams<
   Search extends string,
-  Parts = SplitAndFilterEmpty<Search, "&">,
+  Parts = NonEmptySplit<Search, "&">,
 > = Parts extends [infer Head, ...infer Tail]
   ? Head extends `:${infer Name}[]`
     ? { [K in Name]?: string[] | undefined } & GetSearchParams<Search, Tail>
@@ -146,11 +146,7 @@ export type GetAreaRoutes<Routes extends Record<string, ParsedRoute>> = {
   [K in keyof Routes as Routes[K]["path"] extends `${string}/*`
     ? K
     : never]: Routes[K]["path"] extends `${infer Rest}/*`
-    ? {
-        path: Rest;
-        search: Routes[K]["search"];
-        hash: Routes[K]["hash"];
-      }
+    ? { path: Rest; search: Routes[K]["search"]; hash: Routes[K]["hash"] }
     : never;
 };
 

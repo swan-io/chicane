@@ -7,9 +7,9 @@ import {
   GetHashParams,
   GetPathParams,
   GetSearchParams,
+  NonEmptySplit,
   ParseRoute,
   ParseRoutes,
-  SplitAndFilterEmpty,
 } from "../src/types";
 
 // @ts-expect-error
@@ -41,19 +41,19 @@ test("ParseRoute", () => {
   );
 });
 
-test("SplitAndFilterEmpty", () => {
-  expectType<SplitAndFilterEmpty<"/foo", "/">>(toBe<["foo"]>());
-  expectType<SplitAndFilterEmpty<"foo", "&">>(toBe<["foo"]>());
+test("NonEmptySplit", () => {
+  expectType<NonEmptySplit<"/foo", "/">>(toBe<["foo"]>());
+  expectType<NonEmptySplit<"foo", "&">>(toBe<["foo"]>());
 
-  expectType<SplitAndFilterEmpty<"/foo/bar", "/">>(toBe<["foo", "bar"]>());
-  expectType<SplitAndFilterEmpty<"foo/bar/", "/">>(toBe<["foo", "bar"]>());
-  expectType<SplitAndFilterEmpty<"/foo/bar", "/">>(toBe<["foo", "bar"]>());
-  expectType<SplitAndFilterEmpty<"/foo//bar", "/">>(toBe<["foo", "bar"]>());
+  expectType<NonEmptySplit<"/foo/bar", "/">>(toBe<["foo", "bar"]>());
+  expectType<NonEmptySplit<"foo/bar/", "/">>(toBe<["foo", "bar"]>());
+  expectType<NonEmptySplit<"/foo/bar", "/">>(toBe<["foo", "bar"]>());
+  expectType<NonEmptySplit<"/foo//bar", "/">>(toBe<["foo", "bar"]>());
 
-  expectType<SplitAndFilterEmpty<"foo&bar", "&">>(toBe<["foo", "bar"]>());
-  expectType<SplitAndFilterEmpty<"foo&bar&", "&">>(toBe<["foo", "bar"]>());
-  expectType<SplitAndFilterEmpty<"&foo&bar", "&">>(toBe<["foo", "bar"]>());
-  expectType<SplitAndFilterEmpty<"foo&&bar", "&">>(toBe<["foo", "bar"]>());
+  expectType<NonEmptySplit<"foo&bar", "&">>(toBe<["foo", "bar"]>());
+  expectType<NonEmptySplit<"foo&bar&", "&">>(toBe<["foo", "bar"]>());
+  expectType<NonEmptySplit<"&foo&bar", "&">>(toBe<["foo", "bar"]>());
+  expectType<NonEmptySplit<"foo&&bar", "&">>(toBe<["foo", "bar"]>());
 });
 
 test("GetPathParams", () => {
