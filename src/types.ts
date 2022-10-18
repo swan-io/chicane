@@ -130,12 +130,12 @@ export type ConcatRoutes<
   "?"
 >}${AddPrefixOnNonEmpty<Route["hash"], "#">}`;
 
-export type PrependBaseRoute<
-  BaseRoute extends ParsedRoute,
+export type PrependBasePath<
+  BasePath extends string,
   Routes extends Record<string, ParsedRoute>,
 > = {
   [K in keyof Routes]: {
-    path: ConcatPaths<BaseRoute["path"], Routes[K]["path"]>;
+    path: ConcatPaths<BasePath, Routes[K]["path"]>;
     search: Routes[K]["search"];
     hash: Routes[K]["hash"];
   };

@@ -18,24 +18,21 @@ import {
   ParsedRoute,
   ParseRoute,
   ParseRoutes,
-  PrependBaseRoute,
+  PrependBasePath,
   Simplify,
 } from "./types";
 
 export const createRouter = <
   Routes extends Record<string, string>,
-  BasePath extends string = "/",
+  BasePath extends string = "",
 >(
   routes: Readonly<Routes>,
   options: {
     basePath?: BasePath;
   } = {},
 ) => {
-  type RoutesWithBasePath = PrependBaseRoute<
-    ParseRoute<BasePath>,
-    ParseRoutes<Routes>
-  >;
-
+  type CleanBasePath = ParseRoute<BasePath>["path"];
+  type RoutesWithBasePath = PrependBasePath<CleanBasePath, ParseRoutes<Routes>>;
   type AreaRoutes = GetAreaRoutes<RoutesWithBasePath>;
   type AreaRoutesParams = GetRoutesParams<AreaRoutes>;
   type FiniteRoutes = Omit<RoutesWithBasePath, keyof AreaRoutes>;

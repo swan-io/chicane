@@ -10,6 +10,7 @@ import {
   NonEmptySplit,
   ParseRoute,
   ParseRoutes,
+  PrependBasePath,
 } from "../src/types";
 
 // @ts-expect-error
@@ -111,6 +112,38 @@ test("GetAreaRoutes", () => {
         hash: ":baz";
         search: ":foo&:bar[]";
       };
+    }>(),
+  );
+});
+
+test("PrependBasePath", () => {
+  type Input = {
+    a: ParseRoute<"/">;
+    b: ParseRoute<"/foo/bar">;
+    c: ParseRoute<"/foo?:bar#:baz">;
+  };
+
+  expectType<PrependBasePath<"", Input>>(
+    toBe<{
+      a: { path: "/"; search: ""; hash: "" };
+      b: { path: "/foo/bar"; search: ""; hash: "" };
+      c: { path: "/foo"; search: ":bar"; hash: ":baz" };
+    }>(),
+  );
+
+  expectType<PrependBasePath<"/", Input>>(
+    toBe<{
+      a: { path: "/"; search: ""; hash: "" };
+      b: { path: "/foo/bar"; search: ""; hash: "" };
+      c: { path: "/foo"; search: ":bar"; hash: ":baz" };
+    }>(),
+  );
+
+  expectType<PrependBasePath<"/base", Input>>(
+    toBe<{
+      a: { path: "/base"; search: ""; hash: "" };
+      b: { path: "/base/foo/bar"; search: ""; hash: "" };
+      c: { path: "/base/foo"; search: ":bar"; hash: ":baz" };
     }>(),
   );
 });
