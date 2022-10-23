@@ -15,5 +15,5 @@ export const useNavigationBlocker = (blocked: boolean, message: string) => {
     });
 
     return unblock;
-  }, [blocked]);
+  }, [blocked]); // eslint-disable-line react-hooks/exhaustive-deps
 };

@@ -14,11 +14,10 @@ import { Location, Search, Subscription } from "./types";
 const subscriptions = new Set<Subscription>();
 
 // From https://github.com/facebook/fbjs/blob/v2.0.0/packages/fbjs/src/core/ExecutionEnvironment.js
-const canUseDOM = !!(
+const canUseDOM =
   typeof window !== "undefined" &&
-  window.document &&
-  window.document.createElement
-);
+  typeof window.document !== "undefined" &&
+  typeof window.document.createElement !== "undefined";
 
 export const history = canUseDOM
   ? createBrowserHistory()

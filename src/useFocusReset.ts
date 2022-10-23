@@ -36,7 +36,7 @@ export const useFocusReset = ({
         }
 
         element.focus();
-      } catch {}
+      } catch {} // eslint-disable-line no-empty
     }
   }, [containerRef, focusKey]);
 };

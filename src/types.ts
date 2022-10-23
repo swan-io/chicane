@@ -52,7 +52,7 @@ export type GetPathParams<
   ? Head extends `:${infer Name}`
     ? { [K in Name]: string } & GetPathParams<Path, Tail>
     : GetPathParams<Path, Tail>
-  : {};
+  : {}; // eslint-disable-line @typescript-eslint/ban-types
 
 export type GetSearchParams<
   Search extends string,
@@ -63,11 +63,11 @@ export type GetSearchParams<
     : Head extends `:${infer Name}`
     ? { [K in Name]?: string | undefined } & GetSearchParams<Search, Tail>
     : GetSearchParams<Search, Tail>
-  : {};
+  : {}; // eslint-disable-line @typescript-eslint/ban-types
 
 export type GetHashParams<Value extends string> = Value extends `:${infer Name}`
   ? { [K in Name]?: string | undefined }
-  : {};
+  : {}; // eslint-disable-line @typescript-eslint/ban-types
 
 export type ParseRoute<Route extends string> =
   Route extends `${infer Path}?${infer Search}#${infer Hash}`
@@ -157,7 +157,9 @@ export type GetRoutesParams<Routes extends Record<string, ParsedRoute>> = {
 
 type EmptyRecord = Record<string | number | symbol, never>;
 
-export type Simplify<T> = T extends EmptyRecord ? {} : { [K in keyof T]: T[K] };
+export type Simplify<T> = T extends EmptyRecord
+  ? {} // eslint-disable-line @typescript-eslint/ban-types
+  : { [K in keyof T]: T[K] };
 
 type NonOptionalProperties<T> = Exclude<
   { [K in keyof T]: T extends Record<K, T[K]> ? K : never }[keyof T],

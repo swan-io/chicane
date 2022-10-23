@@ -1,0 +1,8 @@
+__tests__/
+dist/
+example/
+docs/
+
+vite.config.ts
+vitest-setup.ts
+.eslintrc.js

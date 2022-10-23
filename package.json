@@ -31,10 +31,11 @@
     "clean": "rm -rf dist",
     "dev": "microbundle watch",
     "format": "prettier '**/*' -u -w",
+    "lint": "eslint --ext ts,tsx ./src",
     "test": "vitest --run",
     "test:watch": "vitest --watch",
     "tscheck": "tsc --noEmit",
-    "prepack": "yarn test && yarn build"
+    "prepack": "yarn tscheck && yarn lint && yarn test && yarn build"
   },
   "browserslist": [
     ">0.2%",
@@ -57,6 +58,10 @@
     "@types/react": "^17.0.50",
     "@types/react-dom": "^17.0.17",
     "@types/use-sync-external-store": "^0.0.3",
+    "@typescript-eslint/eslint-plugin": "^5.40.1",
+    "@typescript-eslint/parser": "^5.40.1",
+    "eslint": "^8.26.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "jsdom": "^20.0.1",
     "microbundle": "^0.15.1",
     "prettier": "^2.7.1",

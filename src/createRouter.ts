@@ -96,12 +96,14 @@ export const createRouter = <
           }
         | undefined
     : never => {
+    const matchersKey = JSON.stringify(routeNames);
+
     const matchers = React.useMemo(
       () =>
         rankedMatchers.filter(({ name }) =>
           routeNames.includes(name as RouteName),
         ),
-      [JSON.stringify(routeNames)],
+      [matchersKey], // eslint-disable-line react-hooks/exhaustive-deps
     );
 
     const getUniversalLocation = useGetUniversalLocation();
