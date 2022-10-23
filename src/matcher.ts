@@ -27,32 +27,34 @@ export const getMatcher = (name: string, route: string): Matcher => {
     isArea ? pathname.slice(0, -2) : pathname,
   );
 
-  const searchMatchers: Matcher["search"] = {};
-
-  if (search != null) {
-    const params = new URLSearchParams(search.substring(1));
-
-    for (const [key] of params) {
-      if (isMultipleParam(key)) {
-        searchMatchers[key.substring(1, key.length - 2)] = "multiple";
-      } else if (isParam(key)) {
-        searchMatchers[key.substring(1, key.length)] = "unique";
-      }
-    }
-  }
-
-  return {
+  const matcher: Matcher = {
     isArea,
     name,
     // penality due to wildcard
     ranking: isArea ? ranking - 1 : ranking,
     path,
-    search: searchMatchers,
-    hash:
-      hash != null && isParam(hash.substring(1))
-        ? hash.substring(2)
-        : undefined,
+    search: undefined,
+    hash: undefined,
   };
+
+  if (search != null) {
+    matcher.search = {};
+    const params = new URLSearchParams(search.substring(1));
+
+    for (const [key] of params) {
+      if (isMultipleParam(key)) {
+        matcher.search[key.substring(1, key.length - 2)] = "multiple";
+      } else if (isParam(key)) {
+        matcher.search[key.substring(1, key.length)] = "unique";
+      }
+    }
+  }
+
+  if (hash != null && isParam(hash.substring(1))) {
+    matcher.hash = hash.substring(2);
+  }
+
+  return matcher;
 };
 
 export const extractLocationParams = (

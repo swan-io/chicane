@@ -21,7 +21,7 @@ test("getMatcher returns a proper matcher structure for paths without params", (
     isArea: false,
     ranking: 7,
     path: ["groups"],
-    search: {},
+    search: undefined,
     hash: undefined,
   });
 
@@ -29,7 +29,7 @@ test("getMatcher returns a proper matcher structure for paths without params", (
     isArea: false,
     ranking: 14,
     path: ["groups", "mine"],
-    search: {},
+    search: undefined,
     hash: undefined,
   });
 });
@@ -39,7 +39,7 @@ test("getMatcher returns a proper matcher structure for paths with params (in pa
     isArea: false,
     ranking: 13,
     path: ["group", { name: "groupId" }],
-    search: {},
+    search: undefined,
     hash: undefined,
   });
 
@@ -47,7 +47,7 @@ test("getMatcher returns a proper matcher structure for paths with params (in pa
     isArea: false,
     ranking: 20,
     path: ["groups", { name: "groupId" }, "users"],
-    search: {},
+    search: undefined,
     hash: undefined,
   });
 });
@@ -67,7 +67,7 @@ test("getMatcher decrements the ranking by 1 if the path is an area", () => {
     isArea: true,
     ranking: 19,
     path: ["groups", { name: "groupId" }, "users"],
-    search: {},
+    search: undefined,
     hash: undefined,
   });
 
@@ -83,7 +83,7 @@ test("getMatcher decrements the ranking by 1 if the path is an area", () => {
     isArea: false,
     ranking: 20,
     path: ["groups", { name: "groupId" }, "users"],
-    search: {},
+    search: undefined,
     hash: undefined,
   });
 });
