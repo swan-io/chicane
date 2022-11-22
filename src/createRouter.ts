@@ -38,6 +38,10 @@ export const createRouter = <
   type FiniteRoutes = Omit<RoutesWithBasePath, keyof AreaRoutes>;
   type FiniteRoutesParams = GetRoutesParams<FiniteRoutes>;
   type RoutesParams = AreaRoutesParams & FiniteRoutesParams;
+  type CreatedUrlFunction<Key> = {
+    path: string;
+    (...params: ParamsArg<Key>): string;
+  };
 
   const { basePath = "" } = options;
 
@@ -69,9 +73,7 @@ export const createRouter = <
   );
 
   const createURLFunctions = {} as {
-    [RouteName in keyof FiniteRoutes]: (
-      ...args: ParamsArg<FiniteRoutesParams[RouteName]>
-    ) => string;
+    [RouteName in keyof FiniteRoutes]: CreatedUrlFunction<RouteName>;
   };
 
   for (let index = 0; index < rankedMatchers.length; index++) {
@@ -80,8 +82,16 @@ export const createRouter = <
     if (matcher != null && !matcher.isArea) {
       const routeName = matcher.name as keyof FiniteRoutes;
 
-      createURLFunctions[routeName] = (params?: Params) =>
+      const funcWithPath = (params?: Params) =>
         createPath(matchToHistoryPath(matchers[routeName], params));
+
+      const path = routes[routeName];
+
+      funcWithPath.path = path;
+
+      createURLFunctions[routeName] = funcWithPath as CreatedUrlFunction<
+        keyof FiniteRoutes
+      >;
     }
   }
 
@@ -131,6 +141,7 @@ export const createRouter = <
     history.replace(matchToHistoryPath(matchers[routeName], first(args)));
 
   return {
+    path: routes,
     useRoute,
     push,
     replace,

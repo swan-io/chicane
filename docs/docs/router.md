@@ -55,3 +55,12 @@ Takes a route name and its associated params and navigates to it **without** cre
 Router.replace("Home");
 Router.replace("UserDetail", { userId: "123" });
 ```
+
+## Router.{RouteName}.path
+
+Provides the original string path passed to `createRouter` for the route name. Useful when the whole path must be passed to other routers like React Router
+
+```ts
+Router.UserList.path; // "/users"
+Router.UserDetail.path; // "/user/:userId"
+```
