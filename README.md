@@ -26,6 +26,7 @@ $ npm install --save @swan-io/chicane
 ## Links
 
 - 📘 [**Documentation**](https://swan-io.github.io/chicane)
+- 📗 [**Usage with other routers**](./ADOPTION.md)
 - ⚖️ [**License**](./LICENSE)
 
 ## Quickstart
