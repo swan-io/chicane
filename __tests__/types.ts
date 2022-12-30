@@ -1,5 +1,4 @@
-import { expectType } from "tsd";
-import { test } from "vitest";
+import { expectTypeOf, test } from "vitest";
 import {
   ConcatPaths,
   ConcatSearchs,
@@ -13,107 +12,139 @@ import {
   PrependBasePath,
 } from "../src/types";
 
-// @ts-expect-error
-const toBe = <T>(): T => {};
-
 test("ParseRoute", () => {
-  expectType<ParseRoute<"/foo?bar#baz">>(
-    toBe<{ path: "/foo"; search: "bar"; hash: "baz" }>(),
-  );
+  expectTypeOf<ParseRoute<"/foo?bar#baz">>().toEqualTypeOf<{
+    path: "/foo";
+    search: "bar";
+    hash: "baz";
+  }>();
 
-  expectType<ParseRoute<"/foo?bar">>(
-    toBe<{ path: "/foo"; search: "bar"; hash: "" }>(),
-  );
+  expectTypeOf<ParseRoute<"/foo?bar">>().toEqualTypeOf<{
+    path: "/foo";
+    search: "bar";
+    hash: "";
+  }>();
 
-  expectType<ParseRoute<"/foo#baz">>(
-    toBe<{ path: "/foo"; search: ""; hash: "baz" }>(),
-  );
+  expectTypeOf<ParseRoute<"/foo#baz">>().toEqualTypeOf<{
+    path: "/foo";
+    search: "";
+    hash: "baz";
+  }>();
 
-  expectType<ParseRoute<"/foo/bar">>(
-    toBe<{ path: "/foo/bar"; search: ""; hash: "" }>(),
-  );
+  expectTypeOf<ParseRoute<"/foo/bar">>().toEqualTypeOf<{
+    path: "/foo/bar";
+    search: "";
+    hash: "";
+  }>();
 
-  expectType<ParseRoute<"/foo/bar?baz&qux">>(
-    toBe<{ path: "/foo/bar"; search: "baz&qux"; hash: "" }>(),
-  );
+  expectTypeOf<ParseRoute<"/foo/bar?baz&qux">>().toEqualTypeOf<{
+    path: "/foo/bar";
+    search: "baz&qux";
+    hash: "";
+  }>();
 
-  expectType<ParseRoute<"/foo/bar/baz#qux">>(
-    toBe<{ path: "/foo/bar/baz"; search: ""; hash: "qux" }>(),
-  );
+  expectTypeOf<ParseRoute<"/foo/bar/baz#qux">>().toEqualTypeOf<{
+    path: "/foo/bar/baz";
+    search: "";
+    hash: "qux";
+  }>();
 });
 
 test("NonEmptySplit", () => {
-  expectType<NonEmptySplit<"/foo", "/">>(toBe<["foo"]>());
-  expectType<NonEmptySplit<"foo", "&">>(toBe<["foo"]>());
+  expectTypeOf<NonEmptySplit<"/foo", "/">>().toEqualTypeOf<["foo"]>();
+  expectTypeOf<NonEmptySplit<"foo", "&">>().toEqualTypeOf<["foo"]>();
+  expectTypeOf<NonEmptySplit<"foo&bar", "&">>().toEqualTypeOf<["foo", "bar"]>();
 
-  expectType<NonEmptySplit<"/foo/bar", "/">>(toBe<["foo", "bar"]>());
-  expectType<NonEmptySplit<"foo/bar/", "/">>(toBe<["foo", "bar"]>());
-  expectType<NonEmptySplit<"/foo/bar", "/">>(toBe<["foo", "bar"]>());
-  expectType<NonEmptySplit<"/foo//bar", "/">>(toBe<["foo", "bar"]>());
-
-  expectType<NonEmptySplit<"foo&bar", "&">>(toBe<["foo", "bar"]>());
-  expectType<NonEmptySplit<"foo&bar&", "&">>(toBe<["foo", "bar"]>());
-  expectType<NonEmptySplit<"&foo&bar", "&">>(toBe<["foo", "bar"]>());
-  expectType<NonEmptySplit<"foo&&bar", "&">>(toBe<["foo", "bar"]>());
+  expectTypeOf<NonEmptySplit<"/foo/bar", "/">>().toEqualTypeOf<
+    ["foo", "bar"]
+  >();
+  expectTypeOf<NonEmptySplit<"foo/bar/", "/">>().toEqualTypeOf<
+    ["foo", "bar"]
+  >();
+  expectTypeOf<NonEmptySplit<"/foo/bar", "/">>().toEqualTypeOf<
+    ["foo", "bar"]
+  >();
+  expectTypeOf<NonEmptySplit<"/foo//bar", "/">>().toEqualTypeOf<
+    ["foo", "bar"]
+  >();
+  expectTypeOf<NonEmptySplit<"foo&bar&", "&">>().toEqualTypeOf<
+    ["foo", "bar"]
+  >();
+  expectTypeOf<NonEmptySplit<"&foo&bar", "&">>().toEqualTypeOf<
+    ["foo", "bar"]
+  >();
+  expectTypeOf<NonEmptySplit<"foo&&bar", "&">>().toEqualTypeOf<
+    ["foo", "bar"]
+  >();
 });
 
 test("GetPathParams", () => {
-  expectType<GetPathParams<"/foo/bar">>(toBe<{}>());
-  expectType<GetPathParams<"/foo/:bar">>(toBe<{ bar: string }>());
+  expectTypeOf<GetPathParams<"/foo/bar">>().toEqualTypeOf<{}>();
+  expectTypeOf<GetPathParams<"/foo/:bar">>().toEqualTypeOf<{ bar: string }>();
 
-  expectType<GetPathParams<"/:foo/:bar">>(toBe<{ foo: string; bar: string }>());
+  expectTypeOf<GetPathParams<"/:foo/:bar">>().toEqualTypeOf<{
+    foo: string;
+    bar: string;
+  }>();
 });
 
 test("GetSearchParams", () => {
-  expectType<GetSearchParams<"foo&bar">>(toBe<{}>()); // no params
+  expectTypeOf<GetSearchParams<"foo&bar">>().toEqualTypeOf<{}>(); // no params
 
-  expectType<GetSearchParams<"foo&:bar&:baz">>(
-    toBe<{ bar?: string; baz?: string }>(),
-  );
+  expectTypeOf<GetSearchParams<"foo&:bar&:baz">>().toEqualTypeOf<{
+    bar?: string;
+    baz?: string;
+  }>();
 
-  expectType<GetSearchParams<":foo&:bar&:baz[]">>(
-    toBe<{ foo?: string; bar?: string; baz?: string[] }>(),
-  );
+  expectTypeOf<GetSearchParams<":foo&:bar&:baz[]">>().toEqualTypeOf<{
+    foo?: string;
+    bar?: string;
+    baz?: string[];
+  }>();
 });
 
 test("GetHashParams", () => {
-  expectType<GetHashParams<"foo">>(toBe<{}>()); // no param
-  expectType<GetSearchParams<":foo">>(toBe<{ foo?: string }>());
+  expectTypeOf<GetHashParams<"foo">>().toEqualTypeOf<{}>(); // no param
+  expectTypeOf<GetHashParams<":foo">>().toEqualTypeOf<{ foo?: string }>();
 });
 
 test("ConcatPaths", () => {
-  expectType<ConcatPaths<"/foo", "/bar">>(toBe<"/foo/bar">());
-  expectType<ConcatPaths<"/foo", "/">>(toBe<"/foo">());
-  expectType<ConcatPaths<"/foo", "">>(toBe<"/foo">());
-  expectType<ConcatPaths<"/", "/bar">>(toBe<"/bar">());
-  expectType<ConcatPaths<"", "/bar">>(toBe<"/bar">());
-  expectType<ConcatPaths<"/foo/bar", "/baz">>(toBe<"/foo/bar/baz">());
+  expectTypeOf<ConcatPaths<"/foo", "/bar">>().toEqualTypeOf<"/foo/bar">();
+  expectTypeOf<ConcatPaths<"/foo", "/">>().toEqualTypeOf<"/foo">();
+  expectTypeOf<ConcatPaths<"/foo", "">>().toEqualTypeOf<"/foo">();
+  expectTypeOf<ConcatPaths<"/", "/bar">>().toEqualTypeOf<"/bar">();
+  expectTypeOf<ConcatPaths<"", "/bar">>().toEqualTypeOf<"/bar">();
+
+  expectTypeOf<
+    ConcatPaths<"/foo/bar", "/baz">
+  >().toEqualTypeOf<"/foo/bar/baz">();
 });
 
 test("ConcatSearchs", () => {
-  expectType<ConcatSearchs<":foo", ":bar">>(toBe<":foo&:bar">());
-  expectType<ConcatSearchs<":foo", "">>(toBe<":foo">());
-  expectType<ConcatSearchs<"", ":bar">>(toBe<":bar">());
-  expectType<ConcatSearchs<":foo&:bar", ":baz">>(toBe<":foo&:bar&:baz">());
+  expectTypeOf<ConcatSearchs<":foo", ":bar">>().toEqualTypeOf<":foo&:bar">();
+  expectTypeOf<ConcatSearchs<":foo", "">>().toEqualTypeOf<":foo">();
+  expectTypeOf<ConcatSearchs<"", ":bar">>().toEqualTypeOf<":bar">();
+
+  expectTypeOf<
+    ConcatSearchs<":foo&:bar", ":baz">
+  >().toEqualTypeOf<":foo&:bar&:baz">();
 });
 
 test("GetAreaRoutes", () => {
-  expectType<
+  expectTypeOf<
     GetAreaRoutes<
       ParseRoutes<{
         User: "/users/:userId";
         RepositoriesArea: "/users/:userId/repositories/*?:foo&:bar[]#:baz";
       }>
     >
-  >(
-    toBe<{
-      RepositoriesArea: {
-        path: "/users/:userId/repositories";
-        hash: ":baz";
-        search: ":foo&:bar[]";
-      };
-    }>(),
-  );
+  >().toEqualTypeOf<{
+    RepositoriesArea: {
+      path: "/users/:userId/repositories";
+      hash: ":baz";
+      search: ":foo&:bar[]";
+    };
+  }>();
 });
 
 test("PrependBasePath", () => {
@@ -123,27 +154,21 @@ test("PrependBasePath", () => {
     c: ParseRoute<"/foo?:bar#:baz">;
   };
 
-  expectType<PrependBasePath<"", Input>>(
-    toBe<{
-      a: { path: "/"; search: ""; hash: "" };
-      b: { path: "/foo/bar"; search: ""; hash: "" };
-      c: { path: "/foo"; search: ":bar"; hash: ":baz" };
-    }>(),
-  );
+  expectTypeOf<PrependBasePath<"", Input>>().toEqualTypeOf<{
+    a: { path: "/"; search: ""; hash: "" };
+    b: { path: "/foo/bar"; search: ""; hash: "" };
+    c: { path: "/foo"; search: ":bar"; hash: ":baz" };
+  }>();
 
-  expectType<PrependBasePath<"/", Input>>(
-    toBe<{
-      a: { path: "/"; search: ""; hash: "" };
-      b: { path: "/foo/bar"; search: ""; hash: "" };
-      c: { path: "/foo"; search: ":bar"; hash: ":baz" };
-    }>(),
-  );
+  expectTypeOf<PrependBasePath<"/", Input>>().toEqualTypeOf<{
+    a: { path: "/"; search: ""; hash: "" };
+    b: { path: "/foo/bar"; search: ""; hash: "" };
+    c: { path: "/foo"; search: ":bar"; hash: ":baz" };
+  }>();
 
-  expectType<PrependBasePath<"/base", Input>>(
-    toBe<{
-      a: { path: "/base"; search: ""; hash: "" };
-      b: { path: "/base/foo/bar"; search: ""; hash: "" };
-      c: { path: "/base/foo"; search: ":bar"; hash: ":baz" };
-    }>(),
-  );
+  expectTypeOf<PrependBasePath<"/base", Input>>().toEqualTypeOf<{
+    a: { path: "/base"; search: ""; hash: "" };
+    b: { path: "/base/foo/bar"; search: ""; hash: "" };
+    c: { path: "/base/foo"; search: ":bar"; hash: ":baz" };
+  }>();
 });
