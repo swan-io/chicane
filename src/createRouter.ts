@@ -11,6 +11,7 @@ import {
 import { getMatcher, match, matchToHistoryPath } from "./matcher";
 import {
   GetAreaRoutes,
+  GetCreateURLFns,
   GetRoutesParams,
   Matcher,
   Params,
@@ -68,11 +69,7 @@ export const createRouter = <
     (matcherA, matcherB) => matcherB.ranking - matcherA.ranking,
   );
 
-  const createURLFunctions = {} as {
-    [RouteName in keyof FiniteRoutes]: (
-      ...args: ParamsArg<FiniteRoutesParams[RouteName]>
-    ) => string;
-  };
+  const createURLFns = {} as GetCreateURLFns<FiniteRoutesParams>;
 
   for (let index = 0; index < rankedMatchers.length; index++) {
     const matcher = rankedMatchers[index];
@@ -80,7 +77,7 @@ export const createRouter = <
     if (matcher != null && !matcher.isArea) {
       const routeName = matcher.name as keyof FiniteRoutes;
 
-      createURLFunctions[routeName] = (params?: Params) =>
+      createURLFns[routeName] = (params?: Params) =>
         createPath(matchToHistoryPath(matchers[routeName], params));
     }
   }
@@ -134,6 +131,6 @@ export const createRouter = <
     useRoute,
     push,
     replace,
-    ...createURLFunctions,
+    ...createURLFns,
   };
 };
