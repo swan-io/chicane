@@ -171,3 +171,9 @@ export type ParamsArg<Params> = Params extends EmptyRecord
   : NonOptionalProperties<Params> extends never
   ? [params?: { [K in keyof Params]: Params[K] }]
   : [params: { [K in keyof Params]: Params[K] }];
+
+export type GetCreateURLFns<RouteParams extends Record<string, Params>> = {
+  [RouteName in keyof RouteParams]: (
+    ...args: ParamsArg<RouteParams[RouteName]>
+  ) => string;
+};

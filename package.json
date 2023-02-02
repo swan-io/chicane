@@ -1,6 +1,6 @@
 {
   "name": "@swan-io/chicane",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "license": "MIT",
   "description": "A simple and safe router for React and TypeScript",
   "author": "Mathieu Acthernoene <mathieu.acthernoene@swan.io>",
