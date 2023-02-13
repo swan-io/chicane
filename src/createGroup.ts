@@ -1,6 +1,8 @@
 import { concatRoutes, parseRoute } from "./concatRoutes";
 import { ConcatRoutes } from "./types";
 
+const areaParsedRoute = parseRoute("/*");
+
 export const createGroup = <
   GroupName extends string,
   BaseRoute extends string,
@@ -22,9 +24,15 @@ export const createGroup = <
     }
   }
 
+  type WithArea = Omit<{ Area: "/*" }, keyof Routes> & Routes;
+
+  if (!Object.prototype.hasOwnProperty.call(routes, "Area")) {
+    output[name + "Area"] = concatRoutes(baseParsedRoute, areaParsedRoute);
+  }
+
   return output as {
-    [K in keyof Routes as K extends string
+    [K in keyof WithArea as K extends string
       ? `${GroupName}${K}`
-      : never]: ConcatRoutes<BaseRoute, Routes[K]>;
+      : never]: ConcatRoutes<BaseRoute, WithArea[K]>;
   };
 };

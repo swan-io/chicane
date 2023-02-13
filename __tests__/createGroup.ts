@@ -32,6 +32,7 @@ test("createGroup prefix routes keys / paths", () => {
     Home: "/",
     User: "/:userName",
 
+    RepositoryArea: "/:repositoryName/*",
     RepositoryList: "/:repositoryName",
     RepositoryIssues: "/:repositoryName/issues",
     RepositoryPulls: "/:repositoryName/pulls",
@@ -39,6 +40,7 @@ test("createGroup prefix routes keys / paths", () => {
     RepositoryProjects: "/:repositoryName/projects",
     RepositorySecurity: "/:repositoryName/security",
 
+    RepositorySettingsArea: "/:repositoryName/settings/*",
     RepositorySettingsList: "/:repositoryName/settings",
     RepositorySettingsCollaborators: "/:repositoryName/settings/access",
     RepositorySettingsBranches: "/:repositoryName/settings/branches",
@@ -49,5 +51,22 @@ test("createGroup prefix routes keys / paths", () => {
       "/:repositoryName/settings/security_analysis",
     RepositorySettingsDeployKeys: "/:repositoryName/settings/keys",
     RepositorySettingsSecrets: "/:repositoryName/settings/secrets",
+  });
+});
+
+test("createGroup allow Area route overwrite", () => {
+  const routes = {
+    Home: "/",
+
+    ...createGroup("Repository", "/:repositoryName", {
+      List: "/",
+      Area: "/overwritten",
+    }),
+  } as const;
+
+  expect(routes).toEqual({
+    Home: "/",
+    RepositoryList: "/:repositoryName",
+    RepositoryArea: "/:repositoryName/overwritten",
   });
 });
