@@ -1,6 +1,6 @@
 import { parsePath } from "history";
 import * as React from "react";
-import { useSyncExternalStore } from "use-sync-external-store/shim";
+import { useSyncExternalStore } from "use-sync-external-store/shim/index.js";
 import {
   pushUnsafe,
   replaceUnsafe,

@@ -6,7 +6,7 @@ import {
   parsePath,
 } from "history";
 import * as React from "react";
-import { useSyncExternalStore } from "use-sync-external-store/shim";
+import { useSyncExternalStore } from "use-sync-external-store/shim/index.js";
 import { areParamsArrayEqual } from "./helpers";
 import { decodeLocation } from "./location";
 import { Location, Search, Subscription } from "./types";

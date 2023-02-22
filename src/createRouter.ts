@@ -1,6 +1,6 @@
 import { createPath } from "history";
 import * as React from "react";
-import { useSyncExternalStoreWithSelector } from "use-sync-external-store/shim/with-selector";
+import { useSyncExternalStoreWithSelector } from "use-sync-external-store/shim/with-selector.js";
 import { concatRoutes, parseRoute } from "./concatRoutes";
 import { areRouteEqual, first, identity } from "./helpers";
 import {
