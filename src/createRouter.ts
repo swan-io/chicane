@@ -4,6 +4,7 @@ import { useSyncExternalStoreWithSelector } from "use-sync-external-store/shim/w
 import { concatRoutes, parseRoute } from "./concatRoutes";
 import { areRouteEqual, first, identity } from "./helpers";
 import {
+  getLocation,
   history,
   subscribeToLocation,
   useGetUniversalLocation,
@@ -116,6 +117,26 @@ export const createRouter = <
     );
   };
 
+  const getRoute = <RouteName extends keyof FiniteRoutes | keyof AreaRoutes>(
+    routeNames: ReadonlyArray<RouteName>,
+  ): RouteName extends string
+    ?
+        | {
+            key: string;
+            name: RouteName;
+            params: Simplify<RoutesParams[RouteName]>;
+          }
+        | undefined
+    : never => {
+    const location = getLocation();
+    const matchers = rankedMatchers.filter(({ name }) =>
+      routeNames.includes(name as RouteName),
+    );
+
+    // @ts-expect-error
+    return match(location, matchers);
+  };
+
   const push = <RouteName extends keyof FiniteRoutes>(
     routeName: RouteName,
     ...args: ParamsArg<FiniteRoutesParams[RouteName]>
@@ -129,6 +150,7 @@ export const createRouter = <
 
   return {
     useRoute,
+    getRoute,
     push,
     replace,
     ...createURLFns,
