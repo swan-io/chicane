@@ -34,7 +34,7 @@
     "lint": "eslint --ext ts,tsx ./src",
     "test": "vitest --run",
     "test:watch": "vitest --watch",
-    "typecheck": "tsc --noEmit && tsc --noEmit __tests__/types.ts",
+    "typecheck": "tsc --noEmit && vitest typecheck --watch=false",
     "prepack": "yarn typecheck && yarn lint && yarn test && yarn build"
   },
   "browserslist": [
