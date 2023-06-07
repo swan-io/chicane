@@ -31,6 +31,7 @@ export const createRouter = <
   routes: Readonly<Routes>,
   options: {
     basePath?: BasePath;
+    skipUrlCleanup?: boolean;
   } = {},
 ) => {
   type CleanBasePath = ParseRoute<BasePath>["path"];
@@ -41,7 +42,15 @@ export const createRouter = <
   type FiniteRoutesParams = GetRoutesParams<FiniteRoutes>;
   type RoutesParams = AreaRoutesParams & FiniteRoutesParams;
 
-  const { basePath = "" } = options;
+  const { basePath = "", skipUrlCleanup = false } = options;
+  const currentLocation = getLocation();
+
+  if (
+    !skipUrlCleanup &&
+    currentLocation.toString() !== createPath(history.location)
+  ) {
+    history.replace(currentLocation.toString()); // URL cleanup
+  }
 
   const basePathObject: ParsedRoute = {
     path: parseRoute(basePath).path,
