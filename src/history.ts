@@ -1,10 +1,5 @@
 // This module makes the different routes created with @swan-io/chicane listen to the same history instance
-import {
-  createBrowserHistory,
-  createMemoryHistory,
-  createPath,
-  parsePath,
-} from "history";
+import { createBrowserHistory, createMemoryHistory, parsePath } from "history";
 import * as React from "react";
 import { useSyncExternalStore } from "use-sync-external-store/shim/index.js";
 import { areParamsArrayEqual } from "./helpers";
@@ -25,10 +20,6 @@ export const history = canUseDOM
 
 let currentLocation = decodeLocation(history.location, true);
 let initialLocationHasChanged = false;
-
-if (currentLocation.toString() !== createPath(history.location)) {
-  history.replace(currentLocation.toString()); // URL cleanup
-}
 
 history.listen(({ location }) => {
   const nextLocation = decodeLocation(location, false);

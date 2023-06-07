@@ -1,4 +1,4 @@
-import { parsePath, Path as HistoryLocation } from "history";
+import { Path as HistoryLocation, parsePath } from "history";
 import { decodeLocation } from "../src/location";
 import { Location } from "../src/types";
 

@@ -1,4 +1,4 @@
-import { parsePath, Path as HistoryPath } from "history";
+import { Path as HistoryPath, parsePath } from "history";
 import { isMultipleParam, isNonEmpty, isParam } from "./helpers";
 import { encodeSearch } from "./search";
 import { Location, Matcher, Params, Search } from "./types";

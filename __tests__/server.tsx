@@ -5,7 +5,7 @@
 import * as React from "react";
 import * as ReactDOMServer from "react-dom/server";
 import { expect, test } from "vitest";
-import { createRouter, Link, ServerUrlProvider } from "../src";
+import { Link, ServerUrlProvider, createRouter } from "../src";
 
 const Router = createRouter({
   Home: "/",
