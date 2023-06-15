@@ -10,7 +10,7 @@
     "@swan-io/chicane": "link:../",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "ts-pattern": "^4.3.0"
+    "ts-pattern": "^5.0.1"
   },
   "devDependencies": {
     "@types/react": "^17.0.60",
