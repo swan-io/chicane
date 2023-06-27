@@ -8,7 +8,6 @@ sidebar_label: Top-level API
 - `routes` (**required**): Takes an object with your **route names** as keys, and their [**pattern**](./route-pattern-syntax) as values.
 - `options`:
   - `basePath`: Prefix for the path (allowing your code to ignore it)
-  - `skipUrlCleanup`: Avoid running initial URL cleanup
 
 Returns a [Router](./router).
 
