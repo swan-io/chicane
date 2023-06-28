@@ -17,9 +17,9 @@ import {
   Matcher,
   Params,
   ParamsArg,
-  ParsedRoute,
   ParseRoute,
   ParseRoutes,
+  ParsedRoute,
   PrependBasePath,
   Simplify,
 } from "./types";
