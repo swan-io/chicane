@@ -21,7 +21,7 @@ const routes = {
 } as const;
 
 // We avoid exporting chicane routing functions
-const { useRoute, push, replace, ...rest } = createRouter(routes);
+const { getRoute, useRoute, push, replace, ...rest } = createRouter(routes);
 
 // We exports all the link creation functions
 export const Router = rest;
