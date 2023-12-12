@@ -23,8 +23,8 @@ export const concatRoutes = (
     fixedPathA === "/"
       ? fixedPathB
       : fixedPathB === "/"
-      ? fixedPathA
-      : fixedPathA + fixedPathB;
+        ? fixedPathA
+        : fixedPathA + fixedPathB;
 
   const search =
     routeA["search"] === ""

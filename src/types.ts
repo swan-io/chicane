@@ -42,8 +42,8 @@ export type NonEmptySplit<
     ? NonEmptySplit<Tail, Separator>
     : [Head, ...NonEmptySplit<Tail, Separator>]
   : Value extends ""
-  ? []
-  : [Value];
+    ? []
+    : [Value];
 
 export type GetPathParams<
   Path extends string,
@@ -61,8 +61,8 @@ export type GetSearchParams<
   ? Head extends `:${infer Name}[]`
     ? { [K in Name]?: string[] | undefined } & GetSearchParams<Search, Tail>
     : Head extends `:${infer Name}`
-    ? { [K in Name]?: string | undefined } & GetSearchParams<Search, Tail>
-    : GetSearchParams<Search, Tail>
+      ? { [K in Name]?: string | undefined } & GetSearchParams<Search, Tail>
+      : GetSearchParams<Search, Tail>
   : {}; // eslint-disable-line @typescript-eslint/ban-types
 
 export type GetHashParams<Value extends string> = Value extends `:${infer Name}`
@@ -73,10 +73,10 @@ export type ParseRoute<Route extends string> =
   Route extends `${infer Path}?${infer Search}#${infer Hash}`
     ? { path: Path; search: Search; hash: Hash }
     : Route extends `${infer Path}?${infer Search}`
-    ? { path: Path; search: Search; hash: "" }
-    : Route extends `${infer Path}#${infer Hash}`
-    ? { path: Path; search: ""; hash: Hash }
-    : { path: Route; search: ""; hash: "" };
+      ? { path: Path; search: Search; hash: "" }
+      : Route extends `${infer Path}#${infer Hash}`
+        ? { path: Path; search: ""; hash: Hash }
+        : { path: Route; search: ""; hash: "" };
 
 export type ParseRoutes<Routes extends Record<string, string>> = {
   [K in keyof Routes]: ParseRoute<Routes[K]>;
@@ -99,8 +99,8 @@ export type ConcatPaths<
 > = FixedPathA extends "/"
   ? FixedPathB
   : FixedPathB extends "/"
-  ? FixedPathA
-  : `${FixedPathA}${FixedPathB}`;
+    ? FixedPathA
+    : `${FixedPathA}${FixedPathB}`;
 
 export type ConcatSearchs<
   SearchA extends string,
@@ -169,8 +169,8 @@ type NonOptionalProperties<T> = Exclude<
 export type ParamsArg<Params> = Params extends EmptyRecord
   ? []
   : NonOptionalProperties<Params> extends never
-  ? [params?: { [K in keyof Params]: Params[K] }]
-  : [params: { [K in keyof Params]: Params[K] }];
+    ? [params?: { [K in keyof Params]: Params[K] }]
+    : [params: { [K in keyof Params]: Params[K] }];
 
 export type GetCreateURLFns<RouteParams extends Record<string, Params>> = {
   [RouteName in keyof RouteParams]: (

@@ -41,14 +41,14 @@ export const Link = React.forwardRef<HTMLAnchorElement, Props>(
         !active || activeClassName == null
           ? className
           : className == null
-          ? activeClassName
-          : `${className} ${activeClassName}`,
+            ? activeClassName
+            : `${className} ${activeClassName}`,
       style:
         !active || activeStyle == null
           ? style
           : style == null
-          ? activeStyle
-          : { ...style, ...activeStyle },
+            ? activeStyle
+            : { ...style, ...activeStyle },
     });
   },
 );

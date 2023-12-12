@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Should render home page correctly 1`] = `"<div><a href=\\"/\\" class=\\"active\\">Home</a><a href=\\"/users\\">Users</a><a href=\\"/users/123\\">User</a><div>Home</div></div>"`;
+exports[`Should render home page correctly 1`] = `"<div><a href="/" class="active">Home</a><a href="/users">Users</a><a href="/users/123">User</a><div>Home</div></div>"`;
 
-exports[`Should render user page correctly 1`] = `"<div><a href=\\"/\\">Home</a><a href=\\"/users\\">Users</a><a href=\\"/users/123\\" class=\\"active\\">User</a><div>User 123</div></div>"`;
+exports[`Should render user page correctly 1`] = `"<div><a href="/">Home</a><a href="/users">Users</a><a href="/users/123" class="active">User</a><div>User 123</div></div>"`;
 
-exports[`Should render users page correctly 1`] = `"<div><a href=\\"/\\">Home</a><a href=\\"/users\\" class=\\"active\\">Users</a><a href=\\"/users/123\\">User</a><div>Users</div></div>"`;
+exports[`Should render users page correctly 1`] = `"<div><a href="/">Home</a><a href="/users" class="active">Users</a><a href="/users/123">User</a><div>Users</div></div>"`;
