@@ -9,6 +9,7 @@ const subscriptions = new Set<Subscription>();
 
 // From https://github.com/facebook/fbjs/blob/v2.0.0/packages/fbjs/src/core/ExecutionEnvironment.js
 const canUseDOM =
+  // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
   typeof window !== "undefined" &&
   typeof window.document !== "undefined" &&
   typeof window.document.createElement !== "undefined";
