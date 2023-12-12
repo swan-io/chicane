@@ -1,7 +1,6 @@
 // This module makes the different routes created with @swan-io/chicane listen to the same history instance
 import { createBrowserHistory, createMemoryHistory, parsePath } from "history";
-import * as React from "react";
-import { useSyncExternalStore } from "use-sync-external-store/shim/index.js";
+import { createContext, useContext, useSyncExternalStore } from "react";
 import { areParamsArrayEqual } from "./helpers";
 import { decodeLocation } from "./location";
 import { Location, Search, Subscription } from "./types";
@@ -93,14 +92,13 @@ export const subscribeToLocation = (
 export const getLocation = (): Location => currentLocation;
 export const hasInitialLocationChanged = () => initialLocationHasChanged;
 
-const GetUniversalLocationContext =
-  React.createContext<() => Location>(getLocation);
+const GetUniversalLocationContext = createContext<() => Location>(getLocation);
 
 export const GetUniversalLocationProvider =
   GetUniversalLocationContext.Provider;
 
 export const useGetUniversalLocation = () =>
-  React.useContext(GetUniversalLocationContext);
+  useContext(GetUniversalLocationContext);
 
 export const useLocation = (): Location => {
   const getUniversalLocation = useGetUniversalLocation();

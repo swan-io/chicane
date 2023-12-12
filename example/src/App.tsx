@@ -1,5 +1,5 @@
 import { Link, useFocusReset } from "@swan-io/chicane";
-import * as React from "react";
+import { useRef } from "react";
 import { match } from "ts-pattern";
 import { Router } from "./router";
 
@@ -29,7 +29,7 @@ const EXAMPLE_DATA: Record<string, string[]> = {
 
 export const App = () => {
   const route = Router.useRoute(["Home", "Users", "User", "RepositoriesArea"]);
-  const containerRef = React.useRef(null);
+  const containerRef = useRef(null);
 
   useFocusReset({ route, containerRef });
 
@@ -89,7 +89,7 @@ export const App = () => {
 
 const Repositories = ({ userId }: { userId: string }) => {
   const route = Router.useRoute(["Repositories", "Repository"]);
-  const containerRef = React.useRef(null);
+  const containerRef = useRef(null);
 
   useFocusReset({ route, containerRef });
 

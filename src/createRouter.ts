@@ -1,6 +1,5 @@
 import { createPath } from "history";
-import * as React from "react";
-import { useSyncExternalStoreWithSelector } from "use-sync-external-store/shim/with-selector.js";
+import { useMemo } from "react";
 import { concatRoutes, parseRoute } from "./concatRoutes";
 import { areRouteEqual, first, identity } from "./helpers";
 import {
@@ -23,6 +22,7 @@ import {
   PrependBasePath,
   Simplify,
 } from "./types";
+import { useSyncExternalStoreWithSelector } from "./useSyncExternalStoreWithSelector";
 
 export const createRouter = <
   Routes extends Record<string, string>,
@@ -96,7 +96,7 @@ export const createRouter = <
     : never => {
     const matchersKey = JSON.stringify(routeNames);
 
-    const matchers = React.useMemo(
+    const matchers = useMemo(
       () =>
         rankedMatchers.filter(({ name }) =>
           routeNames.includes(name as RouteName),

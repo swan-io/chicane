@@ -1,8 +1,8 @@
-import * as React from "react";
+import { useEffect } from "react";
 import { history } from "./history";
 
 export const useNavigationBlocker = (blocked: boolean, message: string) => {
-  React.useEffect(() => {
+  useEffect(() => {
     if (!blocked) {
       return;
     }

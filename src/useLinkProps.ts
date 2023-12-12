@@ -1,6 +1,5 @@
 import { parsePath } from "history";
-import * as React from "react";
-import { useSyncExternalStore } from "use-sync-external-store/shim/index.js";
+import { useCallback, useMemo, useSyncExternalStore } from "react";
 import {
   pushUnsafe,
   replaceUnsafe,
@@ -18,7 +17,7 @@ export const useLinkProps = ({
   replace?: boolean | undefined;
   target?: React.HTMLAttributeAnchorTarget | undefined;
 }) => {
-  const hrefPath = React.useMemo(() => parsePath(href).pathname, [href]);
+  const hrefPath = useMemo(() => parsePath(href).pathname, [href]);
   const getUniversalLocation = useGetUniversalLocation();
   const getPath = () => hrefPath === getUniversalLocation().raw.path;
   const active = useSyncExternalStore(subscribeToLocation, getPath, getPath);
@@ -28,7 +27,7 @@ export const useLinkProps = ({
 
   return {
     active,
-    onClick: React.useCallback(
+    onClick: useCallback(
       (event: React.MouseEvent) => {
         if (
           !event.defaultPrevented &&

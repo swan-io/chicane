@@ -3,7 +3,7 @@
  */
 
 import * as React from "react";
-import * as ReactDOMServer from "react-dom/server";
+import { renderToString } from "react-dom/server";
 import { expect, test } from "vitest";
 import { Link, ServerUrlProvider, createRouter } from "../src";
 
@@ -50,7 +50,7 @@ const App = () => {
 
 test("Should render home page correctly", () => {
   expect(
-    ReactDOMServer.renderToString(
+    renderToString(
       <ServerUrlProvider value="/">
         <App />
       </ServerUrlProvider>,
@@ -60,7 +60,7 @@ test("Should render home page correctly", () => {
 
 test("Should render users page correctly", () => {
   expect(
-    ReactDOMServer.renderToString(
+    renderToString(
       <ServerUrlProvider value="/users">
         <App />
       </ServerUrlProvider>,
@@ -70,7 +70,7 @@ test("Should render users page correctly", () => {
 
 test("Should render user page correctly", () => {
   expect(
-    ReactDOMServer.renderToString(
+    renderToString(
       <ServerUrlProvider value="/users/123">
         <App />
       </ServerUrlProvider>,

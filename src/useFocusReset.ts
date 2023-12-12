@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useEffect } from "react";
 import { hasInitialLocationChanged } from "./history";
 import { Params } from "./types";
 
@@ -18,7 +18,7 @@ export const useFocusReset = ({
 }) => {
   const focusKey = route?.key.split("-")[0];
 
-  React.useEffect(() => {
+  useEffect(() => {
     const element = containerRef.current as HTMLElement | undefined;
 
     // Only focus after a history change for UX, so that areas outside routing
