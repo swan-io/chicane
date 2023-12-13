@@ -19,8 +19,6 @@ export type ParsedRoute = Readonly<{
 }>;
 
 export type Location = Readonly<{
-  key: string;
-
   path: readonly string[];
   search: Readonly<Search>;
   hash?: string;

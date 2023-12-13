@@ -86,13 +86,7 @@ export const createRouter = <
   const useRoute = <RouteName extends keyof FiniteRoutes | keyof AreaRoutes>(
     routeNames: ReadonlyArray<RouteName>,
   ): RouteName extends string
-    ?
-        | {
-            key: string;
-            name: RouteName;
-            params: Simplify<RoutesParams[RouteName]>;
-          }
-        | undefined
+    ? { name: RouteName; params: Simplify<RoutesParams[RouteName]> } | undefined
     : never => {
     const matchersKey = JSON.stringify(routeNames);
 
@@ -118,13 +112,7 @@ export const createRouter = <
   const getRoute = <RouteName extends keyof FiniteRoutes | keyof AreaRoutes>(
     routeNames: ReadonlyArray<RouteName>,
   ): RouteName extends string
-    ?
-        | {
-            key: string;
-            name: RouteName;
-            params: Simplify<RoutesParams[RouteName]>;
-          }
-        | undefined
+    ? { name: RouteName; params: Simplify<RoutesParams[RouteName]> } | undefined
     : never => {
     const location = getLocation();
     const matchers = rankedMatchers.filter(({ name }) =>

@@ -61,8 +61,6 @@ history.listen(({ location }) => {
 
     // Create a new location object instance
     currentLocation = {
-      key: nextLocation.key,
-
       path:
         nextLocation.raw.path !== currentLocation.raw.path
           ? nextLocation.path

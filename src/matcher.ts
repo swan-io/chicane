@@ -130,12 +130,12 @@ export const extractLocationParams = (
 export const match = (
   location: Location,
   matchers: Matcher[],
-): { key: string; name: string; params: Params } | undefined => {
+): { name: string; params: Params } | undefined => {
   for (const matcher of matchers) {
     const params = extractLocationParams(location, matcher);
 
     if (params != null) {
-      return { key: location.key, name: matcher.name, params };
+      return { name: matcher.name, params };
     }
   }
 };

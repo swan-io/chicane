@@ -1,4 +1,3 @@
-import murmurhash from "@emotion/hash";
 import { Path as HistoryLocation } from "history";
 import { isNonEmpty } from "./helpers";
 import { decodeSearch, encodeSearch } from "./search";
@@ -28,8 +27,6 @@ export const decodeLocation = (
   const stringifiedLocation = rawPath + rawSearch + rawHash;
 
   return {
-    key: `${murmurhash(rawPath)}-${murmurhash(rawSearch + rawHash)}`,
-
     path: parsedPath,
     search: parsedSearch,
     ...(parsedHash !== null && {
