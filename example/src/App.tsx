@@ -1,4 +1,4 @@
-import { Link, useFocusReset } from "@swan-io/chicane";
+import { Link, useFocusReset } from "@swan-io/chicane/src";
 import { useRef } from "react";
 import { match } from "ts-pattern";
 import { Router } from "./router";
@@ -28,7 +28,7 @@ const EXAMPLE_DATA: Record<string, string[]> = {
 };
 
 export const App = () => {
-  const route = Router.useRoute(["Home", "Users", "User", "RepositoriesArea"]);
+  const route = Router.useRoute(["Home", "UsersArea"]);
   const containerRef = useRef(null);
 
   useFocusReset({ route, containerRef });
@@ -58,28 +58,7 @@ export const App = () => {
       >
         {match(route)
           .with({ name: "Home" }, () => <h1>Home</h1>)
-          .with({ name: "Users" }, () => (
-            <>
-              <h1>Users</h1>
-
-              {Object.keys(EXAMPLE_DATA).map((userId) => (
-                <Link key={userId} to={Router.User({ userId })}>
-                  {userId}
-                </Link>
-              ))}
-            </>
-          ))
-          .with({ name: "User" }, ({ params: { userId } }) => (
-            <>
-              <h1>{userId}</h1>
-              <p>{userId} homepage</p>
-
-              <Link to={Router.Repositories({ userId })}>His repositories</Link>
-            </>
-          ))
-          .with({ name: "RepositoriesArea" }, ({ params }) => (
-            <Repositories userId={params.userId} />
-          ))
+          .with({ name: "UsersArea" }, () => <UsersArea />)
           .with(undefined, () => <h1>404 - Page not found</h1>)
           .exhaustive()}
       </main>
@@ -87,7 +66,37 @@ export const App = () => {
   );
 };
 
-const Repositories = ({ userId }: { userId: string }) => {
+const UsersArea = () => {
+  const route = Router.useRoute(["Users", "User", "RepositoriesArea"]);
+
+  return match(route)
+    .with({ name: "Users" }, () => (
+      <>
+        <h1>Users</h1>
+
+        {Object.keys(EXAMPLE_DATA).map((userId) => (
+          <Link key={userId} to={Router.User({ userId })}>
+            {userId}
+          </Link>
+        ))}
+      </>
+    ))
+    .with({ name: "User" }, ({ params: { userId } }) => (
+      <>
+        <h1>{userId}</h1>
+        <p>{userId} homepage</p>
+
+        <Link to={Router.Repositories({ userId })}>His repositories</Link>
+      </>
+    ))
+    .with({ name: "RepositoriesArea" }, ({ params }) => (
+      <RepositoriesArea userId={params.userId} />
+    ))
+    .with(undefined, () => <h1>404 - Page not found</h1>)
+    .exhaustive();
+};
+
+const RepositoriesArea = ({ userId }: { userId: string }) => {
   const route = Router.useRoute(["Repositories", "Repository"]);
   const containerRef = useRef(null);
 
