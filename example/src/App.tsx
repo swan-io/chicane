@@ -31,7 +31,7 @@ export const App = () => {
   const route = Router.useRoute(["Home", "UsersArea"]);
   const containerRef = useRef(null);
 
-  useFocusReset({ route, containerRef });
+  useFocusReset(containerRef);
 
   return (
     <div style={{ display: "flex" }}>
@@ -70,7 +70,7 @@ const UsersArea = () => {
   const route = Router.useRoute(["Users", "User", "RepositoriesArea"]);
   const containerRef = useRef(null);
 
-  useFocusReset({ route, containerRef });
+  useFocusReset(containerRef);
 
   return (
     <div
@@ -110,7 +110,7 @@ const RepositoriesArea = ({ userId }: { userId: string }) => {
   const route = Router.useRoute(["Repositories", "Repository"]);
   const containerRef = useRef(null);
 
-  useFocusReset({ route, containerRef });
+  useFocusReset(containerRef);
 
   return (
     <div ref={containerRef}>

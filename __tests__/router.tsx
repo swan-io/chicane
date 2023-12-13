@@ -105,7 +105,7 @@ describe("router", () => {
       const route = useRoute(routesToMatch);
       const containerRef = React.useRef(null);
 
-      useFocusReset({ route, containerRef });
+      useFocusReset(containerRef);
 
       if (route === undefined) {
         return <div> Not found </div>;
