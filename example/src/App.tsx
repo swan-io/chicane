@@ -68,32 +68,42 @@ export const App = () => {
 
 const UsersArea = () => {
   const route = Router.useRoute(["Users", "User", "RepositoriesArea"]);
+  const containerRef = useRef(null);
 
-  return match(route)
-    .with({ name: "Users" }, () => (
-      <>
-        <h1>Users</h1>
+  useFocusReset({ route, containerRef });
 
-        {Object.keys(EXAMPLE_DATA).map((userId) => (
-          <Link key={userId} to={Router.User({ userId })}>
-            {userId}
-          </Link>
-        ))}
-      </>
-    ))
-    .with({ name: "User" }, ({ params: { userId } }) => (
-      <>
-        <h1>{userId}</h1>
-        <p>{userId} homepage</p>
+  return (
+    <div
+      ref={containerRef}
+      style={{ display: "flex", flexDirection: "column" }}
+    >
+      {match(route)
+        .with({ name: "Users" }, () => (
+          <>
+            <h1>Users</h1>
 
-        <Link to={Router.Repositories({ userId })}>His repositories</Link>
-      </>
-    ))
-    .with({ name: "RepositoriesArea" }, ({ params }) => (
-      <RepositoriesArea userId={params.userId} />
-    ))
-    .with(undefined, () => <h1>404 - Page not found</h1>)
-    .exhaustive();
+            {Object.keys(EXAMPLE_DATA).map((userId) => (
+              <Link key={userId} to={Router.User({ userId })}>
+                {userId}
+              </Link>
+            ))}
+          </>
+        ))
+        .with({ name: "User" }, ({ params: { userId } }) => (
+          <>
+            <h1>{userId}</h1>
+            <p>{userId} homepage</p>
+
+            <Link to={Router.Repositories({ userId })}>His repositories</Link>
+          </>
+        ))
+        .with({ name: "RepositoriesArea" }, ({ params }) => (
+          <RepositoriesArea userId={params.userId} />
+        ))
+        .with(undefined, () => <h1>404 - Page not found</h1>)
+        .exhaustive()}
+    </div>
+  );
 };
 
 const RepositoriesArea = ({ userId }: { userId: string }) => {
