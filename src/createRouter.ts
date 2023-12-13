@@ -1,7 +1,7 @@
 import { createPath } from "history";
 import { useMemo } from "react";
 import { concatRoutes, parseRoute } from "./concatRoutes";
-import { areRouteEqual, first } from "./helpers";
+import { areRouteEqual, first, identity } from "./helpers";
 import {
   getLocation,
   history,
@@ -22,7 +22,7 @@ import {
   PrependBasePath,
   Simplify,
 } from "./types";
-import { useSyncExternalStoreWithCustomEqual } from "./useSyncExternalStoreWithCustomEqual";
+import { useSyncExternalStoreWithSelector } from "./useSyncExternalStoreWithSelector";
 
 export const createRouter = <
   Routes extends Record<string, string>,
@@ -102,9 +102,10 @@ export const createRouter = <
     const getMatch = () => match(getUniversalLocation(), matchers);
 
     // @ts-expect-error
-    return useSyncExternalStoreWithCustomEqual(
+    return useSyncExternalStoreWithSelector(
       subscribeToLocation,
       getMatch,
+      identity,
       areRouteEqual,
     );
   };
