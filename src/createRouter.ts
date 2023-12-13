@@ -22,7 +22,7 @@ import {
   PrependBasePath,
   Simplify,
 } from "./types";
-import { useSyncExternalStoreWithSelector } from "./useSyncExternalStoreWithSelector";
+import { useSyncExternalStoreWithSelector } from "use-sync-external-store/shim/with-selector.js";
 
 export const createRouter = <
   Routes extends Record<string, string>,
@@ -104,6 +104,7 @@ export const createRouter = <
     // @ts-expect-error
     return useSyncExternalStoreWithSelector(
       subscribeToLocation,
+      getMatch,
       getMatch,
       identity,
       areRouteEqual,
