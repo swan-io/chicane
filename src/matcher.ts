@@ -1,5 +1,10 @@
 import { Path as HistoryPath, parsePath } from "history";
-import { isMultipleParam, isNonEmpty, isParam } from "./helpers";
+import {
+  extractPathParam,
+  extractSearchParam,
+  isNonEmpty,
+  isParam,
+} from "./helpers";
 import { encodeSearch } from "./search";
 import { Location, Matcher, Params, Search } from "./types";
 
@@ -8,12 +13,17 @@ const extractFromPathname = (pathname: string) => {
   const parts = pathname.split("/").filter(isNonEmpty);
   const path: Matcher["path"] = [];
 
-  let ranking = parts.length > 0 ? parts.length * 4 : 5;
+  let ranking = parts.length > 0 ? parts.length * 5 : 6;
 
   for (const part of parts) {
-    const param = isParam(part);
-    ranking += param ? 2 : 3;
-    path.push(param ? { name: part.substring(1) } : encodeURIComponent(part));
+    if (isParam(part)) {
+      const param = extractPathParam(part);
+      ranking += param.values == null ? 2 : 3;
+      path.push(param);
+    } else {
+      ranking += 4;
+      path.push(encodeURIComponent(part));
+    }
   }
 
   return { ranking, path };
@@ -42,16 +52,21 @@ export const getMatcher = (name: string, route: string): Matcher => {
     const params = new URLSearchParams(search.substring(1));
 
     for (const [key] of params) {
-      if (isMultipleParam(key)) {
-        matcher.search[key.substring(1, key.length - 2)] = { multiple: true };
-      } else if (isParam(key)) {
-        matcher.search[key.substring(1, key.length)] = { multiple: false };
+      if (isParam(key)) {
+        const { name, multiple, values } = extractSearchParam(key);
+
+        matcher.search[name] =
+          values == null ? { multiple } : { multiple, values };
       }
     }
   }
 
-  if (hash != null && isParam(hash.substring(1))) {
-    matcher.hash = hash.substring(2);
+  if (hash != null) {
+    const value = hash.substring(1);
+
+    if (isParam(value)) {
+      matcher.hash = extractPathParam(value);
+    }
   }
 
   return matcher;
@@ -121,7 +136,7 @@ export const extractLocationParams = (
   }
 
   if (matcher.hash != null && location.hash != null) {
-    params[matcher.hash] = location.hash;
+    params[matcher.hash.name] = location.hash;
   }
 
   return params;
@@ -177,7 +192,7 @@ export const matchToHistoryPath = (
   }
 
   if (matcher.hash != null) {
-    const value = params[matcher.hash];
+    const value = params[matcher.hash.name];
 
     if (typeof value === "string") {
       hash = "#" + encodeURIComponent(value);

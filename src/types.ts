@@ -1,5 +1,5 @@
-export type Search = Record<string, string | string[]>;
 export type Params = Record<string, string | string[] | undefined>;
+export type Search = Record<string, string | string[]>;
 export type Subscription = (location: Location) => void;
 
 export type Matcher = {
@@ -7,9 +7,9 @@ export type Matcher = {
   name: string;
   ranking: number;
 
-  path: (string | { name: string })[];
-  search: Record<string, { multiple: boolean }> | undefined;
-  hash: string | undefined;
+  path: (string | { name: string; values?: string[] })[];
+  search: Record<string, { multiple: boolean; values?: string[] }> | undefined;
+  hash: { name: string; values?: string[] } | undefined;
 };
 
 export type ParsedRoute = Readonly<{
@@ -43,12 +43,36 @@ export type NonEmptySplit<
     ? []
     : [Value];
 
+export type PartialRecord<K extends string, T> = {
+  [P in K]?: T | undefined;
+};
+
+export type ExtractUnion<Union extends string> = NonEmptySplit<
+  Union,
+  "|"
+>[number];
+
+export type ExtractRequiredParam<Value extends string> =
+  Value extends `${infer Name}{${infer Union}}`
+    ? Record<Name, ExtractUnion<Union>>
+    : Record<Value, string>;
+
+export type ExtractOptionalMultipleParam<Value extends string> =
+  Value extends `${infer Name}{${infer Union}}`
+    ? PartialRecord<Name, ExtractUnion<Union>[]>
+    : PartialRecord<Value, string[]>;
+
+export type ExtractOptionalUniqueParam<Value extends string> =
+  Value extends `${infer Name}{${infer Union}}`
+    ? PartialRecord<Name, ExtractUnion<Union>>
+    : PartialRecord<Value, string>;
+
 export type GetPathParams<
   Path extends string,
   Parts = NonEmptySplit<Path, "/">,
 > = Parts extends [infer Head, ...infer Tail]
   ? Head extends `:${infer Name}`
-    ? { [K in Name]: string } & GetPathParams<Path, Tail>
+    ? ExtractRequiredParam<Name> & GetPathParams<Path, Tail>
     : GetPathParams<Path, Tail>
   : {}; // eslint-disable-line @typescript-eslint/ban-types
 
@@ -57,14 +81,14 @@ export type GetSearchParams<
   Parts = NonEmptySplit<Search, "&">,
 > = Parts extends [infer Head, ...infer Tail]
   ? Head extends `:${infer Name}[]`
-    ? { [K in Name]?: string[] | undefined } & GetSearchParams<Search, Tail>
+    ? ExtractOptionalMultipleParam<Name> & GetSearchParams<Search, Tail>
     : Head extends `:${infer Name}`
-      ? { [K in Name]?: string | undefined } & GetSearchParams<Search, Tail>
+      ? ExtractOptionalUniqueParam<Name> & GetSearchParams<Search, Tail>
       : GetSearchParams<Search, Tail>
   : {}; // eslint-disable-line @typescript-eslint/ban-types
 
 export type GetHashParams<Value extends string> = Value extends `:${infer Name}`
-  ? { [K in Name]?: string | undefined }
+  ? ExtractOptionalUniqueParam<Name>
   : {}; // eslint-disable-line @typescript-eslint/ban-types
 
 export type ParseRoute<Route extends string> =

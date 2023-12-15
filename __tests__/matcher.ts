@@ -19,7 +19,7 @@ const matchEqual = <E>(path: string, expected: E) =>
 test("getMatcher returns a proper matcher structure for paths without params", () => {
   getMatcherEqual("Groups", "/groups", {
     isArea: false,
-    ranking: 7,
+    ranking: 9,
     path: ["groups"],
     search: undefined,
     hash: undefined,
@@ -27,7 +27,7 @@ test("getMatcher returns a proper matcher structure for paths without params", (
 
   getMatcherEqual("MyGroup", "/groups/mine", {
     isArea: false,
-    ranking: 14,
+    ranking: 18,
     path: ["groups", "mine"],
     search: undefined,
     hash: undefined,
@@ -37,7 +37,7 @@ test("getMatcher returns a proper matcher structure for paths without params", (
 test("getMatcher returns a proper matcher structure for paths with params (in path only)", () => {
   getMatcherEqual("Group", "/group/:groupId", {
     isArea: false,
-    ranking: 13,
+    ranking: 16,
     path: ["group", { name: "groupId" }],
     search: undefined,
     hash: undefined,
@@ -45,7 +45,7 @@ test("getMatcher returns a proper matcher structure for paths with params (in pa
 
   getMatcherEqual("Users", "/groups/:groupId/users", {
     isArea: false,
-    ranking: 20,
+    ranking: 25,
     path: ["groups", { name: "groupId" }, "users"],
     search: undefined,
     hash: undefined,
@@ -55,17 +55,17 @@ test("getMatcher returns a proper matcher structure for paths with params (in pa
 test("getMatcher returns a proper matcher structure for paths with params (in path, search and hash)", () => {
   getMatcherEqual("Group", "/group/:groupId?:foo&:bar[]#:baz", {
     isArea: false,
-    ranking: 13,
+    ranking: 16,
     path: ["group", { name: "groupId" }],
     search: { foo: { multiple: false }, bar: { multiple: true } },
-    hash: "baz",
+    hash: { name: "baz" },
   });
 });
 
 test("getMatcher decrements the ranking by 1 if the path is an area", () => {
   getMatcherEqual("UsersArea", "/groups/:groupId/users/*", {
     isArea: true,
-    ranking: 19,
+    ranking: 24,
     path: ["groups", { name: "groupId" }, "users"],
     search: undefined,
     hash: undefined,
@@ -73,7 +73,7 @@ test("getMatcher decrements the ranking by 1 if the path is an area", () => {
 
   getMatcherEqual("UsersArea", "/groups/:groupId/users/*?:foo&:bar[]", {
     isArea: true,
-    ranking: 19,
+    ranking: 24,
     path: ["groups", { name: "groupId" }, "users"],
     search: { foo: { multiple: false }, bar: { multiple: true } },
     hash: undefined,
@@ -81,7 +81,7 @@ test("getMatcher decrements the ranking by 1 if the path is an area", () => {
 
   getMatcherEqual("Users", "/groups/:groupId/users", {
     isArea: false,
-    ranking: 20,
+    ranking: 25,
     path: ["groups", { name: "groupId" }, "users"],
     search: undefined,
     hash: undefined,

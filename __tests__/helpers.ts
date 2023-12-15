@@ -2,7 +2,6 @@ import { describe, expect, test } from "vitest";
 import {
   areParamsArrayEqual,
   first,
-  isMultipleParam,
   isNonEmpty,
   isParam,
 } from "../src/helpers";
@@ -53,24 +52,5 @@ describe("areParamsArrayEqual", () => {
     expect(areParamsArrayEqual(["foo"], [])).toBe(false);
     expect(areParamsArrayEqual(["foo"], ["bar"])).toBe(false);
     expect(areParamsArrayEqual(["foo", "bar"], ["bar", "foo"])).toBe(false);
-  });
-});
-
-describe("isMultipleParam", () => {
-  test("returns true if the value is a well-formed route multiple param", () => {
-    expect(isMultipleParam(":test[]")).toBe(true);
-    expect(isMultipleParam(":[]")).toBe(true);
-    expect(isMultipleParam(": []")).toBe(true);
-  });
-
-  test("returns false if the value is not a well-formed route multiple param", () => {
-    expect(isMultipleParam(" :test[]")).toBe(false);
-    expect(isMultipleParam("test[]")).toBe(false);
-    expect(isMultipleParam(":test]")).toBe(false);
-    expect(isMultipleParam(":test[")).toBe(false);
-    expect(isMultipleParam(": ")).toBe(false);
-    expect(isMultipleParam(":")).toBe(false);
-    expect(isMultipleParam(":test")).toBe(false);
-    expect(isMultipleParam("test")).toBe(false);
   });
 });

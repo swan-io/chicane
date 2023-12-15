@@ -34,5 +34,34 @@ export const areRouteEqual = (
   );
 };
 
-export const isMultipleParam = (value: string): boolean =>
-  value.startsWith(":") && value.endsWith("[]");
+const extractParamUnion = (
+  paramName: string,
+): { name: string; values?: string[] } => {
+  const bracketIndex = paramName.indexOf("{");
+
+  if (bracketIndex > -1 && paramName.endsWith("}")) {
+    return {
+      name: paramName.substring(0, bracketIndex),
+      values: paramName
+        .substring(bracketIndex + 1, paramName.length - 1)
+        .split("|")
+        .filter(isNonEmpty),
+    };
+  } else {
+    return { name: paramName };
+  }
+};
+
+export const extractPathParam = (param: string) =>
+  extractParamUnion(param.substring(1));
+
+export const extractSearchParam = (
+  param: string,
+): { name: string; multiple: boolean; values?: string[] } => {
+  const multiple = param.endsWith("[]");
+
+  return {
+    ...extractParamUnion(param.substring(1, param.length - (multiple ? 2 : 0))),
+    multiple,
+  };
+};
