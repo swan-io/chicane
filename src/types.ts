@@ -8,7 +8,7 @@ export type Matcher = {
   ranking: number;
 
   path: (string | { name: string })[];
-  search: Record<string, "unique" | "multiple"> | undefined;
+  search: Record<string, { multiple: boolean }> | undefined;
   hash: string | undefined;
 };
 

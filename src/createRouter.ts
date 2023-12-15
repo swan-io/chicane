@@ -1,5 +1,6 @@
 import { createPath } from "history";
 import { useMemo } from "react";
+import { useSyncExternalStoreWithSelector } from "use-sync-external-store/shim/with-selector.js";
 import { concatRoutes, parseRoute } from "./concatRoutes";
 import { areRouteEqual, first, identity } from "./helpers";
 import {
@@ -22,7 +23,6 @@ import {
   PrependBasePath,
   Simplify,
 } from "./types";
-import { useSyncExternalStoreWithSelector } from "use-sync-external-store/shim/with-selector.js";
 
 export const createRouter = <
   Routes extends Record<string, string>,

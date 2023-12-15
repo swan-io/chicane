@@ -9,9 +9,9 @@ const focusableElements: Record<string, true> = {
 };
 
 export const useFocusReset = (containerRef: React.RefObject<unknown>) => {
-  // Only refocus when the component has rerended with a new pathname
+  // Only refocus when the component has rerendered with a new pathname
   // We don't want to reset focus on search params / hash changes
-  const focusKey = getLocation().raw.path;
+  const { path } = getLocation().raw;
 
   useEffect(() => {
     const element = containerRef.current as HTMLElement | undefined;
@@ -33,5 +33,5 @@ export const useFocusReset = (containerRef: React.RefObject<unknown>) => {
         element.focus();
       } catch {} // eslint-disable-line no-empty
     }
-  }, [containerRef, focusKey]);
+  }, [path, containerRef]);
 };

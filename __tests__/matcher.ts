@@ -57,7 +57,7 @@ test("getMatcher returns a proper matcher structure for paths with params (in pa
     isArea: false,
     ranking: 13,
     path: ["group", { name: "groupId" }],
-    search: { foo: "unique", bar: "multiple" },
+    search: { foo: { multiple: false }, bar: { multiple: true } },
     hash: "baz",
   });
 });
@@ -75,7 +75,7 @@ test("getMatcher decrements the ranking by 1 if the path is an area", () => {
     isArea: true,
     ranking: 19,
     path: ["groups", { name: "groupId" }, "users"],
-    search: { foo: "unique", bar: "multiple" },
+    search: { foo: { multiple: false }, bar: { multiple: true } },
     hash: undefined,
   });
 

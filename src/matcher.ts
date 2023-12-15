@@ -43,9 +43,9 @@ export const getMatcher = (name: string, route: string): Matcher => {
 
     for (const [key] of params) {
       if (isMultipleParam(key)) {
-        matcher.search[key.substring(1, key.length - 2)] = "multiple";
+        matcher.search[key.substring(1, key.length - 2)] = { multiple: true };
       } else if (isParam(key)) {
-        matcher.search[key.substring(1, key.length)] = "unique";
+        matcher.search[key.substring(1, key.length)] = { multiple: false };
       }
     }
   }
@@ -106,7 +106,7 @@ export const extractLocationParams = (
         continue;
       }
 
-      if (matcherValue === "multiple") {
+      if (matcherValue.multiple) {
         params[key] =
           typeof locationValue === "string" ? [locationValue] : locationValue;
         continue;
