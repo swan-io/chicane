@@ -96,47 +96,66 @@ export const extractLocationParams = (
       continue;
     }
 
-    if (typeof matcherPart !== "string") {
-      if (locationPart == null) {
-        return;
-      } else {
-        params[matcherPart.name] = locationPart;
-        continue;
-      }
-    } else {
-      if (matcherPart === locationPart) {
+    if (typeof matcherPart === "string") {
+      if (locationPart === matcherPart) {
         continue;
       } else {
         return;
       }
+    }
+
+    if (locationPart == null) {
+      return;
+    }
+
+    const { name, values } = matcherPart;
+
+    if (values == null || values.includes(locationPart)) {
+      params[name] = locationPart;
     }
   }
 
   for (const key in matcher.search) {
     if (Object.prototype.hasOwnProperty.call(matcher.search, key)) {
-      const matcherValue = matcher.search[key];
-      const locationValue = location.search[key];
+      const matcherPart = matcher.search[key];
+      const locationPart = location.search[key];
 
-      if (matcherValue == null || locationValue == null) {
+      if (matcherPart == null || locationPart == null) {
         continue;
       }
 
-      if (matcherValue.multiple) {
+      const { multiple, values } = matcherPart;
+
+      if (multiple) {
+        const locationValues =
+          typeof locationPart === "string" ? [locationPart] : locationPart;
+
         params[key] =
-          typeof locationValue === "string" ? [locationValue] : locationValue;
+          values == null
+            ? locationValues
+            : locationValues.filter((item) => values.includes(item));
+
         continue;
       }
 
-      if (typeof locationValue === "string") {
+      const locationValue =
+        typeof locationPart === "string" ? locationPart : locationPart[0];
+
+      if (
+        locationValue != null &&
+        (values == null || values.includes(locationValue))
+      ) {
         params[key] = locationValue;
-      } else if (locationValue[0] != null) {
-        params[key] = locationValue[0];
       }
     }
   }
 
   if (matcher.hash != null && location.hash != null) {
-    params[matcher.hash.name] = location.hash;
+    const { name, values } = matcher.hash;
+
+    if (values == null || values.includes(location.hash)) {
+      params[name] = location.hash;
+    }
   }
 
   return params;
