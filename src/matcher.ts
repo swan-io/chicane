@@ -112,6 +112,8 @@ export const extractLocationParams = (
 
     if (values == null || values.includes(locationPart)) {
       params[name] = locationPart;
+    } else {
+      return;
     }
   }
 
@@ -196,14 +198,22 @@ export const matchToHistoryPath = (
     const object: Search = {};
 
     for (const key in params) {
-      const value = params[key];
+      const matcherPart = matcher.search[key];
+      const param = params[key];
 
-      if (
-        Object.prototype.hasOwnProperty.call(params, key) &&
-        Object.prototype.hasOwnProperty.call(matcher.search, key) &&
-        value != null
-      ) {
-        object[key] = value;
+      if (matcherPart != null && param != null) {
+        const { values } = matcherPart;
+
+        if (typeof param === "string") {
+          if (values == null || values.includes(param)) {
+            object[key] = param;
+          }
+        } else {
+          object[key] =
+            values == null
+              ? param
+              : param.filter((item) => values.includes(item));
+        }
       }
     }
 
@@ -211,10 +221,14 @@ export const matchToHistoryPath = (
   }
 
   if (matcher.hash != null) {
-    const value = params[matcher.hash.name];
+    const { name, values } = matcher.hash;
+    const param = params[name];
 
-    if (typeof value === "string") {
-      hash = "#" + encodeURIComponent(value);
+    if (
+      typeof param === "string" &&
+      (values == null || values.includes(param))
+    ) {
+      hash = "#" + encodeURIComponent(param);
     }
   }
 

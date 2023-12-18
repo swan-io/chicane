@@ -11,6 +11,7 @@ const matchers = [
   getMatcher("MyGroup", "/groups/mine"),
   getMatcher("UsersArea", "/groups/:groupId/users/*"),
   getMatcher("Users", "/groups/:groupId/users"),
+  getMatcher("Project", "/projects/:projectId/:env{live|sandbox}"),
 ].sort((a, b) => b.ranking - a.ranking); // we sort the matchers since match doesn't do it at each call
 
 const matchEqual = <E>(path: string, expected: E) =>
@@ -50,6 +51,18 @@ test("getMatcher returns a proper matcher structure for paths with params (in pa
     search: undefined,
     hash: undefined,
   });
+
+  getMatcherEqual("Project", "/projects/:projectId/:env{live|sandbox}", {
+    isArea: false,
+    ranking: 24,
+    path: [
+      "projects",
+      { name: "projectId" },
+      { name: "env", values: ["live", "sandbox"] },
+    ],
+    search: undefined,
+    hash: undefined,
+  });
 });
 
 test("getMatcher returns a proper matcher structure for paths with params (in path, search and hash)", () => {
@@ -59,6 +72,17 @@ test("getMatcher returns a proper matcher structure for paths with params (in pa
     path: ["group", { name: "groupId" }],
     search: { foo: { multiple: false }, bar: { multiple: true } },
     hash: { name: "baz" },
+  });
+
+  getMatcherEqual("Group", "/group/:groupId?:foo{a|b}&:bar{c|d}[]#:baz{e|f}", {
+    isArea: false,
+    ranking: 16,
+    path: ["group", { name: "groupId" }],
+    search: {
+      foo: { multiple: false, values: ["a", "b"] },
+      bar: { multiple: true, values: ["c", "d"] },
+    },
+    hash: { name: "baz", values: ["e", "f"] },
   });
 });
 
@@ -113,9 +137,15 @@ test("match extract route params and matches against a matcher", () => {
     name: "Users",
     params: { groupId: "github" },
   });
+
+  matchEqual("/projects/swan/live", {
+    name: "Project",
+    params: { projectId: "swan", env: "live" },
+  });
 });
 
 test("match returns undefined in case of no route match", () => {
   matchEqual("/repositories/:repositoryId", undefined);
   matchEqual("/bills/:billId", undefined);
+  matchEqual("/projects/swan/unexpected", undefined);
 });

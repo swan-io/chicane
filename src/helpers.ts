@@ -60,8 +60,15 @@ export const extractSearchParam = (
 ): { name: string; multiple: boolean; values?: string[] } => {
   const multiple = param.endsWith("[]");
 
-  return {
-    ...extractParamUnion(param.substring(1, param.length - (multiple ? 2 : 0))),
-    multiple,
-  };
+  const { name, values } = extractParamUnion(
+    param.substring(1, param.length - (multiple ? 2 : 0)),
+  );
+
+  const output: ReturnType<typeof extractSearchParam> = { multiple, name };
+
+  if (typeof values !== "undefined") {
+    output["values"] = values;
+  }
+
+  return output;
 };
