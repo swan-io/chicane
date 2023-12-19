@@ -87,7 +87,6 @@ export type EnsurePath<Path extends string> = Path extends `/${string}`
   ? Path
   : `/${Path}`;
 
-// Ensure that Path starts with / (same in the parsePath fn)
 export type ParseRoute<Route extends string> =
   Route extends `${infer Path}?${infer Search}#${string}`
     ? { path: EnsurePath<Path>; search: Search }
