@@ -1,7 +1,7 @@
 // This module makes the different routes created with @swan-io/chicane listen to the same history instance
-import { createBrowserHistory, createMemoryHistory, parsePath } from "history";
 import { createContext, useContext, useSyncExternalStore } from "react";
 import { areParamsArrayEqual } from "./helpers";
+import { History, createBrowserHistory, parsePath } from "./historyLite";
 import { decodeLocation } from "./location";
 import { Location, Search, Subscription } from "./types";
 
@@ -14,14 +14,20 @@ const canUseDOM =
   typeof window.document !== "undefined" &&
   typeof window.document.createElement !== "undefined";
 
-export const history = canUseDOM
+export const history: History = canUseDOM
   ? createBrowserHistory()
-  : createMemoryHistory();
+  : {
+      location: { pathname: "/", search: "", hash: "" },
+      push: () => {},
+      replace: () => {},
+      listen: () => () => {},
+      block: () => () => {},
+    };
 
 let currentLocation = decodeLocation(history.location, true);
 let initialLocationHasChanged = false;
 
-history.listen(({ location }) => {
+history.listen((location) => {
   const nextLocation = decodeLocation(location, false);
 
   // As the `encodeSearch` function guarantees a stable sorting, we can rely on a simple URL comparison

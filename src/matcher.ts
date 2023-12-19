@@ -1,10 +1,10 @@
-import { Path as HistoryPath, parsePath } from "history";
 import {
   extractPathParam,
   extractSearchParam,
   isNonEmpty,
   isParam,
 } from "./helpers";
+import { Location as HistoryPath, parsePath } from "./historyLite";
 import { encodeSearch } from "./search";
 import { Location, Matcher, Params, Search } from "./types";
 
@@ -47,7 +47,7 @@ export const getMatcher = (name: string, route: string): Matcher => {
     hash: undefined,
   };
 
-  if (search != null) {
+  if (search !== "") {
     matcher.search = {};
     const params = new URLSearchParams(search.substring(1));
 
@@ -61,7 +61,7 @@ export const getMatcher = (name: string, route: string): Matcher => {
     }
   }
 
-  if (hash != null) {
+  if (hash !== "") {
     const value = hash.substring(1);
 
     if (isParam(value)) {

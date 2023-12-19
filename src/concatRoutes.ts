@@ -1,4 +1,4 @@
-import { parsePath } from "history";
+import { parsePath } from "./historyLite";
 import { ParsedRoute } from "./types";
 
 export const addPrefixOnNonEmpty = (value: string, prefix: string) =>

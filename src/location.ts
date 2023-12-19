@@ -1,5 +1,5 @@
-import { Path as HistoryLocation } from "history";
 import { isNonEmpty } from "./helpers";
+import { Location as HistoryLocation } from "./historyLite";
 import { decodeSearch, encodeSearch } from "./search";
 import { Location } from "./types";
 

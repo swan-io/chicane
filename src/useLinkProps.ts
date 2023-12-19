@@ -1,4 +1,3 @@
-import { parsePath } from "history";
 import { useCallback, useMemo, useSyncExternalStore } from "react";
 import {
   pushUnsafe,
@@ -6,6 +5,7 @@ import {
   subscribeToLocation,
   useGetUniversalLocation,
 } from "./history";
+import { parsePath } from "./historyLite";
 
 // Kudos to https://github.com/remix-run/react-router/pull/7998
 export const useLinkProps = ({

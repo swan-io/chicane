@@ -7,10 +7,10 @@ export const useNavigationBlocker = (blocked: boolean, message: string) => {
       return;
     }
 
-    const unblock = history.block((transition) => {
+    const unblock = history.block((retry) => {
       if (window.confirm(message)) {
         unblock();
-        transition.retry();
+        retry();
       }
     });
 

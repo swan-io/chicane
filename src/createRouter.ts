@@ -1,4 +1,3 @@
-import { createPath } from "history";
 import { useMemo } from "react";
 import { useSyncExternalStoreWithSelector } from "use-sync-external-store/shim/with-selector.js";
 import { concatRoutes, parseRoute } from "./concatRoutes";
@@ -9,6 +8,7 @@ import {
   subscribeToLocation,
   useGetUniversalLocation,
 } from "./history";
+import { createPath } from "./historyLite";
 import { getMatcher, match, matchToHistoryPath } from "./matcher";
 import {
   GetAreaRoutes,

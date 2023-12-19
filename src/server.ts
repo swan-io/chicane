@@ -1,6 +1,6 @@
-import { parsePath } from "history";
 import { createElement } from "react";
 import { GetUniversalLocationProvider } from "./history";
+import { parsePath } from "./historyLite";
 import { decodeLocation } from "./location";
 
 type Props = {
