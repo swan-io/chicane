@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { history } from "./history";
+import { blockHistory } from "./history";
 
 export const useNavigationBlocker = (blocked: boolean, message: string) => {
   useEffect(() => {
@@ -7,7 +7,7 @@ export const useNavigationBlocker = (blocked: boolean, message: string) => {
       return;
     }
 
-    const unblock = history.block((retry) => {
+    const unblock = blockHistory((retry) => {
       if (window.confirm(message)) {
         unblock();
         retry();

@@ -4,12 +4,12 @@ import { concatRoutes, parseRoute } from "./concatRoutes";
 import { areRouteEqual, first, identity } from "./helpers";
 import {
   getLocation,
-  history,
+  pushUnsafe,
+  replaceUnsafe,
   subscribeToLocation,
   useGetUniversalLocation,
 } from "./history";
-import { createPath } from "./historyLite";
-import { getMatcher, match, matchToHistoryPath } from "./matcher";
+import { getMatcher, match, matchToUrl } from "./matcher";
 import {
   GetAreaRoutes,
   GetCreateURLFns,
@@ -78,7 +78,7 @@ export const createRouter = <
       const routeName = matcher.name as keyof FiniteRoutes;
 
       createURLFns[routeName] = (params?: Params) =>
-        createPath(matchToHistoryPath(matchers[routeName], params));
+        matchToUrl(matchers[routeName], params);
     }
   }
 
@@ -127,13 +127,12 @@ export const createRouter = <
   const push = <RouteName extends keyof FiniteRoutes>(
     routeName: RouteName,
     ...args: ParamsArg<FiniteRoutesParams[RouteName]>
-  ): void => history.push(matchToHistoryPath(matchers[routeName], first(args)));
+  ): void => pushUnsafe(matchToUrl(matchers[routeName], first(args)));
 
   const replace = <RouteName extends keyof FiniteRoutes>(
     routeName: RouteName,
     ...args: ParamsArg<FiniteRoutesParams[RouteName]>
-  ): void =>
-    history.replace(matchToHistoryPath(matchers[routeName], first(args)));
+  ): void => replaceUnsafe(matchToUrl(matchers[routeName], first(args)));
 
   return {
     useRoute,

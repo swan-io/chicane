@@ -87,14 +87,14 @@ type EnsureSlashPrefix<Value extends string> = Value extends `/${string}`
   ? Value
   : `/${Value}`;
 
-export type ParseRoute<Route extends string> =
-  Route extends `${infer Path}?${infer Search}#${string}`
-    ? { path: EnsureSlashPrefix<Path>; search: Search }
-    : Route extends `${infer Path}?${infer Search}`
-      ? { path: EnsureSlashPrefix<Path>; search: Search }
-      : Route extends `${infer Path}#${string}`
-        ? { path: EnsureSlashPrefix<Path>; search: "" }
-        : { path: Route; search: "" };
+export type ParseRoute<
+  Route extends string,
+  CleanRoute = EnsureSlashPrefix<
+    Route extends `${infer Head}#${string}` ? Head : Route
+  >,
+> = CleanRoute extends `${infer Path}?${infer Search}`
+  ? { path: Path; search: Search }
+  : { path: CleanRoute; search: "" };
 
 export type ParseRoutes<Routes extends Record<string, string>> = {
   [K in keyof Routes]: ParseRoute<Routes[K]>;

@@ -13,9 +13,9 @@ type Blocker = (retry: Retry) => void;
 
 export type History = {
   readonly location: Location;
-  push(to: Location): void;
-  replace(to: Location): void;
-  listen(listener: Listener): () => void;
+  push: (url: string) => void;
+  replace: (url: string) => void;
+  listen: (listener: Listener) => () => void;
   block: (blocker: Blocker) => Unblock;
 };
 
@@ -57,50 +57,34 @@ export const createBrowserHistory = (): History => {
     }
   });
 
-  const push = (to: Location): void => {
+  const push = (url: string): void => {
     if (blockers.size > 0) {
-      blockers.forEach((blocker) => blocker(() => push(to)));
+      blockers.forEach((blocker) => blocker(() => push(url)));
     } else {
-      location = to;
-      const url = createPath(location);
+      location = parsePath(url);
+      const url2 = createPath(location); // TODO: use location.toString()
 
       try {
         // iOS has a limit of 100 pushState calls / 30 secs
-        globalHistory.pushState(null, "", url);
+        globalHistory.pushState(null, "", url2);
       } catch {
-        globalLocation.assign(url);
+        globalLocation.assign(url2);
       }
 
       listeners.forEach((fn) => fn(location));
     }
   };
 
-  const replace = (to: Location): void => {
+  const replace = (url: string): void => {
     if (blockers.size > 0) {
-      blockers.forEach((blocker) => blocker(() => replace(to)));
+      blockers.forEach((blocker) => blocker(() => replace(url)));
     } else {
-      location = to;
-      const url = createPath(location);
+      location = parsePath(url);
+      const url2 = createPath(location); // TODO: use location.toString()
 
-      globalHistory.replaceState(null, "", url);
+      globalHistory.replaceState(null, "", url2);
       listeners.forEach((fn) => fn(location));
     }
-  };
-
-  const block = (blocker: Blocker) => {
-    blockers.add(blocker);
-
-    if (blockers.size === 1) {
-      window.addEventListener("beforeunload", promptBeforeUnload);
-    }
-
-    return () => {
-      blockers.delete(blocker);
-
-      if (blockers.size === 0) {
-        window.removeEventListener("beforeunload", promptBeforeUnload);
-      }
-    };
   };
 
   const history: History = {
@@ -109,14 +93,28 @@ export const createBrowserHistory = (): History => {
     },
     push,
     replace,
-    listen(listener) {
+    listen: (listener) => {
       listeners.add(listener);
 
       return () => {
         listeners.delete(listener);
       };
     },
-    block,
+    block: (blocker: Blocker) => {
+      blockers.add(blocker);
+
+      if (blockers.size === 1) {
+        window.addEventListener("beforeunload", promptBeforeUnload);
+      }
+
+      return () => {
+        blockers.delete(blocker);
+
+        if (blockers.size === 0) {
+          window.removeEventListener("beforeunload", promptBeforeUnload);
+        }
+      };
+    },
   };
 
   return history;

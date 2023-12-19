@@ -4,7 +4,7 @@ import {
   isNonEmpty,
   isParam,
 } from "./helpers";
-import { Location as HistoryPath, parsePath } from "./historyLite";
+import { createPath, parsePath } from "./historyLite";
 import { encodeSearch } from "./search";
 import { Location, Matcher, Params, Search } from "./types";
 
@@ -159,10 +159,7 @@ export const match = (
   }
 };
 
-export const matchToHistoryPath = (
-  matcher: Matcher,
-  params: Params = {},
-): HistoryPath => {
+export const matchToUrl = (matcher: Matcher, params: Params = {}): string => {
   const pathname =
     "/" +
     matcher.path
@@ -202,5 +199,5 @@ export const matchToHistoryPath = (
     search = encodeSearch(object);
   }
 
-  return { pathname, search };
+  return createPath({ pathname, search });
 };

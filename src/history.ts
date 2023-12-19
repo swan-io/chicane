@@ -1,7 +1,7 @@
 // This module makes the different routes created with @swan-io/chicane listen to the same history instance
 import { createContext, useContext, useSyncExternalStore } from "react";
 import { areParamsArrayEqual } from "./helpers";
-import { History, createBrowserHistory, parsePath } from "./historyLite";
+import { History, createBrowserHistory } from "./historyLite";
 import { decodeLocation } from "./location";
 import { Location, Search, Subscription } from "./types";
 
@@ -14,7 +14,7 @@ const canUseDOM =
   typeof window.document !== "undefined" &&
   typeof window.document.createElement !== "undefined";
 
-export const history: History = canUseDOM
+const history: History = canUseDOM
   ? createBrowserHistory()
   : {
       location: { pathname: "/", search: "" },
@@ -112,15 +112,9 @@ export const useLocation = (): Location => {
   );
 };
 
-export const pushUnsafe = (url: string): void => {
-  const { pathname, search } = parsePath(url);
-  history.push({ pathname, search });
-};
-
-export const replaceUnsafe = (url: string) => {
-  const { pathname, search } = parsePath(url);
-  history.replace({ pathname, search });
-};
+export const blockHistory = history.block;
+export const pushUnsafe = history.push;
+export const replaceUnsafe = history.replace;
 
 // For testing purposes
 export const resetInitialHasLocationChanged = () => {
