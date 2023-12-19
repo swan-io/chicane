@@ -83,21 +83,22 @@ export const createPath = ({ pathname, search }: Location) => {
   return output;
 };
 
-export const parsePath = (path: string): Location => {
-  let rest = path;
+// rename this decodeRoute (encodeRoute should not exists)
+export const parsePath = (path: string): Readonly<Location> => {
+  const hashIndex = path.indexOf("#");
 
-  const output: Location = { pathname: "", search: "" };
-  const hashIndex = rest.indexOf("#");
-  const searchIndex = rest.indexOf("?");
+  const cleanPath = ensureSlashPrefix(
+    hashIndex < 0 ? path : path.substring(0, hashIndex),
+  );
 
-  if (hashIndex >= 0) {
-    rest = rest.substring(0, hashIndex);
+  const searchIndex = cleanPath.indexOf("?");
+
+  if (searchIndex < 0) {
+    return { pathname: cleanPath, search: "" };
   }
-  if (searchIndex >= 0) {
-    output.search = rest.substring(searchIndex);
-    rest = rest.substring(0, searchIndex);
-  }
 
-  output.pathname = ensureSlashPrefix(rest);
-  return output;
+  return {
+    pathname: cleanPath.substring(0, searchIndex),
+    search: cleanPath.substring(searchIndex /*+ 1*/),
+  };
 };
