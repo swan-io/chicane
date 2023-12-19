@@ -1,28 +1,22 @@
 // This module makes the different routes created with @swan-io/chicane listen to the same history instance
 import { createContext, useContext, useSyncExternalStore } from "react";
-import { areParamsArrayEqual } from "./helpers";
-import { History, createBrowserHistory } from "./historyLite";
+import { areParamsArrayEqual, noop } from "./helpers";
+import { History, createBrowserHistory, parsePath } from "./historyLite";
 import { decodeLocation } from "./location";
 import { Location, Search, Subscription } from "./types";
 
 const subscriptions = new Set<Subscription>();
 
-// From https://github.com/facebook/fbjs/blob/v2.0.0/packages/fbjs/src/core/ExecutionEnvironment.js
-const canUseDOM =
-  // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
-  typeof window !== "undefined" &&
-  typeof window.document !== "undefined" &&
-  typeof window.document.createElement !== "undefined";
-
-const history: History = canUseDOM
-  ? createBrowserHistory()
-  : {
-      location: { pathname: "/", search: "" },
-      push: () => {},
-      replace: () => {},
-      listen: () => () => {},
-      block: () => () => {},
-    };
+const history: History =
+  typeof window !== "undefined"
+    ? createBrowserHistory()
+    : {
+        location: parsePath("/"),
+        block: () => noop,
+        listen: () => noop, // TODO: rename this subscribe
+        push: noop,
+        replace: noop,
+      };
 
 let currentLocation = decodeLocation(history.location, true);
 let initialLocationHasChanged = false;

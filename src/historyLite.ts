@@ -30,25 +30,33 @@ export const createBrowserHistory = (): History => {
   const globalHistory = window.history;
   const globalLocation = window.location;
 
+  globalHistory.replaceState(0, ""); // TODO: Clean the url here too
+
+  const getStateIndex = () =>
+    typeof globalHistory.state === "number" ? globalHistory.state : 0;
+
   const getLocation = (): Location => {
     const { pathname, search } = globalLocation;
     return { pathname, search };
   };
 
-  const blockers = new Set<Blocker>();
   const listeners = new Set<Listener>();
+  const blockers = new Set<Blocker>();
 
   let location = getLocation();
-  let isBlockedPopStateEvent = false;
+  let index = 0;
+  let blockDelta: number | undefined = undefined;
 
   window.addEventListener("popstate", () => {
     if (blockers.size > 0) {
-      if (!isBlockedPopStateEvent) {
-        isBlockedPopStateEvent = true;
-        globalHistory.go(1);
+      if (typeof blockDelta === "undefined") {
+        console.log(index, getStateIndex());
+        blockDelta = index - getStateIndex();
+        globalHistory.go(blockDelta);
       } else {
-        isBlockedPopStateEvent = false;
-        const retry = () => globalHistory.go(-1);
+        const delta = blockDelta * -1;
+        blockDelta = undefined;
+        const retry = () => globalHistory.go(delta);
         blockers.forEach((blocker) => blocker(retry));
       }
     } else {
@@ -61,12 +69,14 @@ export const createBrowserHistory = (): History => {
     if (blockers.size > 0) {
       blockers.forEach((blocker) => blocker(() => push(url)));
     } else {
+      index = getStateIndex() + 1;
       location = parsePath(url);
+
       const url2 = createPath(location); // TODO: use location.toString()
 
       try {
         // iOS has a limit of 100 pushState calls / 30 secs
-        globalHistory.pushState(null, "", url2);
+        globalHistory.pushState(index, "", url2);
       } catch {
         globalLocation.assign(url2);
       }
@@ -79,10 +89,12 @@ export const createBrowserHistory = (): History => {
     if (blockers.size > 0) {
       blockers.forEach((blocker) => blocker(() => replace(url)));
     } else {
+      index = getStateIndex();
       location = parsePath(url);
+
       const url2 = createPath(location); // TODO: use location.toString()
 
-      globalHistory.replaceState(null, "", url2);
+      globalHistory.replaceState(index, "", url2);
       listeners.forEach((fn) => fn(location));
     }
   };
