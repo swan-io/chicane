@@ -1,4 +1,5 @@
-import { concatRoutes, parseRoute } from "./concatRoutes";
+import { concatRoutes } from "./concatRoutes";
+import { parseRoute } from "./historyLite";
 import { ConcatRoutes } from "./types";
 
 export const createGroup = <

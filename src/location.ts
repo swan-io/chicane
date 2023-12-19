@@ -1,13 +1,12 @@
 import { isNonEmpty } from "./helpers";
-import { Location as HistoryLocation } from "./historyLite";
 import { decodeUnprefixedSearch, encodeSearch } from "./search";
-import { Location } from "./types";
+import { Location, ParsedRoute } from "./types";
 
 export const decodeLocation = (
-  { pathname, search }: HistoryLocation,
+  route: ParsedRoute,
   removeExtraSlashes: boolean,
 ): Location => {
-  const path = pathname.substring(1);
+  const path = route.path.substring(1);
 
   const parsedPath =
     path !== ""
@@ -16,7 +15,8 @@ export const decodeLocation = (
         : path.split("/").map(decodeURIComponent)
       : [];
 
-  const parsedSearch = search !== "" ? decodeUnprefixedSearch(search) : {};
+  const parsedSearch =
+    route.search !== "" ? decodeUnprefixedSearch(route.search) : {};
 
   const rawPath = "/" + parsedPath.map(encodeURIComponent).join("/");
   const rawSearch = encodeSearch(parsedSearch);

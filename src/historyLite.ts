@@ -1,7 +1,8 @@
 import { ensureSlashPrefix } from "./helpers";
+import { ParsedRoute } from "./types";
 
 export type Location = {
-  pathname: string;
+  path: string;
   search: string;
 };
 
@@ -22,7 +23,7 @@ export const createBrowserHistory = (): History => {
 
   const getLocation = (): Location => {
     const { pathname, search } = globalLocation;
-    return { pathname, search };
+    return { path: pathname, search };
   };
 
   const listeners = new Set<Listener>();
@@ -34,7 +35,7 @@ export const createBrowserHistory = (): History => {
   });
 
   const push = (url: string): void => {
-    location = parsePath(url);
+    location = parseRoute(url);
     const url2 = createPath(location); // TODO: use location.toString()
 
     try {
@@ -48,7 +49,7 @@ export const createBrowserHistory = (): History => {
   };
 
   const replace = (url: string): void => {
-    location = parsePath(url);
+    location = parseRoute(url);
     const url2 = createPath(location); // TODO: use location.toString()
 
     globalHistory.replaceState(null, "", url2);
@@ -73,8 +74,8 @@ export const createBrowserHistory = (): History => {
   return history;
 };
 
-export const createPath = ({ pathname, search }: Location) => {
-  let output = pathname;
+export const createPath = ({ path, search }: Location) => {
+  let output = path;
 
   if (search !== "" && search !== "?") {
     output += search[0] === "?" ? search : "?" + search;
@@ -83,22 +84,21 @@ export const createPath = ({ pathname, search }: Location) => {
   return output;
 };
 
-// rename this decodeRoute (encodeRoute should not exists)
-export const parsePath = (path: string): Readonly<Location> => {
-  const hashIndex = path.indexOf("#");
+export const parseRoute = (route: string): ParsedRoute => {
+  const hashIndex = route.indexOf("#");
 
   const cleanPath = ensureSlashPrefix(
-    hashIndex < 0 ? path : path.substring(0, hashIndex),
+    hashIndex < 0 ? route : route.substring(0, hashIndex),
   );
 
   const searchIndex = cleanPath.indexOf("?");
 
   if (searchIndex < 0) {
-    return { pathname: cleanPath, search: "" };
+    return { path: cleanPath, search: "" };
   }
 
   return {
-    pathname: cleanPath.substring(0, searchIndex),
+    path: cleanPath.substring(0, searchIndex),
     search: cleanPath.substring(searchIndex + 1),
   };
 };

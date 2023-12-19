@@ -4,7 +4,7 @@ import {
   isNonEmpty,
   isParam,
 } from "./helpers";
-import { createPath, parsePath } from "./historyLite";
+import { createPath, parseRoute } from "./historyLite";
 import { decodeUnprefixedSearch, encodeSearch } from "./search";
 import { Location, Matcher, Params, Search } from "./types";
 
@@ -30,7 +30,7 @@ const extractFromPathname = (pathname: string) => {
 };
 
 export const getMatcher = (name: string, route: string): Matcher => {
-  const { pathname, search } = parsePath(route);
+  const { path: pathname, search } = parseRoute(route);
   const isArea = pathname.endsWith("/*");
 
   const { ranking, path } = extractFromPathname(
@@ -160,7 +160,7 @@ export const match = (
 };
 
 export const matchToUrl = (matcher: Matcher, params: Params = {}): string => {
-  const pathname =
+  const path =
     "/" +
     matcher.path
       .map((part) =>
@@ -199,5 +199,5 @@ export const matchToUrl = (matcher: Matcher, params: Params = {}): string => {
     search = encodeSearch(object);
   }
 
-  return createPath({ pathname, search });
+  return createPath({ path, search });
 };

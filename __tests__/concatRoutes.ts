@@ -1,5 +1,6 @@
 import { expect, test } from "vitest";
-import { concatRoutes, parseRoute } from "../src/concatRoutes";
+import { concatRoutes } from "../src/concatRoutes";
+import { parseRoute } from "../src/historyLite";
 
 const concatRouteStrings = (routeA: string, routeB: string): string =>
   concatRoutes(parseRoute(routeA), parseRoute(routeB));

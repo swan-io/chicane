@@ -1,7 +1,7 @@
 // This module makes the different routes created with @swan-io/chicane listen to the same history instance
 import { createContext, useContext, useSyncExternalStore } from "react";
 import { areParamsArrayEqual, noop } from "./helpers";
-import { History, createBrowserHistory, parsePath } from "./historyLite";
+import { History, createBrowserHistory, parseRoute } from "./historyLite";
 import { decodeLocation } from "./location";
 import { Location, Search, Subscription } from "./types";
 
@@ -11,7 +11,7 @@ const history: History =
   typeof window !== "undefined"
     ? createBrowserHistory()
     : {
-        location: parsePath("/"),
+        location: parseRoute("/"),
         listen: () => noop, // TODO: rename this subscribe
         push: noop,
         replace: noop,

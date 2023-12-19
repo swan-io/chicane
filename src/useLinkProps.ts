@@ -5,7 +5,7 @@ import {
   subscribeToLocation,
   useGetUniversalLocation,
 } from "./history";
-import { parsePath } from "./historyLite";
+import { parseRoute } from "./historyLite";
 
 // Kudos to https://github.com/remix-run/react-router/pull/7998
 export const useLinkProps = ({
@@ -17,7 +17,7 @@ export const useLinkProps = ({
   replace?: boolean | undefined;
   target?: React.HTMLAttributeAnchorTarget | undefined;
 }) => {
-  const hrefPath = useMemo(() => parsePath(href).pathname, [href]);
+  const hrefPath = useMemo(() => parseRoute(href).path, [href]);
   const getUniversalLocation = useGetUniversalLocation();
   const getPath = () => hrefPath === getUniversalLocation().raw.path;
   const active = useSyncExternalStore(subscribeToLocation, getPath, getPath);

@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useSyncExternalStoreWithSelector } from "use-sync-external-store/shim/with-selector.js";
-import { concatRoutes, parseRoute } from "./concatRoutes";
+import { concatRoutes } from "./concatRoutes";
 import { areRouteEqual, first, identity } from "./helpers";
 import {
   getLocation,
@@ -9,6 +9,7 @@ import {
   subscribeToLocation,
   useGetUniversalLocation,
 } from "./history";
+import { parseRoute } from "./historyLite";
 import { getMatcher, match, matchToUrl } from "./matcher";
 import {
   GetAreaRoutes,

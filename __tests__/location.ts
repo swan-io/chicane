@@ -1,12 +1,12 @@
 import { expect, test } from "vitest";
-import { parsePath } from "../src/historyLite";
+import { parseRoute } from "../src/historyLite";
 import { decodeLocation } from "../src/location";
 
 const getEqual =
   (removeExtraSlashes: boolean) =>
   <E>(path: string, sanitized: string, location: E) => {
     const { toString, ...value } = decodeLocation(
-      parsePath(path),
+      parseRoute(path),
       removeExtraSlashes,
     );
 
