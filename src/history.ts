@@ -12,7 +12,6 @@ const history: History =
     ? createBrowserHistory()
     : {
         location: parsePath("/"),
-        block: () => noop,
         listen: () => noop, // TODO: rename this subscribe
         push: noop,
         replace: noop,
@@ -106,7 +105,6 @@ export const useLocation = (): Location => {
   );
 };
 
-export const blockHistory = history.block;
 export const pushUnsafe = history.push;
 export const replaceUnsafe = history.replace;
 

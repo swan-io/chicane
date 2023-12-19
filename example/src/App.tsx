@@ -1,8 +1,4 @@
-import {
-  Link,
-  useFocusReset,
-  useNavigationBlocker,
-} from "@swan-io/chicane/src";
+import { Link, useFocusReset } from "@swan-io/chicane/src";
 import { useRef } from "react";
 import { match } from "ts-pattern";
 import { Router } from "./router";
@@ -110,22 +106,6 @@ const UsersArea = () => {
   );
 };
 
-const Repository = ({
-  userId,
-  repositoryId,
-}: {
-  userId: string;
-  repositoryId: string;
-}) => {
-  useNavigationBlocker(true, "toto");
-
-  return (
-    <h2>
-      {userId}/{repositoryId}
-    </h2>
-  );
-};
-
 const RepositoriesArea = ({ userId }: { userId: string }) => {
   const route = Router.useRoute(["Repositories", "Repository"]);
   const containerRef = useRef(null);
@@ -151,7 +131,9 @@ const RepositoriesArea = ({ userId }: { userId: string }) => {
         .with(
           { name: "Repository" },
           ({ params: { userId, repositoryId } }) => (
-            <Repository userId={userId} repositoryId={repositoryId} />
+            <h2>
+              {userId}/{repositoryId}
+            </h2>
           ),
         )
         .with(undefined, () => <div>404 - Repository not found</div>)

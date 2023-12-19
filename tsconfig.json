@@ -1,5 +1,5 @@
 {
-  "include": ["./src"],
+  "include": ["src", "__tests__"],
   "compilerOptions": {
     "module": "ES2015",
     "target": "ES2015",
@@ -13,6 +13,7 @@
     "noEmit": true,
     "sourceMap": true,
     "strict": true,
+    "skipLibCheck": true,
     "stripInternal": true,
 
     // https://www.typescriptlang.org/tsconfig#Type_Checking_6248

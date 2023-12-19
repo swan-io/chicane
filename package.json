@@ -27,14 +27,13 @@
     "registry": "https://registry.npmjs.org"
   },
   "scripts": {
-    "build": "yarn clean && microbundle -f cjs,es",
     "clean": "rm -rf dist",
-    "dev": "microbundle watch",
-    "format": "prettier '**/*' -u -w",
+    "format": "prettier '**/*' --ignore-unknown --write",
     "lint": "eslint --ext ts,tsx ./src",
     "test": "vitest --run",
     "test:watch": "vitest --watch",
     "typecheck": "tsc --noEmit",
+    "build": "yarn clean && microbundle -f cjs,es --tsconfig tsconfig.build.json",
     "prepack": "yarn typecheck && yarn lint && yarn test && yarn build"
   },
   "browserslist": [
