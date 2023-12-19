@@ -1,7 +1,6 @@
 export type Location = {
   pathname: string;
   search: string;
-  hash: string;
 };
 
 export type Listener = (location: Location) => void;
@@ -30,8 +29,8 @@ export const createBrowserHistory = (): History => {
   const globalLocation = window.location;
 
   const getLocation = (): Location => {
-    const { pathname, search, hash } = globalLocation;
-    return { pathname, search, hash };
+    const { pathname, search } = globalLocation;
+    return { pathname, search };
   };
 
   const blockers = new Set<Blocker>();
@@ -44,10 +43,10 @@ export const createBrowserHistory = (): History => {
     if (blockers.size > 0) {
       if (!isBlockedPopStateEvent) {
         isBlockedPopStateEvent = true;
-        globalHistory.forward();
+        globalHistory.go(1);
       } else {
         isBlockedPopStateEvent = false;
-        const retry = () => globalHistory.back();
+        const retry = () => globalHistory.go(-1);
         blockers.forEach((blocker) => blocker(retry));
       }
     } else {
@@ -121,30 +120,26 @@ export const createBrowserHistory = (): History => {
   return history;
 };
 
-export const createPath = ({ pathname, search, hash }: Location) => {
+export const createPath = ({ pathname, search }: Location) => {
   let output = pathname;
 
   if (search !== "" && search !== "?") {
     output += search.charAt(0) === "?" ? search : "?" + search;
-  }
-  if (hash !== "" && hash !== "#") {
-    output += hash.charAt(0) === "#" ? hash : "#" + hash;
   }
 
   return output;
 };
 
 export const parsePath = (path: string): Location => {
-  const output: Location = { pathname: "/", search: "", hash: "" };
+  const output: Location = { pathname: "/", search: "" };
 
-  if (path) {
+  if (path !== "") {
     let mutable = path;
 
     const hashIndex = mutable.indexOf("#");
     const searchIndex = mutable.indexOf("?");
 
     if (hashIndex >= 0) {
-      output.hash = mutable.substring(hashIndex);
       mutable = mutable.substring(0, hashIndex);
     }
     if (searchIndex >= 0) {
@@ -152,7 +147,7 @@ export const parsePath = (path: string): Location => {
       mutable = mutable.substring(0, searchIndex);
     }
 
-    if (mutable) {
+    if (mutable !== "") {
       output.pathname = mutable;
     }
   }

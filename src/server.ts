@@ -9,8 +9,8 @@ type Props = {
 };
 
 export const ServerUrlProvider = ({ children, value }: Props) => {
-  const { pathname = "/", search = "", hash = "" } = parsePath(value);
-  const location = decodeLocation({ pathname, search, hash }, false);
+  const { pathname, search } = parsePath(value);
+  const location = decodeLocation({ pathname, search }, false);
 
   return createElement(GetUniversalLocationProvider, {
     children,

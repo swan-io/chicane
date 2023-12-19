@@ -45,8 +45,7 @@ export const createRouter = <
 
   const basePathObject: ParsedRoute = {
     path: parseRoute(basePath).path,
-    search: "", // search and hash are not supported in basePath
-    hash: "",
+    search: "", // search is not supported in basePath
   };
 
   const matchers = {} as Record<keyof Routes, Matcher>;

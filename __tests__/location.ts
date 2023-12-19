@@ -1,12 +1,12 @@
 import { expect, test } from "vitest";
+import { parsePath } from "../src/historyLite";
 import { decodeLocation } from "../src/location";
-import { getHistoryLocation } from "./utils";
 
 const getEqual =
   (removeExtraSlashes: boolean) =>
   <E>(path: string, sanitized: string, location: E) => {
     const { toString, ...value } = decodeLocation(
-      getHistoryLocation(path),
+      parsePath(path),
       removeExtraSlashes,
     );
 
@@ -23,7 +23,6 @@ test("decodeLocation parses well-formed paths properly", () => {
     raw: {
       path: "/",
       search: "",
-      hash: "",
     },
   });
 
@@ -33,7 +32,6 @@ test("decodeLocation parses well-formed paths properly", () => {
     raw: {
       path: "/test",
       search: "",
-      hash: "",
     },
   });
 
@@ -43,7 +41,6 @@ test("decodeLocation parses well-formed paths properly", () => {
     raw: {
       path: "/test/ID",
       search: "",
-      hash: "",
     },
   });
 
@@ -53,18 +50,15 @@ test("decodeLocation parses well-formed paths properly", () => {
     raw: {
       path: "/test/repositories/mine",
       search: "",
-      hash: "",
     },
   });
 
-  equal("/test#foo", "/test#foo", {
+  equal("/test#foo", "/test", {
     path: ["test"],
     search: {},
-    hash: "foo",
     raw: {
       path: "/test",
       search: "",
-      hash: "#foo",
     },
   });
 
@@ -77,7 +71,6 @@ test("decodeLocation parses well-formed paths properly", () => {
       raw: {
         path: "/profile/settings",
         search: "?invitation=code",
-        hash: "",
       },
     },
   );
@@ -88,7 +81,6 @@ test("decodeLocation parses well-formed paths properly", () => {
     raw: {
       path: "/test",
       search: "?filters=foo&filters=bar",
-      hash: "",
     },
   });
 });
@@ -96,14 +88,13 @@ test("decodeLocation parses well-formed paths properly", () => {
 test("decodeLocation parses route with empty params properly", () => {
   const equal = getEqual(false);
 
-  equal("/?#", "/#", {
+  equal("/?#", "/", {
     path: [],
     search: {},
-    hash: "",
+
     raw: {
       path: "/",
       search: "",
-      hash: "#",
     },
   });
 
@@ -113,7 +104,6 @@ test("decodeLocation parses route with empty params properly", () => {
     raw: {
       path: "/test",
       search: "",
-      hash: "",
     },
   });
 
@@ -123,7 +113,6 @@ test("decodeLocation parses route with empty params properly", () => {
     raw: {
       path: "/test",
       search: "?foo",
-      hash: "",
     },
   });
 
@@ -133,7 +122,6 @@ test("decodeLocation parses route with empty params properly", () => {
     raw: {
       path: "/test",
       search: "?foo",
-      hash: "",
     },
   });
 
@@ -143,18 +131,16 @@ test("decodeLocation parses route with empty params properly", () => {
     raw: {
       path: "/test",
       search: "?foo&foo",
-      hash: "",
     },
   });
 
-  equal("/test#", "/test#", {
+  equal("/test#", "/test", {
     path: ["test"],
     search: {},
-    hash: "",
+
     raw: {
       path: "/test",
       search: "",
-      hash: "#",
     },
   });
 });
@@ -168,7 +154,6 @@ test("decodeLocation parses URI components (and encode it back for url)", () => 
     raw: {
       path: "/%3Atest%2B",
       search: "",
-      hash: "",
     },
   });
 
@@ -178,7 +163,6 @@ test("decodeLocation parses URI components (and encode it back for url)", () => 
     raw: {
       path: "/test",
       search: "?%3Ffoo",
-      hash: "",
     },
   });
 
@@ -188,18 +172,15 @@ test("decodeLocation parses URI components (and encode it back for url)", () => 
     raw: {
       path: "/test",
       search: "?foo=%3F",
-      hash: "",
     },
   });
 
-  equal("/test##+foo", "/test#%23%2Bfoo", {
+  equal("/test##+foo", "/test", {
     path: ["test"],
     search: {},
-    hash: "#+foo",
     raw: {
       path: "/test",
       search: "",
-      hash: "#%23%2Bfoo",
     },
   });
 });
@@ -213,7 +194,6 @@ test("decodeLocation keeps extra slashes when removeExtraSlashes is false", () =
     raw: {
       path: "///",
       search: "",
-      hash: "",
     },
   });
 
@@ -223,7 +203,6 @@ test("decodeLocation keeps extra slashes when removeExtraSlashes is false", () =
     raw: {
       path: "/test/",
       search: "",
-      hash: "",
     },
   });
 
@@ -233,7 +212,6 @@ test("decodeLocation keeps extra slashes when removeExtraSlashes is false", () =
     raw: {
       path: "/test/",
       search: "?foo",
-      hash: "",
     },
   });
 
@@ -246,7 +224,6 @@ test("decodeLocation keeps extra slashes when removeExtraSlashes is false", () =
       raw: {
         path: "//profile//settings",
         search: "?invitation=%2F",
-        hash: "",
       },
     },
   );
@@ -261,7 +238,6 @@ test("decodeLocation removes extra slashes when removeExtraSlashes is true", () 
     raw: {
       path: "/",
       search: "",
-      hash: "",
     },
   });
 
@@ -271,7 +247,6 @@ test("decodeLocation removes extra slashes when removeExtraSlashes is true", () 
     raw: {
       path: "/test",
       search: "",
-      hash: "",
     },
   });
 
@@ -281,7 +256,6 @@ test("decodeLocation removes extra slashes when removeExtraSlashes is true", () 
     raw: {
       path: "/test",
       search: "?foo",
-      hash: "",
     },
   });
 
@@ -294,7 +268,6 @@ test("decodeLocation removes extra slashes when removeExtraSlashes is true", () 
       raw: {
         path: "/profile/settings",
         search: "?invitation=%2F",
-        hash: "",
       },
     },
   );

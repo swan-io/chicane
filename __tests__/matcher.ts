@@ -1,6 +1,7 @@
 import { expect, test } from "vitest";
+import { parsePath } from "../src/historyLite";
+import { decodeLocation } from "../src/location";
 import { getMatcher, match } from "../src/matcher";
-import { getLocation } from "./utils";
 
 const getMatcherEqual = <E>(name: string, route: string, expected: E) =>
   expect(getMatcher(name, route)).toStrictEqual({ name, ...expected });
@@ -15,7 +16,9 @@ const matchers = [
 ].sort((a, b) => b.ranking - a.ranking); // we sort the matchers since match doesn't do it at each call
 
 const matchEqual = <E>(path: string, expected: E) =>
-  expect(match(getLocation(path), matchers)).toStrictEqual(expected);
+  expect(match(decodeLocation(parsePath(path), false), matchers)).toStrictEqual(
+    expected,
+  );
 
 test("getMatcher returns a proper matcher structure for paths without params", () => {
   getMatcherEqual("Groups", "/groups", {
@@ -23,7 +26,6 @@ test("getMatcher returns a proper matcher structure for paths without params", (
     ranking: 9,
     path: ["groups"],
     search: undefined,
-    hash: undefined,
   });
 
   getMatcherEqual("MyGroup", "/groups/mine", {
@@ -31,7 +33,6 @@ test("getMatcher returns a proper matcher structure for paths without params", (
     ranking: 18,
     path: ["groups", "mine"],
     search: undefined,
-    hash: undefined,
   });
 });
 
@@ -41,7 +42,6 @@ test("getMatcher returns a proper matcher structure for paths with params (in pa
     ranking: 16,
     path: ["group", { name: "groupId" }],
     search: undefined,
-    hash: undefined,
   });
 
   getMatcherEqual("Users", "/groups/:groupId/users", {
@@ -49,7 +49,6 @@ test("getMatcher returns a proper matcher structure for paths with params (in pa
     ranking: 25,
     path: ["groups", { name: "groupId" }, "users"],
     search: undefined,
-    hash: undefined,
   });
 
   getMatcherEqual("Project", "/projects/:projectId/:env{live|sandbox}", {
@@ -61,17 +60,15 @@ test("getMatcher returns a proper matcher structure for paths with params (in pa
       { name: "env", values: ["live", "sandbox"] },
     ],
     search: undefined,
-    hash: undefined,
   });
 });
 
-test("getMatcher returns a proper matcher structure for paths with params (in path, search and hash)", () => {
+test("getMatcher returns a proper matcher structure for paths with params (in path and search)", () => {
   getMatcherEqual("Group", "/group/:groupId?:foo&:bar[]#:baz", {
     isArea: false,
     ranking: 16,
     path: ["group", { name: "groupId" }],
     search: { foo: { multiple: false }, bar: { multiple: true } },
-    hash: { name: "baz" },
   });
 
   getMatcherEqual("Group", "/group/:groupId?:foo{a|b}&:bar{c|d}[]#:baz{e|f}", {
@@ -82,7 +79,6 @@ test("getMatcher returns a proper matcher structure for paths with params (in pa
       foo: { multiple: false, values: ["a", "b"] },
       bar: { multiple: true, values: ["c", "d"] },
     },
-    hash: { name: "baz", values: ["e", "f"] },
   });
 });
 
@@ -92,7 +88,6 @@ test("getMatcher decrements the ranking by 1 if the path is an area", () => {
     ranking: 24,
     path: ["groups", { name: "groupId" }, "users"],
     search: undefined,
-    hash: undefined,
   });
 
   getMatcherEqual("UsersArea", "/groups/:groupId/users/*?:foo&:bar[]", {
@@ -100,7 +95,6 @@ test("getMatcher decrements the ranking by 1 if the path is an area", () => {
     ranking: 24,
     path: ["groups", { name: "groupId" }, "users"],
     search: { foo: { multiple: false }, bar: { multiple: true } },
-    hash: undefined,
   });
 
   getMatcherEqual("Users", "/groups/:groupId/users", {
@@ -108,7 +102,6 @@ test("getMatcher decrements the ranking by 1 if the path is an area", () => {
     ranking: 25,
     path: ["groups", { name: "groupId" }, "users"],
     search: undefined,
-    hash: undefined,
   });
 });
 

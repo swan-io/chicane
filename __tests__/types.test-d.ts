@@ -3,7 +3,6 @@ import {
   ConcatPaths,
   ConcatSearchs,
   GetAreaRoutes,
-  GetHashParams,
   GetPathParams,
   GetSearchParams,
   NonEmptySplit,
@@ -17,37 +16,31 @@ test("ParseRoute", () => {
   expectTypeOf<ParseRoute<"/foo?bar#baz">>().toEqualTypeOf<{
     path: "/foo";
     search: "bar";
-    hash: "baz";
   }>();
 
   expectTypeOf<ParseRoute<"/foo?bar">>().toEqualTypeOf<{
     path: "/foo";
     search: "bar";
-    hash: "";
   }>();
 
   expectTypeOf<ParseRoute<"/foo#baz">>().toEqualTypeOf<{
     path: "/foo";
     search: "";
-    hash: "baz";
   }>();
 
   expectTypeOf<ParseRoute<"/foo/bar">>().toEqualTypeOf<{
     path: "/foo/bar";
     search: "";
-    hash: "";
   }>();
 
   expectTypeOf<ParseRoute<"/foo/bar?baz&qux">>().toEqualTypeOf<{
     path: "/foo/bar";
     search: "baz&qux";
-    hash: "";
   }>();
 
   expectTypeOf<ParseRoute<"/foo/bar/baz#qux">>().toEqualTypeOf<{
     path: "/foo/bar/baz";
     search: "";
-    hash: "qux";
   }>();
 });
 
@@ -104,11 +97,6 @@ test("GetSearchParams", () => {
   }>();
 });
 
-test("GetHashParams", () => {
-  expectTypeOf<GetHashParams<"foo">>().toEqualTypeOf<{}>(); // no param
-  expectTypeOf<GetHashParams<":foo">>().toEqualTypeOf<{ foo?: string }>();
-});
-
 test("ConcatPaths", () => {
   expectTypeOf<ConcatPaths<"/foo", "/bar">>().toEqualTypeOf<"/foo/bar">();
   expectTypeOf<ConcatPaths<"/foo", "/">>().toEqualTypeOf<"/foo">();
@@ -142,7 +130,6 @@ test("GetAreaRoutes", () => {
   >().toEqualTypeOf<{
     RepositoriesArea: {
       path: "/users/:userId/repositories";
-      hash: ":baz";
       search: ":foo&:bar[]";
     };
   }>();
@@ -156,20 +143,20 @@ test("PrependBasePath", () => {
   };
 
   expectTypeOf<PrependBasePath<"", Input>>().toEqualTypeOf<{
-    a: { path: "/"; search: ""; hash: "" };
-    b: { path: "/foo/bar"; search: ""; hash: "" };
-    c: { path: "/foo"; search: ":bar"; hash: ":baz" };
+    a: { path: "/"; search: "" };
+    b: { path: "/foo/bar"; search: "" };
+    c: { path: "/foo"; search: ":bar" };
   }>();
 
   expectTypeOf<PrependBasePath<"/", Input>>().toEqualTypeOf<{
-    a: { path: "/"; search: ""; hash: "" };
-    b: { path: "/foo/bar"; search: ""; hash: "" };
-    c: { path: "/foo"; search: ":bar"; hash: ":baz" };
+    a: { path: "/"; search: "" };
+    b: { path: "/foo/bar"; search: "" };
+    c: { path: "/foo"; search: ":bar" };
   }>();
 
   expectTypeOf<PrependBasePath<"/base", Input>>().toEqualTypeOf<{
-    a: { path: "/base"; search: ""; hash: "" };
-    b: { path: "/base/foo/bar"; search: ""; hash: "" };
-    c: { path: "/base/foo"; search: ":bar"; hash: ":baz" };
+    a: { path: "/base"; search: "" };
+    b: { path: "/base/foo/bar"; search: "" };
+    c: { path: "/base/foo"; search: ":bar" };
   }>();
 });

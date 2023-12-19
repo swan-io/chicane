@@ -8,8 +8,8 @@ export const ensureSlashPrefix = (value: string): string =>
   value[0] === "/" ? value : `/${value}`;
 
 export const parseRoute = (route: string): ParsedRoute => {
-  const { pathname: path = "", search = "", hash = "" } = parsePath(route);
-  return { path, search: search.substring(1), hash: hash.substring(1) };
+  const { pathname: path, search } = parsePath(route);
+  return { path, search: search.substring(1) };
 };
 
 export const concatRoutes = (
@@ -31,9 +31,5 @@ export const concatRoutes = (
       ? routeB["search"]
       : routeA["search"] + addPrefixOnNonEmpty(routeB["search"], "&");
 
-  const hash = routeB["hash"] === "" ? routeA["hash"] : routeB["hash"];
-
-  return (
-    path + addPrefixOnNonEmpty(search, "?") + addPrefixOnNonEmpty(hash, "#")
-  );
+  return path + addPrefixOnNonEmpty(search, "?");
 };

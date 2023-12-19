@@ -30,7 +30,7 @@ const extractFromPathname = (pathname: string) => {
 };
 
 export const getMatcher = (name: string, route: string): Matcher => {
-  const { pathname = "/", search, hash } = parsePath(route);
+  const { pathname, search } = parsePath(route);
   const isArea = pathname.endsWith("/*");
 
   const { ranking, path } = extractFromPathname(
@@ -44,7 +44,6 @@ export const getMatcher = (name: string, route: string): Matcher => {
     ranking: isArea ? ranking - 1 : ranking,
     path,
     search: undefined,
-    hash: undefined,
   };
 
   if (search !== "") {
@@ -58,14 +57,6 @@ export const getMatcher = (name: string, route: string): Matcher => {
         matcher.search[name] =
           values == null ? { multiple } : { multiple, values };
       }
-    }
-  }
-
-  if (hash !== "") {
-    const value = hash.substring(1);
-
-    if (isParam(value)) {
-      matcher.hash = extractPathParam(value);
     }
   }
 
@@ -152,14 +143,6 @@ export const extractLocationParams = (
     }
   }
 
-  if (matcher.hash != null && location.hash != null) {
-    const { name, values } = matcher.hash;
-
-    if (values == null || values.includes(location.hash)) {
-      params[name] = location.hash;
-    }
-  }
-
   return params;
 };
 
@@ -192,7 +175,6 @@ export const matchToHistoryPath = (
 
   // https://github.com/remix-run/history/issues/859
   let search = "";
-  let hash = "";
 
   if (matcher.search != null) {
     const object: Search = {};
@@ -220,17 +202,5 @@ export const matchToHistoryPath = (
     search = encodeSearch(object);
   }
 
-  if (matcher.hash != null) {
-    const { name, values } = matcher.hash;
-    const param = params[name];
-
-    if (
-      typeof param === "string" &&
-      (values == null || values.includes(param))
-    ) {
-      hash = "#" + encodeURIComponent(param);
-    }
-  }
-
-  return { pathname, search, hash };
+  return { pathname, search };
 };

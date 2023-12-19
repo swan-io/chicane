@@ -4,7 +4,7 @@ import { decodeSearch, encodeSearch } from "./search";
 import { Location } from "./types";
 
 export const decodeLocation = (
-  { pathname, search, hash }: HistoryLocation,
+  { pathname, search }: HistoryLocation,
   removeExtraSlashes: boolean,
 ): Location => {
   const path = pathname.substring(1);
@@ -17,26 +17,18 @@ export const decodeLocation = (
       : [];
 
   const parsedSearch = search !== "" ? decodeSearch(search) : {};
-  const parsedHash = hash !== "" ? decodeURIComponent(hash.substring(1)) : null;
 
   const rawPath = "/" + parsedPath.map(encodeURIComponent).join("/");
   const rawSearch = encodeSearch(parsedSearch);
-  const rawHash =
-    parsedHash != null ? "#" + encodeURIComponent(parsedHash) : "";
-
-  const stringifiedLocation = rawPath + rawSearch + rawHash;
+  const stringifiedLocation = rawPath + rawSearch;
 
   return {
     path: parsedPath,
     search: parsedSearch,
-    ...(parsedHash !== null && {
-      hash: parsedHash,
-    }),
 
     raw: {
       path: rawPath,
       search: rawSearch,
-      hash: rawHash,
     },
 
     toString() {

@@ -9,24 +9,20 @@ export type Matcher = {
 
   path: (string | { name: string; values?: string[] })[];
   search: Record<string, { multiple: boolean; values?: string[] }> | undefined;
-  hash: { name: string; values?: string[] } | undefined;
 };
 
 export type ParsedRoute = Readonly<{
   path: string;
   search: string;
-  hash: string;
 }>;
 
 export type Location = Readonly<{
   path: readonly string[];
   search: Readonly<Search>;
-  hash?: string;
 
   raw: Readonly<{
     path: string;
     search: string;
-    hash: string;
   }>;
 
   toString(): string;
@@ -87,18 +83,14 @@ export type GetSearchParams<
       : GetSearchParams<Search, Tail>
   : {}; // eslint-disable-line @typescript-eslint/ban-types
 
-export type GetHashParams<Value extends string> = Value extends `:${infer Name}`
-  ? ExtractOptionalUniqueParam<Name>
-  : {}; // eslint-disable-line @typescript-eslint/ban-types
-
 export type ParseRoute<Route extends string> =
-  Route extends `${infer Path}?${infer Search}#${infer Hash}`
-    ? { path: Path; search: Search; hash: Hash }
+  Route extends `${infer Path}?${infer Search}#${string}`
+    ? { path: Path; search: Search }
     : Route extends `${infer Path}?${infer Search}`
-      ? { path: Path; search: Search; hash: "" }
-      : Route extends `${infer Path}#${infer Hash}`
-        ? { path: Path; search: ""; hash: Hash }
-        : { path: Route; search: ""; hash: "" };
+      ? { path: Path; search: Search }
+      : Route extends `${infer Path}#${string}`
+        ? { path: Path; search: "" }
+        : { path: Route; search: "" };
 
 export type ParseRoutes<Routes extends Record<string, string>> = {
   [K in keyof Routes]: ParseRoute<Routes[K]>;
@@ -137,7 +129,6 @@ export type ConcatParsedRoutes<
 > = {
   path: ConcatPaths<RouteA["path"], RouteB["path"]>;
   search: ConcatSearchs<RouteA["search"], RouteB["search"]>;
-  hash: RouteB["hash"] extends "" ? RouteA["hash"] : RouteB["hash"];
 };
 
 export type ConcatRoutes<
@@ -147,10 +138,7 @@ export type ConcatRoutes<
     ParseRoute<RouteA>,
     ParseRoute<RouteB>
   >,
-> = `${Route["path"]}${AddPrefixOnNonEmpty<
-  Route["search"],
-  "?"
->}${AddPrefixOnNonEmpty<Route["hash"], "#">}`;
+> = `${Route["path"]}${AddPrefixOnNonEmpty<Route["search"], "?">}`;
 
 export type PrependBasePath<
   BasePath extends string,
@@ -159,7 +147,6 @@ export type PrependBasePath<
   [K in keyof Routes]: {
     path: ConcatPaths<BasePath, Routes[K]["path"]>;
     search: Routes[K]["search"];
-    hash: Routes[K]["hash"];
   };
 };
 
@@ -167,14 +154,13 @@ export type GetAreaRoutes<Routes extends Record<string, ParsedRoute>> = {
   [K in keyof Routes as Routes[K]["path"] extends `${string}/*`
     ? K
     : never]: Routes[K]["path"] extends `${infer Rest}/*`
-    ? { path: Rest; search: Routes[K]["search"]; hash: Routes[K]["hash"] }
+    ? { path: Rest; search: Routes[K]["search"] }
     : never;
 };
 
 export type GetRoutesParams<Routes extends Record<string, ParsedRoute>> = {
   [K in keyof Routes]: GetPathParams<Routes[K]["path"]> &
-    GetSearchParams<Routes[K]["search"]> &
-    GetHashParams<Routes[K]["hash"]>;
+    GetSearchParams<Routes[K]["search"]>;
 };
 
 type EmptyRecord = Record<string | number | symbol, never>;

@@ -17,7 +17,7 @@ const canUseDOM =
 export const history: History = canUseDOM
   ? createBrowserHistory()
   : {
-      location: { pathname: "/", search: "", hash: "" },
+      location: { pathname: "/", search: "" },
       push: () => {},
       replace: () => {},
       listen: () => () => {},
@@ -72,9 +72,6 @@ history.listen((location) => {
           ? nextLocation.path
           : currentLocation.path,
       search,
-      ...(nextLocation.hash != null && {
-        hash: nextLocation.hash,
-      }),
 
       raw: nextLocation.raw,
       toString: nextLocation.toString,
@@ -116,13 +113,13 @@ export const useLocation = (): Location => {
 };
 
 export const pushUnsafe = (url: string): void => {
-  const { pathname = "", search = "", hash = "" } = parsePath(url);
-  history.push({ pathname, search, hash });
+  const { pathname, search } = parsePath(url);
+  history.push({ pathname, search });
 };
 
 export const replaceUnsafe = (url: string) => {
-  const { pathname = "", search = "", hash = "" } = parsePath(url);
-  history.replace({ pathname, search, hash });
+  const { pathname, search } = parsePath(url);
+  history.replace({ pathname, search });
 };
 
 // For testing purposes
