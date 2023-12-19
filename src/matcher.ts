@@ -5,7 +5,7 @@ import {
   isParam,
 } from "./helpers";
 import { createPath, parsePath } from "./historyLite";
-import { encodeSearch } from "./search";
+import { decodeUnprefixedSearch, encodeSearch } from "./search";
 import { Location, Matcher, Params, Search } from "./types";
 
 // Kudos to https://reach.tech/router/ranking
@@ -48,9 +48,9 @@ export const getMatcher = (name: string, route: string): Matcher => {
 
   if (search !== "") {
     matcher.search = {};
-    const params = new URLSearchParams(search.substring(1));
+    const params = decodeUnprefixedSearch(search);
 
-    for (const [key] of params) {
+    for (const key in params) {
       if (isParam(key)) {
         const { name, multiple, values } = extractSearchParam(key);
 

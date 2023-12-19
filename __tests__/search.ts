@@ -40,8 +40,8 @@ test("decodeSearch returns empty object if no query string can be found", () => 
   expect(decodeSearch("&")).toStrictEqual({});
 });
 
-test("decodeSearch handles `+` correctly", () => {
-  expect(decodeSearch("foo+faz=bar+baz++")).toStrictEqual({
+test("decodeSearch handles spaces correctly", () => {
+  expect(decodeSearch("foo%20faz=bar%20baz%20%20")).toStrictEqual({
     "foo faz": "bar baz  ",
   });
 });

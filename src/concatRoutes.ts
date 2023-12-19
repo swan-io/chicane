@@ -7,7 +7,7 @@ export const addPrefixOnNonEmpty = (value: string, prefix: string) =>
 
 export const parseRoute = (route: string): ParsedRoute => {
   const { pathname: path, search } = parsePath(route);
-  return { path, search: search.substring(1) };
+  return { path, search };
 };
 
 export const concatRoutes = (

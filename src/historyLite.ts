@@ -99,6 +99,6 @@ export const parsePath = (path: string): Readonly<Location> => {
 
   return {
     pathname: cleanPath.substring(0, searchIndex),
-    search: cleanPath.substring(searchIndex /*+ 1*/),
+    search: cleanPath.substring(searchIndex + 1),
   };
 };
