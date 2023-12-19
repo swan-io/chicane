@@ -1,7 +1,6 @@
 import { createElement } from "react";
 import { GetUniversalLocationProvider } from "./history";
-import { parseRoute } from "./historyLite";
-import { decodeLocation } from "./location";
+import { decodeLocation, parseRoute } from "./historyLite";
 
 type Props = {
   children: React.ReactNode;
@@ -9,8 +8,7 @@ type Props = {
 };
 
 export const ServerUrlProvider = ({ children, value }: Props) => {
-  const { path, search } = parseRoute(value);
-  const location = decodeLocation({ path, search }, false);
+  const location = decodeLocation(parseRoute(value), false);
 
   return createElement(GetUniversalLocationProvider, {
     children,

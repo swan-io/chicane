@@ -1,6 +1,5 @@
 import { expect, test } from "vitest";
-import { parseRoute } from "../src/historyLite";
-import { decodeLocation } from "../src/location";
+import { decodeLocation, parseRoute } from "../src/historyLite";
 import { getMatcher, match } from "../src/matcher";
 
 const getMatcherEqual = <E>(name: string, route: string, expected: E) =>

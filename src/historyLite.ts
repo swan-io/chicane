@@ -1,10 +1,6 @@
-import { ensureSlashPrefix } from "./helpers";
-import { ParsedRoute } from "./types";
-
-export type Location = {
-  path: string;
-  search: string;
-};
+import { ensureSlashPrefix, isNonEmpty } from "./helpers";
+import { decodeUnprefixedSearch, encodeSearch } from "./search";
+import { Location, ParsedRoute } from "./types";
 
 export type Listener = (location: Location) => void;
 
@@ -15,44 +11,76 @@ export type History = {
   replace: (url: string) => void;
 };
 
+export const decodeLocation = (
+  route: ParsedRoute,
+  removeExtraSlashes: boolean,
+): Location => {
+  const path = route.path.substring(1);
+
+  const parsedPath =
+    path !== ""
+      ? removeExtraSlashes
+        ? path.split("/").filter(isNonEmpty).map(decodeURIComponent)
+        : path.split("/").map(decodeURIComponent)
+      : [];
+
+  const parsedSearch =
+    route.search !== "" ? decodeUnprefixedSearch(route.search) : {};
+
+  const rawPath = "/" + parsedPath.map(encodeURIComponent).join("/");
+  const rawSearch = encodeSearch(parsedSearch);
+  const stringifiedLocation = rawPath + rawSearch;
+
+  return {
+    path: parsedPath,
+    search: parsedSearch,
+
+    raw: {
+      path: rawPath,
+      search: rawSearch,
+    },
+
+    toString() {
+      return stringifiedLocation;
+    },
+  };
+};
+
 export const createBrowserHistory = (): History => {
   const globalHistory = window.history;
   const globalLocation = window.location;
 
   // globalHistory.replaceState(0, ""); // TODO: Clean the url here too
 
-  const getLocation = (): Location => {
+  const getLocation = (removeExtraSlashes: boolean): Location => {
     const { pathname, search } = globalLocation;
-    return { path: pathname, search };
+    return decodeLocation({ path: pathname, search }, removeExtraSlashes);
   };
 
   const listeners = new Set<Listener>();
-  let location = getLocation();
+  let location = getLocation(true);
 
   window.addEventListener("popstate", () => {
-    location = getLocation();
+    location = getLocation(false);
     listeners.forEach((fn) => fn(location));
   });
 
   const push = (url: string): void => {
-    location = parseRoute(url);
-    const url2 = createPath(location); // TODO: use location.toString()
+    location = decodeLocation(parseRoute(url), false);
 
     try {
       // iOS has a limit of 100 pushState calls / 30 secs
-      globalHistory.pushState(null, "", url2);
+      globalHistory.pushState(null, "", location.toString());
     } catch {
-      globalLocation.assign(url2);
+      globalLocation.assign(location.toString());
     }
 
     listeners.forEach((fn) => fn(location));
   };
 
   const replace = (url: string): void => {
-    location = parseRoute(url);
-    const url2 = createPath(location); // TODO: use location.toString()
-
-    globalHistory.replaceState(null, "", url2);
+    location = decodeLocation(parseRoute(url), false);
+    globalHistory.replaceState(null, "", location.toString());
     listeners.forEach((fn) => fn(location));
   };
 
@@ -73,16 +101,6 @@ export const createBrowserHistory = (): History => {
     push,
     replace,
   };
-};
-
-export const createPath = ({ path, search }: Location) => {
-  let output = path;
-
-  if (search !== "" && search !== "?") {
-    output += search[0] === "?" ? search : "?" + search;
-  }
-
-  return output;
 };
 
 export const parseRoute = (route: string): ParsedRoute => {

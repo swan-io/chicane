@@ -1,8 +1,12 @@
 // This module makes the different routes created with @swan-io/chicane listen to the same history instance
 import { createContext, useContext, useSyncExternalStore } from "react";
 import { areParamsArrayEqual, noop } from "./helpers";
-import { History, createBrowserHistory, parseRoute } from "./historyLite";
-import { decodeLocation } from "./location";
+import {
+  History,
+  createBrowserHistory,
+  decodeLocation,
+  parseRoute,
+} from "./historyLite";
 import { Location, Search, Subscription } from "./types";
 
 const subscriptions = new Set<Subscription>();
@@ -11,31 +15,28 @@ const history: History =
   typeof window !== "undefined"
     ? createBrowserHistory()
     : {
-        location: parseRoute("/"),
+        location: decodeLocation(parseRoute("/"), false),
         listen: () => noop, // TODO: rename this subscribe
         push: noop,
         replace: noop,
       };
 
-let currentLocation = decodeLocation(history.location, true);
+let currentLocation = history.location;
 let initialLocationHasChanged = false;
 
 history.listen((location) => {
-  const nextLocation = decodeLocation(location, false);
-
   // As the `encodeSearch` function guarantees a stable sorting, we can rely on a simple URL comparison
-  if (nextLocation.toString() !== currentLocation.toString()) {
+  if (location.toString() !== currentLocation.toString()) {
     initialLocationHasChanged = true;
 
-    const searchHasChanged =
-      nextLocation.raw.search !== currentLocation.raw.search;
+    const searchHasChanged = location.raw.search !== currentLocation.raw.search;
 
     const search: Search = searchHasChanged ? {} : currentLocation.search;
 
     if (searchHasChanged) {
-      for (const key in nextLocation.search) {
-        if (Object.prototype.hasOwnProperty.call(nextLocation.search, key)) {
-          const value = nextLocation.search[key];
+      for (const key in location.search) {
+        if (Object.prototype.hasOwnProperty.call(location.search, key)) {
+          const value = location.search[key];
 
           if (value == null) {
             continue;
@@ -61,13 +62,13 @@ history.listen((location) => {
     // Create a new location object instance
     currentLocation = {
       path:
-        nextLocation.raw.path !== currentLocation.raw.path
-          ? nextLocation.path
+        location.raw.path !== currentLocation.raw.path
+          ? location.path
           : currentLocation.path,
       search,
 
-      raw: nextLocation.raw,
-      toString: nextLocation.toString,
+      raw: location.raw,
+      toString: location.toString,
     };
 
     subscriptions.forEach((subscription) => subscription(currentLocation));

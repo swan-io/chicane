@@ -1,6 +1,5 @@
 import { expect, test } from "vitest";
-import { parseRoute } from "../src/historyLite";
-import { decodeLocation } from "../src/location";
+import { decodeLocation, parseRoute } from "../src/historyLite";
 
 const getEqual =
   (removeExtraSlashes: boolean) =>
