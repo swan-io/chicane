@@ -9,9 +9,9 @@ import { decodeUnprefixedSearch, encodeSearch } from "./search";
 import { Location, Matcher, Params, Search } from "./types";
 
 // Kudos to https://reach.tech/router/ranking
-const extractFromPathname = (pathname: string) => {
-  const parts = pathname.split("/").filter(isNonEmpty);
-  const path: Matcher["path"] = [];
+const extractFromPath = (path: string) => {
+  const parts = path.split("/").filter(isNonEmpty);
+  const output: Matcher["path"] = [];
 
   let ranking = parts.length > 0 ? parts.length * 5 : 6;
 
@@ -19,22 +19,22 @@ const extractFromPathname = (pathname: string) => {
     if (isParam(part)) {
       const param = extractPathParam(part);
       ranking += param.values == null ? 2 : 3;
-      path.push(param);
+      output.push(param);
     } else {
       ranking += 4;
-      path.push(encodeURIComponent(part));
+      output.push(encodeURIComponent(part));
     }
   }
 
-  return { ranking, path };
+  return { ranking, path: output };
 };
 
 export const getMatcher = (name: string, route: string): Matcher => {
-  const { path: pathname, search } = parseRoute(route);
-  const isArea = pathname.endsWith("/*");
+  const parsed = parseRoute(route);
+  const isArea = parsed.path.endsWith("/*");
 
-  const { ranking, path } = extractFromPathname(
-    isArea ? pathname.slice(0, -2) : pathname,
+  const { ranking, path } = extractFromPath(
+    isArea ? parsed.path.slice(0, -2) : parsed.path,
   );
 
   const matcher: Matcher = {
@@ -46,9 +46,9 @@ export const getMatcher = (name: string, route: string): Matcher => {
     search: undefined,
   };
 
-  if (search !== "") {
+  if (parsed.search !== "") {
     matcher.search = {};
-    const params = decodeUnprefixedSearch(search);
+    const params = decodeUnprefixedSearch(parsed.search);
 
     for (const key in params) {
       if (isParam(key)) {
