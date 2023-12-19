@@ -124,33 +124,27 @@ export const createPath = ({ pathname, search }: Location) => {
   let output = pathname;
 
   if (search !== "" && search !== "?") {
-    output += search.charAt(0) === "?" ? search : "?" + search;
+    output += search[0] === "?" ? search : "?" + search;
   }
 
   return output;
 };
 
 export const parsePath = (path: string): Location => {
-  const output: Location = { pathname: "/", search: "" };
+  let rest = path;
 
-  if (path !== "") {
-    let mutable = path;
+  const output: Location = { pathname: "", search: "" };
+  const hashIndex = rest.indexOf("#");
+  const searchIndex = rest.indexOf("?");
 
-    const hashIndex = mutable.indexOf("#");
-    const searchIndex = mutable.indexOf("?");
-
-    if (hashIndex >= 0) {
-      mutable = mutable.substring(0, hashIndex);
-    }
-    if (searchIndex >= 0) {
-      output.search = mutable.substring(searchIndex);
-      mutable = mutable.substring(0, searchIndex);
-    }
-
-    if (mutable !== "") {
-      output.pathname = mutable;
-    }
+  if (hashIndex >= 0) {
+    rest = rest.substring(0, hashIndex);
+  }
+  if (searchIndex >= 0) {
+    output.search = rest.substring(searchIndex);
+    rest = rest.substring(0, searchIndex);
   }
 
+  output.pathname = rest[0] === "/" ? rest : `/${rest}`;
   return output;
 };

@@ -83,13 +83,18 @@ export type GetSearchParams<
       : GetSearchParams<Search, Tail>
   : {}; // eslint-disable-line @typescript-eslint/ban-types
 
+export type EnsurePath<Path extends string> = Path extends `/${string}`
+  ? Path
+  : `/${Path}`;
+
+// Ensure that Path starts with / (same in the parsePath fn)
 export type ParseRoute<Route extends string> =
   Route extends `${infer Path}?${infer Search}#${string}`
-    ? { path: Path; search: Search }
+    ? { path: EnsurePath<Path>; search: Search }
     : Route extends `${infer Path}?${infer Search}`
-      ? { path: Path; search: Search }
+      ? { path: EnsurePath<Path>; search: Search }
       : Route extends `${infer Path}#${string}`
-        ? { path: Path; search: "" }
+        ? { path: EnsurePath<Path>; search: "" }
         : { path: Route; search: "" };
 
 export type ParseRoutes<Routes extends Record<string, string>> = {
