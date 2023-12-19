@@ -10,9 +10,9 @@ export type Listener = (location: Location) => void;
 
 export type History = {
   readonly location: Location;
+  listen: (listener: Listener) => () => void;
   push: (url: string) => void;
   replace: (url: string) => void;
-  listen: (listener: Listener) => () => void;
 };
 
 export const createBrowserHistory = (): History => {
@@ -56,22 +56,23 @@ export const createBrowserHistory = (): History => {
     listeners.forEach((fn) => fn(location));
   };
 
-  const history: History = {
+  const listen = (listener: Listener) => {
+    listeners.add(listener);
+
+    return () => {
+      listeners.delete(listener);
+    };
+  };
+
+  return {
     get location() {
       return location;
     },
+
+    listen,
     push,
     replace,
-    listen: (listener) => {
-      listeners.add(listener);
-
-      return () => {
-        listeners.delete(listener);
-      };
-    },
   };
-
-  return history;
 };
 
 export const createPath = ({ path, search }: Location) => {
