@@ -1,11 +1,9 @@
+import { ensureSlashPrefix } from "./helpers";
 import { parsePath } from "./historyLite";
 import { ParsedRoute } from "./types";
 
 export const addPrefixOnNonEmpty = (value: string, prefix: string) =>
   value === "" ? value : prefix + value;
-
-export const ensureSlashPrefix = (value: string): string =>
-  value[0] === "/" ? value : `/${value}`;
 
 export const parseRoute = (route: string): ParsedRoute => {
   const { pathname: path, search } = parsePath(route);

@@ -83,17 +83,17 @@ export type GetSearchParams<
       : GetSearchParams<Search, Tail>
   : {}; // eslint-disable-line @typescript-eslint/ban-types
 
-export type EnsurePath<Path extends string> = Path extends `/${string}`
-  ? Path
-  : `/${Path}`;
+type EnsureSlashPrefix<Value extends string> = Value extends `/${string}`
+  ? Value
+  : `/${Value}`;
 
 export type ParseRoute<Route extends string> =
   Route extends `${infer Path}?${infer Search}#${string}`
-    ? { path: EnsurePath<Path>; search: Search }
+    ? { path: EnsureSlashPrefix<Path>; search: Search }
     : Route extends `${infer Path}?${infer Search}`
-      ? { path: EnsurePath<Path>; search: Search }
+      ? { path: EnsureSlashPrefix<Path>; search: Search }
       : Route extends `${infer Path}#${string}`
-        ? { path: EnsurePath<Path>; search: "" }
+        ? { path: EnsureSlashPrefix<Path>; search: "" }
         : { path: Route; search: "" };
 
 export type ParseRoutes<Routes extends Record<string, string>> = {
@@ -104,10 +104,6 @@ type AddPrefixOnNonEmpty<
   Value extends string,
   Prefix extends string,
 > = Value extends "" ? Value : `${Prefix}${Value}`;
-
-type EnsureSlashPrefix<Value extends string> = Value extends `/${string}`
-  ? Value
-  : `/${Value}`;
 
 export type ConcatPaths<
   PathA extends string,

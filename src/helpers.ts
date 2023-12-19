@@ -5,6 +5,9 @@ export const identity = <T>(value: T): T => value;
 export const isNonEmpty = (value: string): boolean => value !== "";
 export const isParam = (value: string): boolean => value.startsWith(":");
 
+export const ensureSlashPrefix = (value: string): string =>
+  value[0] === "/" ? value : `/${value}`;
+
 export const areParamsArrayEqual = (arrayA: string[], arrayB: string[]) =>
   arrayA.length === arrayB.length &&
   arrayA.every((a, index) => a === arrayB[index]);

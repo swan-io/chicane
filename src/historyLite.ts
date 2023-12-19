@@ -1,3 +1,5 @@
+import { ensureSlashPrefix } from "./helpers";
+
 export type Location = {
   pathname: string;
   search: string;
@@ -145,6 +147,6 @@ export const parsePath = (path: string): Location => {
     rest = rest.substring(0, searchIndex);
   }
 
-  output.pathname = rest[0] === "/" ? rest : `/${rest}`;
+  output.pathname = ensureSlashPrefix(rest);
   return output;
 };
