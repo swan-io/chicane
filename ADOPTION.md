@@ -14,7 +14,7 @@ import { createRouter } from "@swan-io/chicane";
 // Here we list all our application pages
 const routes = {
   Home: "/",
-  Teams: "/teams?:created", // chicane support search / hash params declaration
+  Teams: "/teams?:created", // chicane supports search params declaration
   Team: "/teams/:teamId",
   NewTeam: "/teams/new",
   // Note that chicane "createGroup" works perfectly here! (for routes nesting)
@@ -26,7 +26,7 @@ const { getRoute, useRoute, push, replace, ...rest } = createRouter(routes);
 // We exports all the link creation functions
 export const Router = rest;
 
-// We export paths (without search and hash params, as react-router-dom doesn't support them)
+// We export paths (without search params, as react-router-dom doesn't support them)
 export const paths = (Object.keys(routes) as (keyof typeof routes)[]).reduce(
   (acc, key) => ({ ...acc, [key]: routes[key].replace(/[?#].*/, "") }),
   {} as Record<keyof typeof routes, string>,

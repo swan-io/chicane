@@ -155,19 +155,19 @@ export const createBrowserHistory = () => {
 export const parseRoute = (route: string): ParsedRoute => {
   const hashIndex = route.indexOf("#");
 
-  const cleanPath = ensureSlashPrefix(
+  const cleanRoute = ensureSlashPrefix(
     hashIndex < 0 ? route : route.substring(0, hashIndex),
   );
 
-  const searchIndex = cleanPath.indexOf("?");
+  const searchIndex = cleanRoute.indexOf("?");
 
   if (searchIndex < 0) {
-    return { path: cleanPath, search: "" };
+    return { path: cleanRoute, search: "" };
   }
 
   return {
-    path: cleanPath.substring(0, searchIndex),
-    search: cleanPath.substring(searchIndex + 1),
+    path: cleanRoute.substring(0, searchIndex),
+    search: cleanRoute.substring(searchIndex + 1),
   };
 };
 

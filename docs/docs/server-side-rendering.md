@@ -23,7 +23,3 @@ app.use("*", (req, res) => {
   // …
 });
 ```
-
-:::warning
-Since the server can't access the hash contained in your url (as it's not sent by the browser), be sure **not** to render something conditionally based on its value.
-:::

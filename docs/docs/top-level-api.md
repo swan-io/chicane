@@ -23,7 +23,7 @@ export const Router = createRouter({
 
 ## createGroup
 
-Spread a `createGroup` in your routes if you want to avoid repetition with nested routes having the same prefix, search or hash params.
+Spread a `createGroup` in your routes if you want to avoid repetition with nested routes having the same prefix or search params.
 
 - `routeName` (**required**): string
 - `routePath` (**required**): string

@@ -98,7 +98,3 @@ const Router = createRouter({
   UserDetail: "/users/:userId",
 });
 ```
-
-:::info
-You can also do the same for the hash of the URL. Same syntax, just add it after a `#` character. (e.g. `/users/:userId#:profile`)
-:::
