@@ -47,10 +47,10 @@ export const decodeLocation = (
   };
 };
 
-const createBrowserHistory = () => {
+export const createBrowserHistory = () => {
+  const listeners = new Set<Listener>();
   const globalHistory = window.history;
   const globalLocation = window.location;
-  const listeners = new Set<Listener>();
 
   let location = decodeLocation(
     globalLocation.pathname + globalLocation.search,
