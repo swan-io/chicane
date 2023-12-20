@@ -4,12 +4,12 @@ import { concatRoutes } from "./concatRoutes";
 import { areRouteEqual, first, identity } from "./helpers";
 import {
   getLocation,
+  parseRoute,
   pushUnsafe,
   replaceUnsafe,
   subscribeToLocation,
   useGetUniversalLocation,
 } from "./history";
-import { parseRoute } from "./historyLite";
 import { getMatcher, match, matchToUrl } from "./matcher";
 import {
   GetAreaRoutes,

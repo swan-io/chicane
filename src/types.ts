@@ -1,6 +1,6 @@
 export type Params = Record<string, string | string[] | undefined>;
 export type Search = Record<string, string | string[]>;
-export type Subscription = (location: Location) => void;
+export type Listener = (location: Location) => void;
 
 export type Matcher = {
   isArea: boolean;
@@ -72,6 +72,8 @@ export type GetPathParams<
     : GetPathParams<Path, Tail>
   : {}; // eslint-disable-line @typescript-eslint/ban-types
 
+// TODO: when params is an array, it SHOULD be in search params?
+// or we don't put it (undefined), but it should reflect in received values / types
 export type GetSearchParams<
   Search extends string,
   Parts = NonEmptySplit<Search, "&">,

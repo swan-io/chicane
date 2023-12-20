@@ -1,6 +1,9 @@
 import { createElement } from "react";
-import { GetUniversalLocationProvider } from "./history";
-import { decodeLocation, parseRoute } from "./historyLite";
+import {
+  GetUniversalLocationProvider,
+  decodeLocation,
+  parseRoute,
+} from "./history";
 
 type Props = {
   children: React.ReactNode;

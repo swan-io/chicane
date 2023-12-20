@@ -4,7 +4,7 @@ import {
   isNonEmpty,
   isParam,
 } from "./helpers";
-import { parseRoute } from "./historyLite";
+import { parseRoute } from "./history";
 import { decodeUnprefixedSearch, encodeSearch } from "./search";
 import { Location, Matcher, Params, Search } from "./types";
 
