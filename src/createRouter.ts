@@ -127,13 +127,13 @@ export const createRouter = <
 
   const push = <RouteName extends keyof FiniteRoutes>(
     routeName: RouteName,
-    ...args: ParamsArg<FiniteRoutesParams[RouteName]>
-  ): void => pushUnsafe(matchToUrl(matchers[routeName], first(args)));
+    ...params: ParamsArg<FiniteRoutesParams[RouteName]>
+  ): void => pushUnsafe(matchToUrl(matchers[routeName], first(params)));
 
   const replace = <RouteName extends keyof FiniteRoutes>(
     routeName: RouteName,
-    ...args: ParamsArg<FiniteRoutesParams[RouteName]>
-  ): void => replaceUnsafe(matchToUrl(matchers[routeName], first(args)));
+    ...params: ParamsArg<FiniteRoutesParams[RouteName]>
+  ): void => replaceUnsafe(matchToUrl(matchers[routeName], first(params)));
 
   return {
     useRoute,

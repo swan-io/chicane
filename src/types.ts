@@ -184,6 +184,6 @@ export type ParamsArg<Params> = Params extends EmptyRecord
 
 export type GetCreateURLFns<RouteParams extends Record<string, Params>> = {
   [RouteName in keyof RouteParams]: (
-    ...args: ParamsArg<RouteParams[RouteName]>
+    ...params: ParamsArg<RouteParams[RouteName]>
   ) => string;
 };
