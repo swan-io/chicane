@@ -1,11 +1,9 @@
-import { replaceUnsafe, useLocation } from "@swan-io/chicane/src";
+import { getLocation, replaceUnsafe } from "@swan-io/chicane/src";
 import { useLayoutEffect } from "react";
 
 export const Redirect = ({ to }: { to: string }) => {
-  const location = useLocation().toString();
-
   useLayoutEffect(() => {
-    if (to !== location) {
+    if (to !== getLocation().toString()) {
       replaceUnsafe(to);
     }
   }, []);
