@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { decodeLocation, parseRoute } from "../src/history";
+import { decodeLocation } from "../src/history";
 import { getMatcher, match } from "../src/matcher";
 
 const getMatcherEqual = <E>(name: string, route: string, expected: E) =>
@@ -15,9 +15,7 @@ const matchers = [
 ].sort((a, b) => b.ranking - a.ranking); // we sort the matchers since match doesn't do it at each call
 
 const matchEqual = <E>(path: string, expected: E) =>
-  expect(
-    match(decodeLocation(parseRoute(path), false), matchers),
-  ).toStrictEqual(expected);
+  expect(match(decodeLocation(path), matchers)).toStrictEqual(expected);
 
 test("getMatcher returns a proper matcher structure for paths without params", () => {
   getMatcherEqual("Groups", "/groups", {

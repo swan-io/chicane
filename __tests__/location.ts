@@ -1,13 +1,12 @@
 import { expect, test } from "vitest";
-import { decodeLocation, parseRoute } from "../src/history";
+import { decodeLocation } from "../src/history";
 
 const getEqual =
-  (removeExtraSlashes: boolean) =>
+  (removeExtraPathSlashes: boolean) =>
   <E>(path: string, sanitized: string, location: E) => {
-    const { toString, ...value } = decodeLocation(
-      parseRoute(path),
-      removeExtraSlashes,
-    );
+    const { toString, ...value } = decodeLocation(path, {
+      removeExtraPathSlashes,
+    });
 
     expect(toString()).toStrictEqual(sanitized);
     expect(value).toStrictEqual(location);

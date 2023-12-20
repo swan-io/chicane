@@ -12,14 +12,15 @@ import { Listener, Location, ParsedRoute, Search } from "./types";
 let initialLocationHasChanged = false;
 
 export const decodeLocation = (
-  route: ParsedRoute,
-  removeExtraSlashes: boolean,
+  url: string,
+  { removeExtraPathSlashes = false }: { removeExtraPathSlashes?: boolean } = {},
 ): Location => {
+  const route = parseRoute(url);
   const path = route.path.substring(1);
 
   const parsedPath =
     path !== ""
-      ? removeExtraSlashes
+      ? removeExtraPathSlashes
         ? path.split("/").filter(isNonEmpty).map(decodeURIComponent)
         : path.split("/").map(decodeURIComponent)
       : [];
@@ -49,20 +50,16 @@ export const decodeLocation = (
 const createBrowserHistory = () => {
   const globalHistory = window.history;
   const globalLocation = window.location;
-
   const listeners = new Set<Listener>();
 
   let location = decodeLocation(
-    parseRoute(globalLocation.pathname + globalLocation.search),
-    true,
+    globalLocation.pathname + globalLocation.search,
+    { removeExtraPathSlashes: true },
   );
 
-  const updateLocation = (url: string) => {
-    const nextLocation = decodeLocation(parseRoute(url), false);
-
-    // As the `encodeSearch` function guarantees a stable sorting, we can rely on a simple URL comparison
-    if (nextLocation.toString() !== location.toString()) {
-      return false;
+  const maybeUpdateLocation = (nextLocation: Location) => {
+    if (nextLocation.toString() === location.toString()) {
+      return; // As the `encodeSearch` function guarantees a stable sorting, we can rely on a simple URL comparison
     }
 
     initialLocationHasChanged = true;
@@ -103,43 +100,37 @@ const createBrowserHistory = () => {
           ? nextLocation.path
           : location.path,
       search,
-
       raw: nextLocation.raw,
       toString: nextLocation.toString,
     };
 
-    return true;
+    listeners.forEach((listener) => listener(location));
   };
 
   window.addEventListener("popstate", () => {
-    if (updateLocation(globalLocation.pathname + globalLocation.search)) {
-      listeners.forEach((fn) => fn(location));
-    }
+    maybeUpdateLocation(
+      decodeLocation(globalLocation.pathname + globalLocation.search),
+    );
   });
 
   const push = (url: string): void => {
-    const x = updateLocation(url);
+    const nextLocation = decodeLocation(url);
+    const nextUrl = nextLocation.toString();
 
     try {
       // iOS has a limit of 100 pushState calls / 30 secs
-      globalHistory.pushState(null, "", location.toString());
+      globalHistory.pushState(null, "", nextUrl);
     } catch {
-      globalLocation.assign(location.toString());
+      globalLocation.assign(nextUrl);
     }
 
-    if (x) {
-      listeners.forEach((fn) => fn(location));
-    }
+    maybeUpdateLocation(nextLocation);
   };
 
   const replace = (url: string): void => {
-    const x = updateLocation(url);
-
-    globalHistory.replaceState(null, "", location.toString());
-
-    if (x) {
-      listeners.forEach((fn) => fn(location));
-    }
+    const nextLocation = decodeLocation(url);
+    globalHistory.replaceState(null, "", nextLocation.toString());
+    maybeUpdateLocation(nextLocation);
   };
 
   const subscribe = (listener: Listener) => {
@@ -184,7 +175,7 @@ const history: ReturnType<typeof createBrowserHistory> =
   typeof window !== "undefined"
     ? createBrowserHistory()
     : {
-        location: decodeLocation(parseRoute("/"), true),
+        location: decodeLocation("/"),
         subscribe: () => noop,
         push: noop,
         replace: noop,
