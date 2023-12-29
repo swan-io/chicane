@@ -132,7 +132,11 @@ export const extractLocationParams = (
       }
 
       const locationValue =
-        typeof locationPart === "string" ? locationPart : locationPart[0];
+        typeof locationPart === "string"
+          ? locationPart
+          : values == null
+            ? locationPart[0]
+            : locationPart.filter((item) => values.includes(item))[0];
 
       if (
         locationValue != null &&
