@@ -119,30 +119,26 @@ export const extractLocationParams = (
 
       const { multiple, values } = matcherPart;
 
+      const locationValues =
+        typeof locationPart === "string" ? [locationPart] : locationPart;
+
+      const multipleValues =
+        values == null
+          ? locationValues
+          : locationValues.filter((item) => values.includes(item));
+
       if (multiple) {
-        const locationValues =
-          typeof locationPart === "string" ? [locationPart] : locationPart;
-
-        params[key] =
-          values == null
-            ? locationValues
-            : locationValues.filter((item) => values.includes(item));
-
+        params[key] = multipleValues;
         continue;
       }
 
-      const locationValue =
-        typeof locationPart === "string"
-          ? locationPart
-          : values == null
-            ? locationPart[0]
-            : locationPart.filter((item) => values.includes(item))[0];
+      const uniqueValue = multipleValues[0];
 
       if (
-        locationValue != null &&
-        (values == null || values.includes(locationValue))
+        uniqueValue != null &&
+        (values == null || values.includes(uniqueValue))
       ) {
-        params[key] = locationValue;
+        params[key] = uniqueValue;
       }
     }
   }
