@@ -170,7 +170,6 @@ export const matchToUrl = (matcher: Matcher, params: Params = {}): string => {
       )
       .join("/");
 
-  // https://github.com/remix-run/history/issues/859
   let search = "";
 
   if (matcher.search != null) {
