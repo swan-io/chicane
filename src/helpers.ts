@@ -37,7 +37,7 @@ export const areRouteEqual = (
   );
 };
 
-const extractParamUnion = (
+export const extractParamUnion = (
   paramName: string,
 ): { name: string; values?: string[] } => {
   const bracketIndex = paramName.indexOf("{");
@@ -53,25 +53,4 @@ const extractParamUnion = (
   } else {
     return { name: paramName };
   }
-};
-
-export const extractPathParam = (param: string) =>
-  extractParamUnion(param.substring(1));
-
-export const extractSearchParam = (
-  param: string,
-): { name: string; multiple: boolean; values?: string[] } => {
-  const multiple = param.endsWith("[]");
-
-  const { name, values } = extractParamUnion(
-    param.substring(1, param.length - (multiple ? 2 : 0)),
-  );
-
-  const output: ReturnType<typeof extractSearchParam> = { multiple, name };
-
-  if (typeof values !== "undefined") {
-    output["values"] = values;
-  }
-
-  return output;
 };
