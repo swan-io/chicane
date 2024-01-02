@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 import {
   areParamsArrayEqual,
+  areRouteEqual,
   first,
   getStableParamsKey,
   isNonEmpty,
@@ -75,5 +76,37 @@ describe("getStableParamsKey", () => {
     expect(
       getStableParamsKey({ b: undefined, c: ["baz", "qux"], a: "foo" }),
     ).toBe('[["a","foo"],["b",null],["c",["baz","qux"]]]');
+  });
+});
+
+describe("areRouteEqual", () => {
+  test("with identical routes", () => {
+    expect(areRouteEqual(undefined, undefined)).toBe(true);
+
+    expect(
+      areRouteEqual({ name: "Foo", params: {} }, { name: "Foo", params: {} }),
+    ).toBe(true);
+
+    expect(
+      areRouteEqual(
+        { name: "Foo", params: { bar: "baz", qux: ["a", "b"] } },
+        { name: "Foo", params: { bar: "baz", qux: ["a", "b"] } },
+      ),
+    ).toBe(true);
+  });
+
+  test("with different routes", () => {
+    expect(areRouteEqual({ name: "Foo", params: {} }, undefined)).toBe(false);
+
+    expect(
+      areRouteEqual({ name: "Foo", params: {} }, { name: "Bar", params: {} }),
+    ).toBe(false);
+
+    expect(
+      areRouteEqual(
+        { name: "Foo", params: { bar: "baz", qux: ["a", "b"] } },
+        { name: "Foo", params: { bar: "baz", qux: ["a"] } },
+      ),
+    ).toBe(false);
   });
 });
