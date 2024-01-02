@@ -13,7 +13,7 @@ export const areParamsArrayEqual = (arrayA: string[], arrayB: string[]) =>
   arrayA.length === arrayB.length &&
   arrayA.every((a, index) => a === arrayB[index]);
 
-export const stableStringifyParams = (params: Params) => {
+export const getStableParamsKey = (params: Params): string => {
   const keys = Object.keys(params).sort();
   return JSON.stringify(keys.map((key) => [key, params[key]]));
 };
@@ -33,8 +33,7 @@ export const areRouteEqual = (
   }
 
   return (
-    stableStringifyParams(routeA.params) ===
-    stableStringifyParams(routeB.params)
+    getStableParamsKey(routeA.params) === getStableParamsKey(routeB.params)
   );
 };
 

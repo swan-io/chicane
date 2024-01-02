@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest";
 import {
   areParamsArrayEqual,
   first,
+  getStableParamsKey,
   isNonEmpty,
   isParam,
 } from "../src/helpers";
@@ -52,5 +53,27 @@ describe("areParamsArrayEqual", () => {
     expect(areParamsArrayEqual(["foo"], [])).toBe(false);
     expect(areParamsArrayEqual(["foo"], ["bar"])).toBe(false);
     expect(areParamsArrayEqual(["foo", "bar"], ["bar", "foo"])).toBe(false);
+  });
+});
+
+describe("getStableParamsKey", () => {
+  test("with already ordered params", () => {
+    expect(getStableParamsKey({ a: "foo", b: "bar", c: "baz" })).toBe(
+      '[["a","foo"],["b","bar"],["c","baz"]]',
+    );
+
+    expect(
+      getStableParamsKey({ a: "foo", b: undefined, c: ["baz", "qux"] }),
+    ).toBe('[["a","foo"],["b",null],["c",["baz","qux"]]]');
+  });
+
+  test("with unordered params", () => {
+    expect(getStableParamsKey({ b: "bar", a: "foo", c: "baz" })).toBe(
+      '[["a","foo"],["b","bar"],["c","baz"]]',
+    );
+
+    expect(
+      getStableParamsKey({ b: undefined, c: ["baz", "qux"], a: "foo" }),
+    ).toBe('[["a","foo"],["b",null],["c",["baz","qux"]]]');
   });
 });
