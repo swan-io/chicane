@@ -4,12 +4,9 @@ import { decodeLocation } from "../src/history";
 const getEqual =
   (removeExtraPathSlashes: boolean) =>
   <E>(path: string, sanitized: string, location: E) => {
-    const { toString, ...value } = decodeLocation(path, {
-      removeExtraPathSlashes,
-    });
-
-    expect(toString()).toStrictEqual(sanitized);
+    const { toString, ...value } = decodeLocation(path, removeExtraPathSlashes);
     expect(value).toStrictEqual(location);
+    expect(toString()).toStrictEqual(sanitized);
   };
 
 test("decodeLocation parses well-formed paths properly", () => {

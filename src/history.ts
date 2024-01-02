@@ -13,7 +13,7 @@ let initialLocationHasChanged = false;
 
 export const decodeLocation = (
   url: string,
-  { removeExtraPathSlashes = false }: { removeExtraPathSlashes?: boolean } = {},
+  removeExtraPathSlashes = false,
 ): Location => {
   const route = parseRoute(url);
   const path = route.path.substring(1);
@@ -54,7 +54,7 @@ export const createBrowserHistory = () => {
 
   let currentLocation = decodeLocation(
     globalLocation.pathname + globalLocation.search,
-    { removeExtraPathSlashes: true },
+    true,
   );
 
   const maybeUpdateLocation = (nextLocation: Location) => {
