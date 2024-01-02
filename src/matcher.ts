@@ -1,4 +1,4 @@
-import { extractParamUnion, isNonEmpty, isParam } from "./helpers";
+import { extractParamNameUnion, isNonEmpty, isParam } from "./helpers";
 import { parseRoute } from "./history";
 import { decodeUnprefixedSearch, encodeSearch } from "./search";
 import { Location, Matcher, Params, Search } from "./types";
@@ -12,7 +12,7 @@ const extractFromPath = (path: string) => {
 
   for (const part of parts) {
     if (isParam(part)) {
-      const param = extractParamUnion(part.substring(1));
+      const param = extractParamNameUnion(part.substring(1));
       ranking += param.values == null ? 2 : 3;
       output.push(param);
     } else {
@@ -49,7 +49,7 @@ export const getMatcher = (name: string, route: string): Matcher => {
       if (isParam(key)) {
         const multiple = key.endsWith("[]");
 
-        const { name, values } = extractParamUnion(
+        const { name, values } = extractParamNameUnion(
           key.substring(1, key.length - (multiple ? 2 : 0)),
         );
 

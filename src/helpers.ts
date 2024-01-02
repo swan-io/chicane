@@ -37,7 +37,7 @@ export const areRouteEqual = (
   );
 };
 
-export const extractParamUnion = (
+export const extractParamNameUnion = (
   paramName: string,
 ): { name: string; values?: string[] } => {
   const bracketIndex = paramName.indexOf("{");
