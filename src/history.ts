@@ -52,20 +52,22 @@ export const createBrowserHistory = () => {
   const globalHistory = window.history;
   const globalLocation = window.location;
 
-  let location = decodeLocation(
+  let currentLocation = decodeLocation(
     globalLocation.pathname + globalLocation.search,
     { removeExtraPathSlashes: true },
   );
 
   const maybeUpdateLocation = (nextLocation: Location) => {
-    if (nextLocation.toString() === location.toString()) {
+    if (nextLocation.toString() === currentLocation.toString()) {
       return; // As the `encodeSearch` function guarantees a stable sorting, we can rely on a simple URL comparison
     }
 
     initialLocationHasChanged = true;
 
-    const searchHasChanged = nextLocation.raw.search !== location.raw.search;
-    const search: Search = searchHasChanged ? {} : location.search;
+    const searchHasChanged =
+      nextLocation.raw.search !== currentLocation.raw.search;
+
+    const search: Search = searchHasChanged ? {} : currentLocation.search;
 
     if (searchHasChanged) {
       for (const key in nextLocation.search) {
@@ -76,7 +78,7 @@ export const createBrowserHistory = () => {
             continue;
           }
 
-          const prevValue = location.search[key];
+          const prevValue = currentLocation.search[key];
 
           if (
             prevValue == null ||
@@ -94,17 +96,17 @@ export const createBrowserHistory = () => {
     }
 
     // Create a new location object instance
-    location = {
+    currentLocation = {
       path:
-        nextLocation.raw.path !== location.raw.path
+        nextLocation.raw.path !== currentLocation.raw.path
           ? nextLocation.path
-          : location.path,
+          : currentLocation.path,
       search,
       raw: nextLocation.raw,
       toString: nextLocation.toString,
     };
 
-    listeners.forEach((listener) => listener(location));
+    listeners.forEach((listener) => listener(currentLocation));
   };
 
   window.addEventListener("popstate", () => {
@@ -143,7 +145,7 @@ export const createBrowserHistory = () => {
 
   return {
     get location() {
-      return location;
+      return currentLocation;
     },
 
     subscribe,
