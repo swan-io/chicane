@@ -158,9 +158,7 @@ export type GetAreaRoutes<Routes extends Record<string, ParsedRoute>> = {
     : never;
 };
 
-type EmptyRecord = Record<PropertyKey, never>;
-
-type SimplifyParams<T> = T extends EmptyRecord
+type SimplifyParams<T> = T extends Record<PropertyKey, never>
   ? {} // eslint-disable-line @typescript-eslint/ban-types
   : { [K in keyof T]: T[K] };
 
@@ -175,7 +173,7 @@ type NonOptionalProperties<T> = Exclude<
   undefined
 >;
 
-export type ParamsArg<Params> = Params extends EmptyRecord
+export type ParamsArg<Params> = Params extends Record<PropertyKey, never>
   ? []
   : NonOptionalProperties<Params> extends never
     ? [params?: { [K in keyof Params]: Params[K] }]
