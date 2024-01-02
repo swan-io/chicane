@@ -13,7 +13,7 @@ const extractFromPath = (path: string) => {
   for (const part of parts) {
     if (isParam(part)) {
       const param = extractParamNameUnion(part.substring(1));
-      ranking += param.values == null ? 2 : 3;
+      ranking += param.union == null ? 2 : 3;
       output.push(param);
     } else {
       ranking += 4;
@@ -49,12 +49,12 @@ export const getMatcher = (name: string, route: string): Matcher => {
       if (isParam(key)) {
         const multiple = key.endsWith("[]");
 
-        const { name, values } = extractParamNameUnion(
+        const { name, union } = extractParamNameUnion(
           key.substring(1, key.length - (multiple ? 2 : 0)),
         );
 
         matcher.search[name] =
-          values == null ? { multiple } : { multiple, values };
+          union == null ? { multiple } : { multiple, union };
       }
     }
   }
@@ -98,9 +98,9 @@ export const extractLocationParams = (
       return;
     }
 
-    const { name, values } = matcherPart;
+    const { name, union } = matcherPart;
 
-    if (values == null || values.includes(locationPart)) {
+    if (union == null || union.includes(locationPart)) {
       params[name] = locationPart;
     } else {
       return;
@@ -116,28 +116,25 @@ export const extractLocationParams = (
         continue;
       }
 
-      const { multiple, values } = matcherPart;
+      const { multiple, union } = matcherPart;
 
-      const locationValues =
+      const locationParts =
         typeof locationPart === "string" ? [locationPart] : locationPart;
 
-      const multipleValues =
-        values == null
-          ? locationValues
-          : locationValues.filter((item) => values.includes(item));
+      const values =
+        union == null
+          ? locationParts
+          : locationParts.filter((item) => union.includes(item));
 
       if (multiple) {
-        params[key] = multipleValues;
+        params[key] = values;
         continue;
       }
 
-      const uniqueValue = multipleValues[0];
+      const value = values[0];
 
-      if (
-        uniqueValue != null &&
-        (values == null || values.includes(uniqueValue))
-      ) {
-        params[key] = uniqueValue;
+      if (value != null && (union == null || union.includes(value))) {
+        params[key] = value;
       }
     }
   }
@@ -179,17 +176,17 @@ export const matchToUrl = (matcher: Matcher, params: Params = {}): string => {
       const param = params[key];
 
       if (matcherPart != null && param != null) {
-        const { values } = matcherPart;
+        const { union } = matcherPart;
 
         if (typeof param === "string") {
-          if (values == null || values.includes(param)) {
+          if (union == null || union.includes(param)) {
             object[key] = param;
           }
         } else {
           object[key] =
-            values == null
+            union == null
               ? param
-              : param.filter((item) => values.includes(item));
+              : param.filter((item) => union.includes(item));
         }
       }
     }

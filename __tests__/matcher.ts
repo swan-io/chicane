@@ -45,7 +45,7 @@ test("getMatcher returns a proper matcher structure for paths with params (in pa
     path: [
       "projects",
       { name: "projectId" },
-      { name: "env", values: ["live", "sandbox"] },
+      { name: "env", union: ["live", "sandbox"] },
     ],
     search: undefined,
   });
@@ -67,8 +67,8 @@ test("getMatcher returns a proper matcher structure for paths with params (in pa
     ranking: 16,
     path: ["group", { name: "groupId" }],
     search: {
-      foo: { multiple: false, values: ["a", "b"] },
-      bar: { multiple: true, values: ["c", "d"] },
+      foo: { multiple: false, union: ["a", "b"] },
+      bar: { multiple: true, union: ["c", "d"] },
     },
   });
 });
@@ -114,11 +114,11 @@ test("getMatcher decrements the ranking by 1 if the path is an area", () => {
       search: {
         orderBy: {
           multiple: false,
-          values: ["asc", "desc"],
+          union: ["asc", "desc"],
         },
         status: {
           multiple: true,
-          values: ["disabled", "enabled", "pending"],
+          union: ["disabled", "enabled", "pending"],
         },
       },
     },

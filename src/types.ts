@@ -7,8 +7,8 @@ export type Matcher = {
   name: string;
   ranking: number;
 
-  path: (string | { name: string; values?: string[] })[];
-  search: Record<string, { multiple: boolean; values?: string[] }> | undefined;
+  path: (string | { name: string; union?: string[] })[];
+  search: Record<string, { multiple: boolean; union?: string[] }> | undefined;
 };
 
 export type ParsedRoute = Readonly<{
