@@ -158,16 +158,17 @@ export type GetAreaRoutes<Routes extends Record<string, ParsedRoute>> = {
     : never;
 };
 
-export type GetRoutesParams<Routes extends Record<string, ParsedRoute>> = {
-  [K in keyof Routes]: GetPathParams<Routes[K]["path"]> &
-    GetSearchParams<Routes[K]["search"]>;
-};
+type EmptyRecord = Record<PropertyKey, never>;
 
-type EmptyRecord = Record<string | number | symbol, never>;
-
-export type Simplify<T> = T extends EmptyRecord
+type SimplifyParams<T> = T extends EmptyRecord
   ? {} // eslint-disable-line @typescript-eslint/ban-types
   : { [K in keyof T]: T[K] };
+
+export type GetRoutesParams<Routes extends Record<string, ParsedRoute>> = {
+  [K in keyof Routes]: SimplifyParams<
+    GetPathParams<Routes[K]["path"]> & GetSearchParams<Routes[K]["search"]>
+  >;
+};
 
 type NonOptionalProperties<T> = Exclude<
   { [K in keyof T]: T extends Record<K, T[K]> ? K : never }[keyof T],
