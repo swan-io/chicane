@@ -83,10 +83,10 @@ export const createRouter = <
     P[name] = <const Params>(params: Params) => ({ name, params });
 
     if (!matcher.isArea) {
-      const routeName = name as keyof FiniteRoutes;
+      const finiteName = name as keyof FiniteRoutes;
 
-      createURLFns[routeName] = (params?: Params) =>
-        matchToUrl(matchers[routeName], params);
+      createURLFns[finiteName] = (params?: Params) =>
+        matchToUrl(matchers[finiteName], params);
     }
   }
 
