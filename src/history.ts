@@ -1,4 +1,3 @@
-// This module makes the different routes created with @swan-io/chicane listen to the same history instance
 import { createContext, useContext, useSyncExternalStore } from "react";
 import {
   areParamsArrayEqual,
