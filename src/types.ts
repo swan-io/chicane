@@ -179,8 +179,8 @@ export type ParamsArg<Params> = Params extends Record<PropertyKey, never>
     ? [params?: { [K in keyof Params]: Params[K] }]
     : [params: { [K in keyof Params]: Params[K] }];
 
-export type GetCreateURLFns<RouteParams extends Record<string, Params>> = {
-  [RouteName in keyof RouteParams]: (
-    ...params: ParamsArg<RouteParams[RouteName]>
+export type GetCreateURLFns<RoutesParams extends Record<string, Params>> = {
+  [RouteName in keyof RoutesParams]: (
+    ...params: ParamsArg<RoutesParams[RouteName]>
   ) => string;
 };

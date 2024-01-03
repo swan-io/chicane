@@ -69,13 +69,21 @@ export const createRouter = <
     (matcherA, matcherB) => matcherB.ranking - matcherA.ranking,
   );
 
+  const P = {} as {
+    [RouteName in keyof Routes]: <const Params>(params: Params) => {
+      readonly name: RouteName;
+      readonly params: Params;
+    };
+  };
+
   const createURLFns = {} as GetCreateURLFns<FiniteRoutesParams>;
 
-  for (let index = 0; index < rankedMatchers.length; index++) {
-    const matcher = rankedMatchers[index];
+  for (const matcher of rankedMatchers) {
+    const name = matcher.name as keyof Routes;
+    P[name] = <const Params>(params: Params) => ({ name, params });
 
-    if (matcher != null && !matcher.isArea) {
-      const routeName = matcher.name as keyof FiniteRoutes;
+    if (!matcher.isArea) {
+      const routeName = name as keyof FiniteRoutes;
 
       createURLFns[routeName] = (params?: Params) =>
         matchToUrl(matchers[routeName], params);
@@ -139,6 +147,7 @@ export const createRouter = <
     getRoute,
     push,
     replace,
+    P,
     ...createURLFns,
   };
 };
