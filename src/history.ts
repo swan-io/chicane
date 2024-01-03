@@ -10,18 +10,15 @@ import { Listener, Location, RouteObject, Search } from "./types";
 
 let initialLocationHasChanged = false;
 
-export const decodeLocation = (
-  url: string,
-  removeExtraPathSlashes = false,
-): Location => {
+export const decodeLocation = (url: string): Location => {
   const route = parseRoute(url);
   const path = route.path.substring(1);
 
   const parsedPath =
     path !== ""
-      ? removeExtraPathSlashes
-        ? path.split("/").filter(isNonEmpty).map(decodeURIComponent)
-        : path.split("/").map(decodeURIComponent)
+      ? initialLocationHasChanged
+        ? path.split("/").map(decodeURIComponent)
+        : path.split("/").filter(isNonEmpty).map(decodeURIComponent)
       : [];
 
   const parsedSearch =
@@ -53,7 +50,6 @@ export const createBrowserHistory = () => {
 
   let currentLocation = decodeLocation(
     globalLocation.pathname + globalLocation.search,
-    true,
   );
 
   const maybeUpdateLocation = (nextLocation: Location) => {
@@ -208,6 +204,6 @@ export const useLocation = (): Location => {
 export const hasInitialLocationChanged = () => initialLocationHasChanged;
 
 // For testing purposes
-export const resetInitialHasLocationChanged = () => {
-  initialLocationHasChanged = false;
+export const setInitialHasLocationChanged = (value: boolean) => {
+  initialLocationHasChanged = value;
 };

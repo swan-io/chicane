@@ -2,7 +2,7 @@ import { act, render } from "@testing-library/react";
 import * as React from "react";
 import { beforeEach, expect, test } from "vitest";
 import { createRouter, pushUnsafe, useFocusReset } from "../src";
-import { resetInitialHasLocationChanged } from "../src/history";
+import { setInitialHasLocationChanged } from "../src/history";
 
 const expectToHaveFocus = (element: Element) => {
   expect(element.ownerDocument.activeElement).toBe(element);
@@ -19,7 +19,7 @@ const routesToMatch: (keyof typeof routes)[] = ["Home", "Profiles", "Profile"];
 
 beforeEach(() => {
   pushUnsafe("/");
-  resetInitialHasLocationChanged();
+  setInitialHasLocationChanged(false);
 });
 
 test("useRoute: should match the correct route", () => {
