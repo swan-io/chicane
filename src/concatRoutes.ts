@@ -1,12 +1,12 @@
 import { ensureSlashPrefix } from "./helpers";
-import { ParsedRoute } from "./types";
+import { RouteObject } from "./types";
 
 export const addPrefixOnNonEmpty = (value: string, prefix: string) =>
   value === "" ? value : prefix + value;
 
 export const concatRoutes = (
-  routeA: ParsedRoute,
-  routeB: ParsedRoute,
+  routeA: RouteObject,
+  routeB: RouteObject,
 ): string => {
   const fixedPathA = ensureSlashPrefix(routeA["path"]);
   const fixedPathB = ensureSlashPrefix(routeB["path"]);

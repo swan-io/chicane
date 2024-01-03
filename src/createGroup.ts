@@ -11,13 +11,13 @@ export const createGroup = <
   baseRoute: BaseRoute,
   routes: Readonly<Routes>,
 ) => {
-  const baseParsedRoute = parseRoute(baseRoute);
+  const baseRouteObject = parseRoute(baseRoute);
   const output: Record<string, string> = {};
 
   for (const key in routes) {
     if (Object.prototype.hasOwnProperty.call(routes, key)) {
       output[name + key] = concatRoutes(
-        baseParsedRoute,
+        baseRouteObject,
         parseRoute(routes[key]),
       );
     }

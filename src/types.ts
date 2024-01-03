@@ -11,7 +11,7 @@ export type Matcher = {
   search: Record<string, { multiple: boolean; union?: string[] }> | undefined;
 };
 
-export type ParsedRoute = Readonly<{
+export type RouteObject = Readonly<{
   path: string;
   search: string;
 }>;
@@ -123,26 +123,21 @@ export type ConcatSearchs<
   ? SearchB
   : `${SearchA}${AddPrefixOnNonEmpty<SearchB, "&">}`;
 
-export type ConcatParsedRoutes<
-  RouteA extends ParsedRoute,
-  RouteB extends ParsedRoute,
-> = {
-  path: ConcatPaths<RouteA["path"], RouteB["path"]>;
-  search: ConcatSearchs<RouteA["search"], RouteB["search"]>;
-};
-
 export type ConcatRoutes<
   RouteA extends string,
   RouteB extends string,
-  Route extends ParsedRoute = ConcatParsedRoutes<
-    ParseRoute<RouteA>,
-    ParseRoute<RouteB>
+  RouteObjectA extends RouteObject = ParseRoute<RouteA>,
+  RouteObjectB extends RouteObject = ParseRoute<RouteB>,
+  Path extends string = ConcatPaths<RouteObjectA["path"], RouteObjectB["path"]>,
+  Search extends string = ConcatSearchs<
+    RouteObjectA["search"],
+    RouteObjectB["search"]
   >,
-> = `${Route["path"]}${AddPrefixOnNonEmpty<Route["search"], "?">}`;
+> = `${Path}${AddPrefixOnNonEmpty<Search, "?">}`;
 
 export type PrependBasePath<
   BasePath extends string,
-  Routes extends Record<string, ParsedRoute>,
+  Routes extends Record<string, RouteObject>,
 > = {
   [K in keyof Routes]: {
     path: ConcatPaths<BasePath, Routes[K]["path"]>;
@@ -150,7 +145,7 @@ export type PrependBasePath<
   };
 };
 
-export type GetAreaRoutes<Routes extends Record<string, ParsedRoute>> = {
+export type GetAreaRoutes<Routes extends Record<string, RouteObject>> = {
   [K in keyof Routes as Routes[K]["path"] extends `${string}/*`
     ? K
     : never]: Routes[K]["path"] extends `${infer Rest}/*`
@@ -162,7 +157,7 @@ type SimplifyParams<T> = T extends Record<PropertyKey, never>
   ? {} // eslint-disable-line @typescript-eslint/ban-types
   : { [K in keyof T]: T[K] };
 
-export type GetRoutesParams<Routes extends Record<string, ParsedRoute>> = {
+export type GetRoutesParams<Routes extends Record<string, RouteObject>> = {
   [K in keyof Routes]: SimplifyParams<
     GetPathParams<Routes[K]["path"]> & GetSearchParams<Routes[K]["search"]>
   >;

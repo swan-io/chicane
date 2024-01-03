@@ -20,8 +20,8 @@ import {
   ParamsArg,
   ParseRoute,
   ParseRoutes,
-  ParsedRoute,
   PrependBasePath,
+  RouteObject,
 } from "./types";
 
 export const createRouter = <
@@ -43,7 +43,7 @@ export const createRouter = <
 
   const { basePath = "" } = options;
 
-  const basePathObject: ParsedRoute = {
+  const basePathObject: RouteObject = {
     path: parseRoute(basePath).path,
     search: "", // search is not supported in basePath
   };

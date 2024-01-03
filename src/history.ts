@@ -6,7 +6,7 @@ import {
   noop,
 } from "./helpers";
 import { decodeUnprefixedSearch, encodeSearch } from "./search";
-import { Listener, Location, ParsedRoute, Search } from "./types";
+import { Listener, Location, RouteObject, Search } from "./types";
 
 let initialLocationHasChanged = false;
 
@@ -153,7 +153,7 @@ export const createBrowserHistory = () => {
   };
 };
 
-export const parseRoute = (route: string): ParsedRoute => {
+export const parseRoute = (route: string): RouteObject => {
   const hashIndex = route.indexOf("#");
 
   const cleanRoute = ensureSlashPrefix(
