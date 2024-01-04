@@ -11,6 +11,25 @@ import { Blocker, Listener, Location, RouteObject, Search } from "./types";
 
 let initialLocationHasChanged = false;
 
+export const parseRoute = (route: string): RouteObject => {
+  const hashIndex = route.indexOf("#");
+
+  const cleanRoute = ensureSlashPrefix(
+    hashIndex < 0 ? route : route.substring(0, hashIndex),
+  );
+
+  const searchIndex = cleanRoute.indexOf("?");
+
+  if (searchIndex < 0) {
+    return { path: cleanRoute, search: "" };
+  }
+
+  return {
+    path: cleanRoute.substring(0, searchIndex),
+    search: cleanRoute.substring(searchIndex + 1),
+  };
+};
+
 export const decodeLocation = (url: string): Location => {
   const route = parseRoute(url);
   const path = route.path.substring(1);
@@ -119,87 +138,63 @@ export const createBrowserHistory = () => {
     }
   };
 
-  const push = (url: string): void => {
-    const blocker = last(blockers);
-
-    if (blocker == null || window.confirm(blocker.message)) {
-      unblock(blocker);
-
-      const nextLocation = decodeLocation(url);
-      const nextUrl = nextLocation.toString();
-
-      try {
-        // iOS has a limit of 100 pushState calls / 30 secs
-        globalHistory.pushState(null, "", nextUrl);
-      } catch {
-        globalLocation.assign(nextUrl);
-      }
-
-      maybeUpdateLocation(nextLocation);
-    }
-  };
-
-  const replace = (url: string): void => {
-    const blocker = last(blockers);
-
-    if (blocker == null || window.confirm(blocker.message)) {
-      unblock(blocker);
-
-      const nextLocation = decodeLocation(url);
-      globalHistory.replaceState(null, "", nextLocation.toString());
-      maybeUpdateLocation(nextLocation);
-    }
-  };
-
-  const subscribe = (listener: Listener) => {
-    listeners.add(listener);
-
-    return () => {
-      listeners.delete(listener);
-    };
-  };
-
-  const block = (message: string): (() => void) => {
-    const blocker = {
-      id: Math.random().toString(36).substring(2),
-      message,
-    };
-
-    blockers.push(blocker);
-
-    return () => {
-      unblock(blocker);
-    };
-  };
-
   return {
     get location() {
       return currentLocation;
     },
 
-    subscribe,
-    push,
-    replace,
-    block,
-  };
-};
+    subscribe: (listener: Listener) => {
+      listeners.add(listener);
 
-export const parseRoute = (route: string): RouteObject => {
-  const hashIndex = route.indexOf("#");
+      return () => {
+        listeners.delete(listener);
+      };
+    },
 
-  const cleanRoute = ensureSlashPrefix(
-    hashIndex < 0 ? route : route.substring(0, hashIndex),
-  );
+    push: (url: string): void => {
+      const blocker = last(blockers);
 
-  const searchIndex = cleanRoute.indexOf("?");
+      if (blocker == null || window.confirm(blocker.message)) {
+        unblock(blocker);
 
-  if (searchIndex < 0) {
-    return { path: cleanRoute, search: "" };
-  }
+        const nextLocation = decodeLocation(url);
+        const nextUrl = nextLocation.toString();
 
-  return {
-    path: cleanRoute.substring(0, searchIndex),
-    search: cleanRoute.substring(searchIndex + 1),
+        try {
+          // iOS has a limit of 100 pushState calls / 30 secs
+          globalHistory.pushState(null, "", nextUrl);
+        } catch {
+          globalLocation.assign(nextUrl);
+        }
+
+        maybeUpdateLocation(nextLocation);
+      }
+    },
+
+    replace: (url: string): void => {
+      const blocker = last(blockers);
+
+      if (blocker == null || window.confirm(blocker.message)) {
+        unblock(blocker);
+
+        const nextLocation = decodeLocation(url);
+        const nextUrl = nextLocation.toString();
+
+        globalHistory.replaceState(null, "", nextUrl);
+        maybeUpdateLocation(nextLocation);
+      }
+    },
+
+    block: (message: string): (() => void) => {
+      const id = Math.random().toString(36).substring(2);
+      const blocker = { id, message };
+
+      blockers.push(blocker);
+
+      return () => {
+        unblock(blocker);
+      };
+    },
   };
 };
 
