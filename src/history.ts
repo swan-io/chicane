@@ -44,11 +44,6 @@ export const decodeLocation = (url: string): Location => {
   };
 };
 
-const onBeforeUnload = (event: BeforeUnloadEvent) => {
-  event.preventDefault();
-  event.returnValue = ""; // Chrome requires returnValue to be set
-};
-
 export const createBrowserHistory = () => {
   const listeners = new Set<Listener>();
   let blockers: Blocker[] = [];
@@ -121,10 +116,6 @@ export const createBrowserHistory = () => {
   const unblock = (blocker: Blocker | undefined) => {
     if (blocker != null) {
       blockers = blockers.filter(({ id }) => id !== blocker.id);
-
-      if (blockers.length === 0) {
-        window.removeEventListener("beforeunload", onBeforeUnload);
-      }
     }
   };
 
@@ -175,10 +166,6 @@ export const createBrowserHistory = () => {
     };
 
     blockers.push(blocker);
-
-    if (blockers.length === 1) {
-      window.addEventListener("beforeunload", onBeforeUnload);
-    }
 
     return () => {
       unblock(blocker);
