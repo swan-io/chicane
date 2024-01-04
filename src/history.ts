@@ -209,7 +209,7 @@ const history: ReturnType<typeof createBrowserHistory> =
         block: () => noop,
       };
 
-export const getLocation = (): Location => history.location;
+export const getLocation = () => history.location;
 export const subscribeToLocation = history.subscribe;
 export const pushUnsafe = history.push;
 export const replaceUnsafe = history.replace;
