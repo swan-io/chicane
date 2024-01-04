@@ -60,7 +60,7 @@ export type ExtractOptionalMultipleParam<Value extends string> =
     ? PartialRecord<Name, ExtractUnion<Union>[]>
     : PartialRecord<Value, string[]>;
 
-export type ExtractOptionalUniqueParam<Value extends string> =
+export type ExtractOptionalParam<Value extends string> =
   Value extends `${infer Name}{${infer Union}}`
     ? PartialRecord<Name, ExtractUnion<Union>>
     : PartialRecord<Value, string>;
@@ -81,7 +81,7 @@ export type GetSearchParams<
   ? Head extends `:${infer Name}[]`
     ? ExtractOptionalMultipleParam<Name> & GetSearchParams<Search, Tail>
     : Head extends `:${infer Name}`
-      ? ExtractOptionalUniqueParam<Name> & GetSearchParams<Search, Tail>
+      ? ExtractOptionalParam<Name> & GetSearchParams<Search, Tail>
       : GetSearchParams<Search, Tail>
   : {}; // eslint-disable-line @typescript-eslint/ban-types
 
