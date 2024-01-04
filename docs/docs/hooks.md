@@ -35,7 +35,7 @@ export const App = () => {
   const route = Router.useRoute(["Home", "UserArea"]);
   const containerRef = useRef(null);
 
-  useFocusReset(containerRef);
+  useFocusReset({ route, containerRef });
 
   return (
     <>
@@ -68,6 +68,25 @@ const App = () => {
     console.log("Location changed!");
     console.log(location);
   }, [location]);
+
+  // …
+};
+```
+
+## useNavigationBlocker
+
+Block the navigation and ask user for confirmation. Useful to avoid loosing a form state.
+
+```tsx
+import { useNavigationBlocker } from "@swan-io/chicane";
+
+const App = () => {
+  const { formStatus } = useForm(/* … */);
+
+  useNavigationBlocker(
+    formStatus === "editing",
+    "Are you sure you want to stop editing this profile?",
+  );
 
   // …
 };

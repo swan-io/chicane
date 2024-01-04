@@ -1,4 +1,9 @@
-import { extractParamNameUnion, isNonEmpty, isParam } from "./helpers";
+import {
+  extractParamNameUnion,
+  getRouteKey,
+  isNonEmpty,
+  isParam,
+} from "./helpers";
 import { parseRoute } from "./history";
 import { decodeUnprefixedSearch, encodeSearch } from "./search";
 import { Location, Matcher, Params, Search } from "./types";
@@ -62,10 +67,10 @@ export const getMatcher = (name: string, route: string): Matcher => {
   return matcher;
 };
 
-export const extractLocationParams = (
+export const getMatchResult = (
   location: Location,
   matcher: Matcher,
-): Params | undefined => {
+): { key: string; name: string; params: Params } | undefined => {
   const { path: locationPath } = location;
   const { isArea, path: matcherPath } = matcher;
 
@@ -76,7 +81,7 @@ export const extractLocationParams = (
     return;
   }
 
-  const params: Params = {};
+  const pathParams: Params = {};
 
   for (let index = 0; index < matcherPath.length; index++) {
     const locationPart = locationPath[index];
@@ -101,11 +106,13 @@ export const extractLocationParams = (
     const { name, union } = matcherPart;
 
     if (union == null || union.includes(locationPart)) {
-      params[name] = locationPart;
+      pathParams[name] = locationPart;
     } else {
       return;
     }
   }
+
+  const searchParams: Params = {};
 
   for (const key in matcher.search) {
     if (Object.prototype.hasOwnProperty.call(matcher.search, key)) {
@@ -127,30 +134,34 @@ export const extractLocationParams = (
           : locationParts.filter((item) => union.includes(item));
 
       if (multiple) {
-        params[key] = values;
+        searchParams[key] = values;
         continue;
       }
 
       const value = values[0];
 
       if (value != null && (union == null || union.includes(value))) {
-        params[key] = value;
+        searchParams[key] = value;
       }
     }
   }
 
-  return params;
+  return {
+    key: getRouteKey(matcher.name, pathParams, searchParams),
+    name: matcher.name,
+    params: { ...pathParams, ...searchParams },
+  };
 };
 
 export const match = (
   location: Location,
   matchers: Matcher[],
-): { name: string; params: Params } | undefined => {
+): { key: string; name: string; params: Params } | undefined => {
   for (const matcher of matchers) {
-    const params = extractLocationParams(location, matcher);
+    const result = getMatchResult(location, matcher);
 
-    if (params != null) {
-      return { name: matcher.name, params };
+    if (result != null) {
+      return result;
     }
   }
 };

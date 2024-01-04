@@ -142,61 +142,73 @@ const matchEqual = <E>(path: string, expected: E) =>
 
 test("match extract route params and matches against a matcher", () => {
   matchEqual("/groups", {
+    key: "zjtk4x-0",
     name: "Groups",
     params: {},
   });
 
   matchEqual("/groups/github", {
+    key: "1xtu51s-0",
     name: "Group",
     params: { groupId: "github" },
   });
 
   matchEqual("/groups/mine", {
+    key: "1gopcby-0",
     name: "MyGroup",
     params: {},
   });
 
   matchEqual("/groups/github/users/nested", {
+    key: "g43jq8-0",
     name: "UsersArea",
     params: { groupId: "github" },
   });
 
   matchEqual("/groups/github/users", {
+    key: "1iqwlap-0",
     name: "Users",
     params: { groupId: "github" },
   });
 
   matchEqual("/groups?orderBy=asc", {
+    key: "zjtk4x-1gluujz",
     name: "Groups",
     params: { orderBy: "asc" },
   });
 
   matchEqual("/groups?orderBy=asc&orderBy=desc", {
+    key: "zjtk4x-1gluujz",
     name: "Groups",
     params: { orderBy: "asc" },
   });
 
   matchEqual("/groups?orderBy=invalid", {
+    key: "zjtk4x-0",
     name: "Groups",
     params: {},
   });
 
   matchEqual("/groups?orderBy=invalid&orderBy=desc", {
+    key: "zjtk4x-1xytzwc",
     name: "Groups",
     params: { orderBy: "desc" },
   });
 
   matchEqual("/groups?status=disabled&status=pending", {
+    key: "zjtk4x-1gjv8l3",
     name: "Groups",
     params: { status: ["disabled", "pending"] },
   });
 
   matchEqual("/groups?status=invalid&status=pending", {
+    key: "zjtk4x-1tkhw3n",
     name: "Groups",
     params: { status: ["pending"] },
   });
 
   matchEqual("/projects/swan/live", {
+    key: "13ec1qg-0",
     name: "Project",
     params: { projectId: "swan", env: "live" },
   });

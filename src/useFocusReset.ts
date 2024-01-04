@@ -1,5 +1,6 @@
-import { useEffect } from "react";
-import { getLocation, hasInitialLocationChanged } from "./history";
+import { RefObject, useEffect } from "react";
+import { hasInitialLocationChanged } from "./history";
+import { Params } from "./types";
 
 const focusableElements: Record<string, true> = {
   A: true,
@@ -8,10 +9,14 @@ const focusableElements: Record<string, true> = {
   TEXTAREA: true,
 };
 
-export const useFocusReset = (containerRef: React.RefObject<unknown>) => {
-  // Only refocus when the component has rerendered with a new path
-  // We don't want to reset focus on search params changes
-  const { path } = getLocation().raw;
+export const useFocusReset = ({
+  route,
+  containerRef,
+}: {
+  route?: { key: string; name: string; params: Params } | undefined;
+  containerRef: RefObject<unknown>;
+}) => {
+  const focusKey = route?.key.split("-")[0];
 
   useEffect(() => {
     const element = containerRef.current as HTMLElement | undefined;
@@ -33,5 +38,5 @@ export const useFocusReset = (containerRef: React.RefObject<unknown>) => {
         element.focus();
       } catch {} // eslint-disable-line no-empty
     }
-  }, [path, containerRef]);
+  }, [containerRef, focusKey]);
 };

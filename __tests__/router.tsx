@@ -101,7 +101,7 @@ test("useFocusReset: should focus the correct element", () => {
     const route = useRoute(routesToMatch);
     const containerRef = React.useRef(null);
 
-    useFocusReset(containerRef);
+    useFocusReset({ route, containerRef });
 
     if (route === undefined) {
       return <div> Not found </div>;

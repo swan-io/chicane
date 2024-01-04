@@ -1,10 +1,8 @@
 import { expect, test } from "vitest";
 import {
   areParamsArrayEqual,
-  areRouteEqual,
   extractParamNameUnion,
   first,
-  getStableParamsKey,
   isNonEmpty,
   isParam,
 } from "../src/helpers";
@@ -40,71 +38,6 @@ test("areParamsArrayEqual", () => {
   expect(areParamsArrayEqual(["foo"], [])).toBe(false);
   expect(areParamsArrayEqual(["foo"], ["bar"])).toBe(false);
   expect(areParamsArrayEqual(["foo", "bar"], ["bar", "foo"])).toBe(false);
-});
-
-test("getStableParamsKey", () => {
-  expect(getStableParamsKey({ a: "foo", b: "bar", c: "baz" })).toBe(
-    JSON.stringify([
-      ["a", "foo"],
-      ["b", "bar"],
-      ["c", "baz"],
-    ]),
-  );
-
-  expect(
-    getStableParamsKey({ a: "foo", b: undefined, c: ["baz", "qux"] }),
-  ).toBe(
-    JSON.stringify([
-      ["a", "foo"],
-      ["b", null],
-      ["c", ["baz", "qux"]],
-    ]),
-  );
-
-  expect(getStableParamsKey({ b: "bar", a: "foo", c: "baz" })).toBe(
-    JSON.stringify([
-      ["a", "foo"],
-      ["b", "bar"],
-      ["c", "baz"],
-    ]),
-  );
-
-  expect(
-    getStableParamsKey({ b: undefined, c: ["baz", "qux"], a: "foo" }),
-  ).toBe(
-    JSON.stringify([
-      ["a", "foo"],
-      ["b", null],
-      ["c", ["baz", "qux"]],
-    ]),
-  );
-});
-
-test("areRouteEqual", () => {
-  expect(areRouteEqual(undefined, undefined)).toBe(true);
-  expect(areRouteEqual({ name: "Foo", params: {} }, undefined)).toBe(false);
-
-  expect(
-    areRouteEqual({ name: "Foo", params: {} }, { name: "Foo", params: {} }),
-  ).toBe(true);
-
-  expect(
-    areRouteEqual({ name: "Foo", params: {} }, { name: "Bar", params: {} }),
-  ).toBe(false);
-
-  expect(
-    areRouteEqual(
-      { name: "Foo", params: { bar: "baz", qux: ["a", "b"] } },
-      { name: "Foo", params: { bar: "baz", qux: ["a", "b"] } },
-    ),
-  ).toBe(true);
-
-  expect(
-    areRouteEqual(
-      { name: "Foo", params: { bar: "baz", qux: ["a", "b"] } },
-      { name: "Foo", params: { bar: "baz", qux: ["a"] } },
-    ),
-  ).toBe(false);
 });
 
 test("extractParamNameUnion", () => {

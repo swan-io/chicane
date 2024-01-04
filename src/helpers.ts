@@ -1,3 +1,4 @@
+import murmurhash from "@emotion/hash";
 import { Params } from "./types";
 
 export const first = <T>(value: T[]): T | undefined => value[0];
@@ -14,29 +15,28 @@ export const areParamsArrayEqual = (arrayA: string[], arrayB: string[]) =>
   arrayA.length === arrayB.length &&
   arrayA.every((a, index) => a === arrayB[index]);
 
-export const getStableParamsKey = (params: Params): string => {
-  const keys = Object.keys(params).sort();
-  return JSON.stringify(keys.map((key) => [key, params[key]]));
+const getStableParamsKey = (params: Params): string => {
+  const keys = Object.keys(params);
+
+  return keys.length > 0
+    ? JSON.stringify(keys.sort().map((key) => [key, params[key]]))
+    : "";
+};
+
+export const getRouteKey = (
+  name: string,
+  pathParams: Params,
+  searchParams: Params,
+) => {
+  const stableStart = name + getStableParamsKey(pathParams);
+  const stableEnd = getStableParamsKey(searchParams);
+  return `${murmurhash(stableStart)}-${murmurhash(stableEnd)}`;
 };
 
 export const areRouteEqual = (
-  routeA?: { name: string; params: Params },
-  routeB?: { name: string; params: Params },
-): boolean => {
-  const hasRouteA = routeA != null;
-  const hasRouteB = routeB != null;
-
-  if (!hasRouteA && !hasRouteB) {
-    return true;
-  }
-  if (!hasRouteA || !hasRouteB || routeA.name !== routeB.name) {
-    return false;
-  }
-
-  return (
-    getStableParamsKey(routeA.params) === getStableParamsKey(routeB.params)
-  );
-};
+  routeA?: { key: string },
+  routeB?: { key: string },
+) => routeA?.key === routeB?.key;
 
 export const extractParamNameUnion = (
   paramName: string,

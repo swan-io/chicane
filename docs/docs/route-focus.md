@@ -15,7 +15,7 @@ export const App = () => {
   const route = Router.useRoute(["Home", "UserArea"]);
   const containerRef = useRef(null);
 
-  useFocusReset(containerRef);
+  useFocusReset({ route, containerRef });
 
   return (
     <>
