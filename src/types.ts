@@ -1,6 +1,8 @@
 export type Params = Record<string, string | string[] | undefined>;
 export type Search = Record<string, string | string[]>;
+
 export type Listener = (location: Location) => void;
+export type Blocker = { id: string; message: string };
 
 export type Matcher = {
   isArea: boolean;

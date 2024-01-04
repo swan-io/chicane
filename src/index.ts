@@ -13,3 +13,4 @@ export { ServerUrlProvider } from "./server";
 export type { Location, Search } from "./types";
 export { useFocusReset } from "./useFocusReset";
 export { useLinkProps } from "./useLinkProps";
+export { useNavigationBlocker } from "./useNavigationBlocker";

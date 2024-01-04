@@ -3,10 +3,11 @@ import {
   areParamsArrayEqual,
   ensureSlashPrefix,
   isNonEmpty,
+  last,
   noop,
 } from "./helpers";
 import { decodeUnprefixedSearch, encodeSearch } from "./search";
-import { Listener, Location, RouteObject, Search } from "./types";
+import { Blocker, Listener, Location, RouteObject, Search } from "./types";
 
 let initialLocationHasChanged = false;
 
@@ -43,8 +44,15 @@ export const decodeLocation = (url: string): Location => {
   };
 };
 
+const onBeforeUnload = (event: BeforeUnloadEvent) => {
+  event.preventDefault();
+  event.returnValue = ""; // Chrome requires returnValue to be set
+};
+
 export const createBrowserHistory = () => {
   const listeners = new Set<Listener>();
+  let blockers: Blocker[] = [];
+
   const globalHistory = window.history;
   const globalLocation = window.location;
 
@@ -110,24 +118,46 @@ export const createBrowserHistory = () => {
     );
   });
 
-  const push = (url: string): void => {
-    const nextLocation = decodeLocation(url);
-    const nextUrl = nextLocation.toString();
+  const unblock = (blocker: Blocker | undefined) => {
+    if (blocker != null) {
+      blockers = blockers.filter(({ id }) => id !== blocker.id);
 
-    try {
-      // iOS has a limit of 100 pushState calls / 30 secs
-      globalHistory.pushState(null, "", nextUrl);
-    } catch {
-      globalLocation.assign(nextUrl);
+      if (blockers.length === 0) {
+        window.removeEventListener("beforeunload", onBeforeUnload);
+      }
     }
+  };
 
-    maybeUpdateLocation(nextLocation);
+  const push = (url: string): void => {
+    const blocker = last(blockers);
+
+    if (blocker == null || window.confirm(blocker.message)) {
+      unblock(blocker);
+
+      const nextLocation = decodeLocation(url);
+      const nextUrl = nextLocation.toString();
+
+      try {
+        // iOS has a limit of 100 pushState calls / 30 secs
+        globalHistory.pushState(null, "", nextUrl);
+      } catch {
+        globalLocation.assign(nextUrl);
+      }
+
+      maybeUpdateLocation(nextLocation);
+    }
   };
 
   const replace = (url: string): void => {
-    const nextLocation = decodeLocation(url);
-    globalHistory.replaceState(null, "", nextLocation.toString());
-    maybeUpdateLocation(nextLocation);
+    const blocker = last(blockers);
+
+    if (blocker == null || window.confirm(blocker.message)) {
+      unblock(blocker);
+
+      const nextLocation = decodeLocation(url);
+      globalHistory.replaceState(null, "", nextLocation.toString());
+      maybeUpdateLocation(nextLocation);
+    }
   };
 
   const subscribe = (listener: Listener) => {
@@ -135,6 +165,23 @@ export const createBrowserHistory = () => {
 
     return () => {
       listeners.delete(listener);
+    };
+  };
+
+  const block = (message: string): (() => void) => {
+    const blocker = {
+      id: Math.random().toString(36).substring(2),
+      message,
+    };
+
+    blockers.push(blocker);
+
+    if (blockers.length === 1) {
+      window.addEventListener("beforeunload", onBeforeUnload);
+    }
+
+    return () => {
+      unblock(blocker);
     };
   };
 
@@ -146,6 +193,7 @@ export const createBrowserHistory = () => {
     subscribe,
     push,
     replace,
+    block,
   };
 };
 
@@ -176,12 +224,14 @@ const history: ReturnType<typeof createBrowserHistory> =
         subscribe: () => noop,
         push: noop,
         replace: noop,
+        block: () => noop,
       };
 
 export const getLocation = (): Location => history.location;
 export const subscribeToLocation = history.subscribe;
 export const pushUnsafe = history.push;
 export const replaceUnsafe = history.replace;
+export const block = history.block;
 
 const GetUniversalLocationContext = createContext<() => Location>(getLocation);
 

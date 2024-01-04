@@ -1,6 +1,7 @@
 import { Params } from "./types";
 
 export const first = <T>(value: T[]): T | undefined => value[0];
+export const last = <T>(value: T[]): T | undefined => value[value.length - 1];
 export const identity = <T>(value: T): T => value;
 export const noop = () => {};
 export const isNonEmpty = (value: string): boolean => value !== "";
@@ -22,8 +23,8 @@ export const areRouteEqual = (
   routeA?: { name: string; params: Params },
   routeB?: { name: string; params: Params },
 ): boolean => {
-  const hasRouteA = typeof routeA !== "undefined";
-  const hasRouteB = typeof routeB !== "undefined";
+  const hasRouteA = routeA != null;
+  const hasRouteB = routeB != null;
 
   if (!hasRouteA && !hasRouteB) {
     return true;
