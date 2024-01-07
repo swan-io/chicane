@@ -63,6 +63,11 @@ export const decodeLocation = (url: string): Location => {
   };
 };
 
+const onBeforeUnload = (event: BeforeUnloadEvent) => {
+  event.preventDefault();
+  event.returnValue = ""; // Chrome requires returnValue to be set
+};
+
 export const createBrowserHistory = () => {
   const listeners = new Set<Listener>();
   let blockers: Blocker[] = [];
@@ -132,12 +137,6 @@ export const createBrowserHistory = () => {
     );
   });
 
-  const unblock = (blocker: Blocker | undefined) => {
-    if (blocker != null) {
-      blockers = blockers.filter(({ id }) => id !== blocker.id);
-    }
-  };
-
   return {
     get location() {
       return currentLocation;
@@ -155,8 +154,6 @@ export const createBrowserHistory = () => {
       const blocker = last(blockers);
 
       if (blocker == null || window.confirm(blocker.message)) {
-        unblock(blocker);
-
         const nextLocation = decodeLocation(url);
         const nextUrl = nextLocation.toString();
 
@@ -175,8 +172,6 @@ export const createBrowserHistory = () => {
       const blocker = last(blockers);
 
       if (blocker == null || window.confirm(blocker.message)) {
-        unblock(blocker);
-
         const nextLocation = decodeLocation(url);
         const nextUrl = nextLocation.toString();
 
@@ -185,14 +180,23 @@ export const createBrowserHistory = () => {
       }
     },
 
-    block: (message: string): (() => void) => {
-      const id = Math.random().toString(36).substring(2);
-      const blocker = { id, message };
-
+    block: (blocker: Blocker): (() => void) => {
       blockers.push(blocker);
 
+      if (blockers.length === 1) {
+        window.addEventListener("beforeunload", onBeforeUnload, {
+          capture: true,
+        });
+      }
+
       return () => {
-        unblock(blocker);
+        blockers = blockers.filter(({ id }) => id !== blocker.id);
+
+        if (blockers.length === 0) {
+          window.removeEventListener("beforeunload", onBeforeUnload, {
+            capture: true,
+          });
+        }
       };
     },
   };

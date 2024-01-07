@@ -1,10 +1,12 @@
-import { useEffect } from "react";
+import { useEffect, useId } from "react";
 import { block } from "./history";
 
 export const useBlocker = (blocked: boolean, message: string) => {
+  const id = useId();
+
   useEffect(() => {
     if (blocked) {
-      return block(message);
+      return block({ id, message });
     }
-  }, [blocked]); // eslint-disable-line react-hooks/exhaustive-deps
+  });
 };
