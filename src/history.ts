@@ -143,7 +143,7 @@ export const createBrowserHistory = () => {
       return currentLocation;
     },
 
-    subscribe: (listener: Listener) => {
+    subscribe: (listener: Listener): (() => void) => {
       listeners.add(listener);
 
       return () => {
