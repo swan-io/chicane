@@ -5,7 +5,7 @@ sidebar_label: Router
 
 The following cover the API exposed by a **Router** ([check out how to create one](/creating-your-router)).
 
-## Router.{RouteName}
+## Router.\{RouteName\}
 
 The Router has one per route. Takes the route params (if it has some), and returns a build URL.
 
