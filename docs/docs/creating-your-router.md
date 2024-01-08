@@ -68,6 +68,7 @@ export const Router = createRouter({
   About: "/about",
 
   ...createGroup("User", "/users", {
+    Area: "/*", // UserArea: "/users/*"
     List: "/", // UserList: "/users"
     Detail: "/:userId", // UserDetail: "/users/:userId"
   }),

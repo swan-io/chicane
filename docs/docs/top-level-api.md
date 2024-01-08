@@ -36,11 +36,13 @@ export const Router = createRouter({
   Home: "/",
 
   ...createGroup("User", "/users", {
+    Area: "/*", // UserArea: "/users/*"
     List: "/", // UserList: "/users"
     Detail: "/:userId", // UserDetail: "/users/:userId"
   }),
 
   ...createGroup("Book", "/books?:isEditor", {
+    Area: "/*", // BookArea: "/books/*?:isEditor"
     List: "/?:byAuthor", // BookList: "/books?:isEditor&:byAuthor"
     Detail: "/:bookId", // BookDetail: "/books/:bookId?:isEditor"
   }),
