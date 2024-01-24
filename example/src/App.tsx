@@ -1,4 +1,4 @@
-import { Link, useFocusReset } from "@swan-io/chicane/src";
+import { Link, useFocusReset } from "@swan-io/chicane";
 import { useRef } from "react";
 import { match } from "ts-pattern";
 import { Router } from "./router";
