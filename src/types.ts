@@ -155,9 +155,10 @@ export type GetAreaRoutes<Routes extends Record<string, RouteObject>> = {
     : never;
 };
 
-type SimplifyParams<T> = T extends Record<PropertyKey, never>
-  ? {} // eslint-disable-line @typescript-eslint/ban-types
-  : { [K in keyof T]: T[K] };
+type SimplifyParams<T> =
+  T extends Record<PropertyKey, never>
+    ? {} // eslint-disable-line @typescript-eslint/ban-types
+    : { [K in keyof T]: T[K] };
 
 export type GetRoutesParams<Routes extends Record<string, RouteObject>> = {
   [K in keyof Routes]: SimplifyParams<
@@ -170,11 +171,12 @@ type NonOptionalProperties<T> = Exclude<
   undefined
 >;
 
-export type ParamsArg<Params> = Params extends Record<PropertyKey, never>
-  ? []
-  : NonOptionalProperties<Params> extends never
-    ? [params?: { [K in keyof Params]: Params[K] }]
-    : [params: { [K in keyof Params]: Params[K] }];
+export type ParamsArg<Params> =
+  Params extends Record<PropertyKey, never>
+    ? []
+    : NonOptionalProperties<Params> extends never
+      ? [params?: { [K in keyof Params]: Params[K] }]
+      : [params: { [K in keyof Params]: Params[K] }];
 
 export type GetCreateURLFns<RoutesParams extends Record<string, Params>> = {
   [RouteName in keyof RoutesParams]: (
