@@ -70,3 +70,25 @@ Takes a route name and its associated params and navigates to it **without** cre
 Router.replace("Home");
 Router.replace("UserDetail", { userId: "123" });
 ```
+
+## Router.P.\{RouteName\}
+
+Provides `ts-pattern` interop.
+
+```tsx
+const Router = createRouter({
+  Home: "/",
+  UserArea: "/users/*",
+  User: "/users/:userId",
+});
+
+const App = () => {
+  const route = Router.useRoute(["Home", "UserArea", "User"]);
+
+  return match(route)
+    .with(Router.P.Home(P._), () => <Home />)
+    .with(Router.P.UserArea(P._), () => <UserArea />)
+    .with(Router.P.User({ userId: P.select() }), (id) => <User id={id} />)
+    .otherwise(() => null);
+};
+```
