@@ -60,24 +60,22 @@ At some point you might need to restraint a param type (as `string` is too wide)
 const Router = createRouter({
   Home: "/",
   Projects: "/:env{live|sandbox}/projects",
-  Users: "/users?:sortBy{asc|desc}&:statuses{invited|active|banned}[]",
+  Users: "/users?:statuses{invited|enabled|banned}[]",
 });
 ```
 
 ```tsx title="src/App.tsx"
 const App = () => {
-  const route = Router.useRoute(["Home", "Projects", "Users"]);
+  const route = Router.useRoute(["Projects", "Users"]);
 
   return match(route)
-    .with({ name: "Home" }, () => <Home />)
     .with({ name: "Projects" }, ({ params: { env } }) => (
       // env type is "live" | "sandbox"
       <Projects env={env} />
     ))
-    .with({ name: "Users" }, ({ params: { sortBy, statuses } }) => (
-      // sortBy type is "asc" | "desc" | undefined
-      // statuses type is Array<"invited" | "active" | "banned"> | undefined
-      <Users sortBy={sortBy} statuses={statuses} />
+    .with({ name: "Users" }, ({ params: { statuses } }) => (
+      // statuses type is Array<"invited" | "enabled" | "banned"> | undefined
+      <Users statuses={statuses} />
     ))
     .otherwise(() => null);
 };
