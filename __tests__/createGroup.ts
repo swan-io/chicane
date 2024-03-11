@@ -28,7 +28,7 @@ test("createGroup prefix routes keys / paths", () => {
     }),
   } as const;
 
-  expect(routes).toEqual({
+  expect(routes).toStrictEqual({
     Home: "/",
     User: "/:userName",
 

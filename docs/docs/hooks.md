@@ -73,17 +73,17 @@ const App = () => {
 };
 ```
 
-## useNavigationBlocker
+## useBlocker
 
 Block the navigation and ask user for confirmation. Useful to avoid loosing a form state.
 
 ```tsx
-import { useNavigationBlocker } from "@swan-io/chicane";
+import { useBlocker } from "@swan-io/chicane";
 
 const App = () => {
   const { formStatus } = useForm(/* … */);
 
-  useNavigationBlocker(
+  useBlocker(
     formStatus === "editing",
     "Are you sure you want to stop editing this profile?",
   );

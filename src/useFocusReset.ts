@@ -1,4 +1,4 @@
-import * as React from "react";
+import { RefObject, useEffect } from "react";
 import { hasInitialLocationChanged } from "./history";
 import { Params } from "./types";
 
@@ -14,16 +14,16 @@ export const useFocusReset = ({
   containerRef,
 }: {
   route?: { key: string; name: string; params: Params } | undefined;
-  containerRef: React.RefObject<unknown>;
+  containerRef: RefObject<unknown>;
 }) => {
   const focusKey = route?.key.split("-")[0];
 
-  React.useEffect(() => {
+  useEffect(() => {
     const element = containerRef.current as HTMLElement | undefined;
 
     // Only focus after a history change for UX, so that areas outside routing
     // (e.g. navigation header) are available immediately to keyboard navigation
-    if (element && hasInitialLocationChanged()) {
+    if (element != null && hasInitialLocationChanged()) {
       try {
         // A tabIndex of -1 allows element to be programmatically focused but
         // prevents keyboard focus, so we don't want to set the value on elements

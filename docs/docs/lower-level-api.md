@@ -15,9 +15,7 @@ import { getLocation /*, Location */ } from "@swan-io/chicane";
 type Location = {
   path: string[]; // path split on `/`
   search: Record<string, string | string[]>;
-  hash?: string;
-  key: string; // a hash for the location
-  raw: { path: string; search: string; hash: string };
+  raw: { path: string; search: string };
   toString(): string; // returns the imploded location
 };
 

@@ -1,4 +1,4 @@
-import * as React from "react";
+import { createElement, forwardRef } from "react";
 import { useLinkProps } from "./useLinkProps";
 
 type BaseProps = Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "href">;
@@ -11,7 +11,7 @@ type Props = BaseProps & {
   activeClassName?: BaseProps["className"];
 };
 
-export const Link = React.forwardRef<HTMLAnchorElement, Props>(
+export const Link = forwardRef<HTMLAnchorElement, Props>(
   (
     {
       onClick: baseOnClick,
@@ -28,7 +28,7 @@ export const Link = React.forwardRef<HTMLAnchorElement, Props>(
   ) => {
     const { active, onClick } = useLinkProps({ href: to, replace, target });
 
-    return React.createElement("a", {
+    return createElement("a", {
       ...props,
       ref: forwardedRef,
       href: to,
@@ -41,14 +41,14 @@ export const Link = React.forwardRef<HTMLAnchorElement, Props>(
         !active || activeClassName == null
           ? className
           : className == null
-          ? activeClassName
-          : `${className} ${activeClassName}`,
+            ? activeClassName
+            : `${className} ${activeClassName}`,
       style:
         !active || activeStyle == null
           ? style
           : style == null
-          ? activeStyle
-          : { ...style, ...activeStyle },
+            ? activeStyle
+            : { ...style, ...activeStyle },
     });
   },
 );

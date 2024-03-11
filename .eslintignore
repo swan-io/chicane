@@ -3,6 +3,6 @@ dist/
 example/
 docs/
 
-vite.config.ts
+vite.config.mts
 vitest-setup.ts
 .eslintrc.js

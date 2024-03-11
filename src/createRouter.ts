@@ -1,15 +1,16 @@
-import { createPath } from "history";
-import * as React from "react";
+import { useMemo } from "react";
 import { useSyncExternalStoreWithSelector } from "use-sync-external-store/shim/with-selector.js";
-import { concatRoutes, parseRoute } from "./concatRoutes";
+import { concatRoutes } from "./concatRoutes";
 import { areRouteEqual, first, identity } from "./helpers";
 import {
   getLocation,
-  history,
+  parseRoute,
+  pushUnsafe,
+  replaceUnsafe,
   subscribeToLocation,
   useGetUniversalLocation,
 } from "./history";
-import { getMatcher, match, matchToHistoryPath } from "./matcher";
+import { getMatcher, match, matchToUrl } from "./matcher";
 import {
   GetAreaRoutes,
   GetCreateURLFns,
@@ -19,9 +20,8 @@ import {
   ParamsArg,
   ParseRoute,
   ParseRoutes,
-  ParsedRoute,
   PrependBasePath,
-  Simplify,
+  RouteObject,
 } from "./types";
 
 export const createRouter = <
@@ -43,10 +43,9 @@ export const createRouter = <
 
   const { basePath = "" } = options;
 
-  const basePathObject: ParsedRoute = {
+  const basePathObject: RouteObject = {
     path: parseRoute(basePath).path,
-    search: "", // search and hash are not supported in basePath
-    hash: "",
+    search: "", // search is not supported in basePath
   };
 
   const matchers = {} as Record<keyof Routes, Matcher>;
@@ -70,16 +69,24 @@ export const createRouter = <
     (matcherA, matcherB) => matcherB.ranking - matcherA.ranking,
   );
 
+  const P = {} as {
+    [RouteName in keyof Routes]: <const Params>(params: Params) => {
+      readonly name: RouteName;
+      readonly params: Params;
+    };
+  };
+
   const createURLFns = {} as GetCreateURLFns<FiniteRoutesParams>;
 
-  for (let index = 0; index < rankedMatchers.length; index++) {
-    const matcher = rankedMatchers[index];
+  for (const matcher of rankedMatchers) {
+    const name = matcher.name as keyof Routes;
+    P[name] = <const Params>(params: Params) => ({ name, params });
 
-    if (matcher != null && !matcher.isArea) {
-      const routeName = matcher.name as keyof FiniteRoutes;
+    if (!matcher.isArea) {
+      const finiteName = name as keyof FiniteRoutes;
 
-      createURLFns[routeName] = (params?: Params) =>
-        createPath(matchToHistoryPath(matchers[routeName], params));
+      createURLFns[finiteName] = (params?: Params) =>
+        matchToUrl(matchers[finiteName], params);
     }
   }
 
@@ -87,16 +94,12 @@ export const createRouter = <
     routeNames: ReadonlyArray<RouteName>,
   ): RouteName extends string
     ?
-        | {
-            key: string;
-            name: RouteName;
-            params: Simplify<RoutesParams[RouteName]>;
-          }
+        | { key: string; name: RouteName; params: RoutesParams[RouteName] }
         | undefined
     : never => {
     const matchersKey = JSON.stringify(routeNames);
 
-    const matchers = React.useMemo(
+    const matchers = useMemo(
       () =>
         rankedMatchers.filter(({ name }) =>
           routeNames.includes(name as RouteName),
@@ -121,11 +124,7 @@ export const createRouter = <
     routeNames: ReadonlyArray<RouteName>,
   ): RouteName extends string
     ?
-        | {
-            key: string;
-            name: RouteName;
-            params: Simplify<RoutesParams[RouteName]>;
-          }
+        | { key: string; name: RouteName; params: RoutesParams[RouteName] }
         | undefined
     : never => {
     const location = getLocation();
@@ -139,20 +138,20 @@ export const createRouter = <
 
   const push = <RouteName extends keyof FiniteRoutes>(
     routeName: RouteName,
-    ...args: ParamsArg<FiniteRoutesParams[RouteName]>
-  ): void => history.push(matchToHistoryPath(matchers[routeName], first(args)));
+    ...params: ParamsArg<FiniteRoutesParams[RouteName]>
+  ): void => pushUnsafe(matchToUrl(matchers[routeName], first(params)));
 
   const replace = <RouteName extends keyof FiniteRoutes>(
     routeName: RouteName,
-    ...args: ParamsArg<FiniteRoutesParams[RouteName]>
-  ): void =>
-    history.replace(matchToHistoryPath(matchers[routeName], first(args)));
+    ...params: ParamsArg<FiniteRoutesParams[RouteName]>
+  ): void => replaceUnsafe(matchToUrl(matchers[routeName], first(params)));
 
   return {
     useRoute,
     getRoute,
     push,
     replace,
+    P,
     ...createURLFns,
   };
 };

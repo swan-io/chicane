@@ -1,31 +1,89 @@
-// This module makes the different routes created with @swan-io/chicane listen to the same history instance
-import { createBrowserHistory, createMemoryHistory, parsePath } from "history";
-import * as React from "react";
-import { useSyncExternalStore } from "use-sync-external-store/shim/index.js";
-import { areParamsArrayEqual } from "./helpers";
-import { decodeLocation } from "./location";
-import { Location, Search, Subscription } from "./types";
+import { createContext, useContext, useSyncExternalStore } from "react";
+import {
+  areParamsArrayEqual,
+  ensureSlashPrefix,
+  isNonEmpty,
+  last,
+  noop,
+} from "./helpers";
+import { decodeUnprefixedSearch, encodeSearch } from "./search";
+import { Blocker, Listener, Location, RouteObject, Search } from "./types";
 
-const subscriptions = new Set<Subscription>();
-
-// From https://github.com/facebook/fbjs/blob/v2.0.0/packages/fbjs/src/core/ExecutionEnvironment.js
-const canUseDOM =
-  typeof window !== "undefined" &&
-  typeof window.document !== "undefined" &&
-  typeof window.document.createElement !== "undefined";
-
-export const history = canUseDOM
-  ? createBrowserHistory()
-  : createMemoryHistory();
-
-let currentLocation = decodeLocation(history.location, true);
 let initialLocationHasChanged = false;
 
-history.listen(({ location }) => {
-  const nextLocation = decodeLocation(location, false);
+export const parseRoute = (route: string): RouteObject => {
+  const hashIndex = route.indexOf("#");
 
-  // As the `encodeSearch` function guarantees a stable sorting, we can rely on a simple URL comparison
-  if (nextLocation.toString() !== currentLocation.toString()) {
+  const cleanRoute = ensureSlashPrefix(
+    hashIndex < 0 ? route : route.substring(0, hashIndex),
+  );
+
+  const searchIndex = cleanRoute.indexOf("?");
+
+  if (searchIndex < 0) {
+    return { path: cleanRoute, search: "" };
+  }
+
+  return {
+    path: cleanRoute.substring(0, searchIndex),
+    search: cleanRoute.substring(searchIndex + 1),
+  };
+};
+
+export const decodeLocation = (url: string): Location => {
+  const route = parseRoute(url);
+  const path = route.path.substring(1);
+
+  const parsedPath =
+    path !== ""
+      ? initialLocationHasChanged
+        ? path.split("/").map(decodeURIComponent)
+        : path.split("/").filter(isNonEmpty).map(decodeURIComponent)
+      : [];
+
+  const parsedSearch =
+    route.search !== "" ? decodeUnprefixedSearch(route.search) : {};
+
+  const rawPath = "/" + parsedPath.map(encodeURIComponent).join("/");
+  const rawSearch = encodeSearch(parsedSearch);
+  const stringifiedLocation = rawPath + rawSearch;
+
+  return {
+    path: parsedPath,
+    search: parsedSearch,
+
+    raw: {
+      path: rawPath,
+      search: rawSearch,
+    },
+
+    toString() {
+      return stringifiedLocation;
+    },
+  };
+};
+
+const onBeforeUnload = (event: BeforeUnloadEvent) => {
+  event.preventDefault();
+  event.returnValue = ""; // Chrome requires returnValue to be set
+};
+
+export const createBrowserHistory = () => {
+  const listeners = new Set<Listener>();
+  let blockers: Blocker[] = [];
+
+  const globalHistory = window.history;
+  const globalLocation = window.location;
+
+  let currentLocation = decodeLocation(
+    globalLocation.pathname + globalLocation.search,
+  );
+
+  const maybeUpdateLocation = (nextLocation: Location) => {
+    if (nextLocation.toString() === currentLocation.toString()) {
+      return; // As the `encodeSearch` function guarantees a stable sorting, we can rely on a simple URL comparison
+    }
+
     initialLocationHasChanged = true;
 
     const searchHasChanged =
@@ -61,46 +119,113 @@ history.listen(({ location }) => {
 
     // Create a new location object instance
     currentLocation = {
-      key: nextLocation.key,
-
       path:
         nextLocation.raw.path !== currentLocation.raw.path
           ? nextLocation.path
           : currentLocation.path,
       search,
-      ...(nextLocation.hash != null && {
-        hash: nextLocation.hash,
-      }),
-
       raw: nextLocation.raw,
       toString: nextLocation.toString,
     };
 
-    subscriptions.forEach((subscription) => subscription(currentLocation));
-  }
-});
+    listeners.forEach((listener) => listener(currentLocation));
+  };
 
-export const subscribeToLocation = (
-  subscription: Subscription,
-): (() => void) => {
-  subscriptions.add(subscription);
+  window.addEventListener("popstate", () => {
+    maybeUpdateLocation(
+      decodeLocation(globalLocation.pathname + globalLocation.search),
+    );
+  });
 
-  return () => {
-    subscriptions.delete(subscription);
+  return {
+    get location() {
+      return currentLocation;
+    },
+
+    subscribe: (listener: Listener): (() => void) => {
+      listeners.add(listener);
+
+      return () => {
+        listeners.delete(listener);
+      };
+    },
+
+    push: (url: string): void => {
+      const blocker = last(blockers);
+
+      if (blocker == null || window.confirm(blocker.message)) {
+        const nextLocation = decodeLocation(url);
+        const nextUrl = nextLocation.toString();
+
+        try {
+          // iOS has a limit of 100 pushState calls / 30 secs
+          globalHistory.pushState(null, "", nextUrl);
+        } catch {
+          globalLocation.assign(nextUrl);
+        }
+
+        maybeUpdateLocation(nextLocation);
+      }
+    },
+
+    replace: (url: string): void => {
+      const blocker = last(blockers);
+
+      if (blocker == null || window.confirm(blocker.message)) {
+        const nextLocation = decodeLocation(url);
+        const nextUrl = nextLocation.toString();
+
+        globalHistory.replaceState(null, "", nextUrl);
+        maybeUpdateLocation(nextLocation);
+      }
+    },
+
+    block: (blocker: Blocker): (() => void) => {
+      blockers.push(blocker);
+
+      if (blockers.length === 1) {
+        window.addEventListener("beforeunload", onBeforeUnload, {
+          capture: true,
+        });
+      }
+
+      return () => {
+        blockers = blockers.filter(({ id }) => id !== blocker.id);
+
+        if (blockers.length === 0) {
+          window.removeEventListener("beforeunload", onBeforeUnload, {
+            capture: true,
+          });
+        }
+      };
+    },
   };
 };
 
-export const getLocation = (): Location => currentLocation;
-export const hasInitialLocationChanged = () => initialLocationHasChanged;
+const history: ReturnType<typeof createBrowserHistory> =
+  typeof window !== "undefined"
+    ? createBrowserHistory()
+    : {
+        location: decodeLocation("/"),
+        subscribe: () => noop,
+        push: noop,
+        replace: noop,
+        block: () => noop,
+      };
 
-const GetUniversalLocationContext =
-  React.createContext<() => Location>(getLocation);
+export const getLocation = () => history.location;
+export const subscribeToLocation = history.subscribe;
+export const pushUnsafe = history.push;
+export const replaceUnsafe = history.replace;
+export const block = history.block;
+
+const GetUniversalLocationContext = createContext<() => Location>(getLocation);
 
 export const GetUniversalLocationProvider =
   GetUniversalLocationContext.Provider;
 
 export const useGetUniversalLocation = () =>
-  React.useContext(GetUniversalLocationContext);
+  useContext(GetUniversalLocationContext);
 
 export const useLocation = (): Location => {
   const getUniversalLocation = useGetUniversalLocation();
@@ -112,17 +237,9 @@ export const useLocation = (): Location => {
   );
 };
 
-export const pushUnsafe = (url: string): void => {
-  const { pathname = "", search = "", hash = "" } = parsePath(url);
-  history.push({ pathname, search, hash });
-};
-
-export const replaceUnsafe = (url: string) => {
-  const { pathname = "", search = "", hash = "" } = parsePath(url);
-  history.replace({ pathname, search, hash });
-};
+export const hasInitialLocationChanged = () => initialLocationHasChanged;
 
 // For testing purposes
-export const resetInitialHasLocationChanged = () => {
-  initialLocationHasChanged = false;
+export const setInitialHasLocationChanged = (value: boolean) => {
+  initialLocationHasChanged = value;
 };

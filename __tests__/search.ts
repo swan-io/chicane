@@ -21,16 +21,16 @@ test("decodeSearch parses a single query string", () => {
 });
 
 test("decodeSearch parses multiple query string", () => {
-  expect(decodeSearch("foo=bar&key=val")).toStrictEqual({
+  expect(decodeSearch("foo=bar&baz=qux")).toStrictEqual({
     foo: "bar",
-    key: "val",
+    baz: "qux",
   });
 });
 
 test("decodeSearch parses query string without value", () => {
   expect(decodeSearch("foo")).toStrictEqual({ foo: "" });
-  expect(decodeSearch("foo&key")).toStrictEqual({ foo: "", key: "" });
-  expect(decodeSearch("foo=bar&key")).toStrictEqual({ foo: "bar", key: "" });
+  expect(decodeSearch("foo&bar")).toStrictEqual({ foo: "", bar: "" });
+  expect(decodeSearch("foo=bar&baz")).toStrictEqual({ foo: "bar", baz: "" });
   expect(decodeSearch("a&a")).toStrictEqual({ a: ["", ""] });
   expect(decodeSearch("a=&a")).toStrictEqual({ a: ["", ""] });
 });
@@ -40,8 +40,8 @@ test("decodeSearch returns empty object if no query string can be found", () => 
   expect(decodeSearch("&")).toStrictEqual({});
 });
 
-test("decodeSearch handles `+` correctly", () => {
-  expect(decodeSearch("foo+faz=bar+baz++")).toStrictEqual({
+test("decodeSearch handles spaces correctly", () => {
+  expect(decodeSearch("foo%20faz=bar%20baz%20%20")).toStrictEqual({
     "foo faz": "bar baz  ",
   });
 });

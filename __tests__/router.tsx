@@ -1,8 +1,12 @@
 import { act, render } from "@testing-library/react";
 import * as React from "react";
-import { beforeEach, describe, expect, test } from "vitest";
+import { beforeEach, expect, test } from "vitest";
 import { createRouter, pushUnsafe, useFocusReset } from "../src";
-import { resetInitialHasLocationChanged } from "../src/history";
+import { setInitialHasLocationChanged } from "../src/history";
+
+const expectToHaveFocus = (element: Element) => {
+  expect(element.ownerDocument.activeElement).toBe(element);
+};
 
 const routes = {
   Home: "/",
@@ -10,151 +14,142 @@ const routes = {
   Profile: "/profile/:username",
 } as const;
 
-const expectToHaveFocus = (element: Element) => {
-  expect(element.ownerDocument.activeElement).toBe(element);
-};
+const { getRoute, useRoute } = createRouter(routes);
+const routesToMatch: (keyof typeof routes)[] = ["Home", "Profiles", "Profile"];
 
-describe("router", () => {
-  const { getRoute, useRoute } = createRouter(routes);
+beforeEach(() => {
+  pushUnsafe("/");
+  setInitialHasLocationChanged(false);
+});
 
-  type RouteName = keyof typeof routes;
+test("useRoute: should match the correct route", () => {
+  const App = () => {
+    const route = useRoute(routesToMatch);
 
-  const routesToMatch: RouteName[] = ["Home", "Profiles", "Profile"];
+    if (route === undefined) {
+      return <div> Not found </div>;
+    }
 
-  beforeEach(() => {
-    pushUnsafe("/");
-    resetInitialHasLocationChanged();
+    return (
+      <>
+        {route.name === "Home" ? (
+          <div> Home </div>
+        ) : route.name === "Profile" ? (
+          <div> Profile {route.params.username} </div>
+        ) : null}
+      </>
+    );
+  };
+
+  const { container } = render(<App />);
+
+  expect(container.textContent).toContain("Home");
+
+  act(() => {
+    pushUnsafe("/profile/zoontek");
   });
 
-  test("useRoute: should match the correct route", () => {
-    const App = () => {
-      const route = useRoute(routesToMatch);
+  expect(container.textContent).toContain("Profile zoontek");
 
-      if (route === undefined) {
-        return <div> Not found </div>;
-      }
-
-      return (
-        <>
-          {route.name === "Home" ? (
-            <div> Home </div>
-          ) : route.name === "Profile" ? (
-            <div> Profile {route.params.username} </div>
-          ) : null}
-        </>
-      );
-    };
-
-    const { container } = render(<App />);
-
-    expect(container.textContent).toContain("Home");
-
-    act(() => {
-      pushUnsafe("/profile/zoontek");
-    });
-
-    expect(container.textContent).toContain("Profile zoontek");
-
-    act(() => {
-      pushUnsafe("/unknown");
-    });
-
-    expect(container.textContent).toContain("Not found");
+  act(() => {
+    pushUnsafe("/unknown");
   });
 
-  test("getRoute: should match the correct route", () => {
-    const App = () => {
-      const route = getRoute(routesToMatch);
+  expect(container.textContent).toContain("Not found");
+});
 
-      if (route === undefined) {
-        return <div> Not found </div>;
-      }
+test("getRoute: should match the correct route", () => {
+  const App = () => {
+    const route = getRoute(routesToMatch);
 
-      return (
-        <>
-          {route.name === "Home" ? (
-            <div> Home </div>
-          ) : route.name === "Profile" ? (
-            <div> Profile {route.params.username} </div>
-          ) : null}
-        </>
-      );
-    };
+    if (route === undefined) {
+      return <div> Not found </div>;
+    }
 
-    const { container, rerender } = render(<App />);
+    return (
+      <>
+        {route.name === "Home" ? (
+          <div> Home </div>
+        ) : route.name === "Profile" ? (
+          <div> Profile {route.params.username} </div>
+        ) : null}
+      </>
+    );
+  };
 
-    expect(container.textContent).toContain("Home");
+  const { container, rerender } = render(<App />);
 
-    act(() => {
-      pushUnsafe("/profile/zoontek");
-    });
+  expect(container.textContent).toContain("Home");
 
-    rerender(<App />);
-    expect(container.textContent).toContain("Profile zoontek");
-
-    act(() => {
-      pushUnsafe("/unknown");
-    });
-
-    rerender(<App />);
-    expect(container.textContent).toContain("Not found");
+  act(() => {
+    pushUnsafe("/profile/zoontek");
   });
 
-  test("useFocusReset: should focus the correct element", () => {
-    const App = () => {
-      const route = useRoute(routesToMatch);
-      const containerRef = React.useRef(null);
+  rerender(<App />);
+  expect(container.textContent).toContain("Profile zoontek");
 
-      useFocusReset({ route, containerRef });
-
-      if (route === undefined) {
-        return <div> Not found </div>;
-      }
-
-      return (
-        <div ref={containerRef} data-testid="routeContainer">
-          {route.name === "Home" ? (
-            <div> Home </div>
-          ) : route.name === "Profile" ? (
-            <div> Profile {route.params.username} </div>
-          ) : null}
-        </div>
-      );
-    };
-
-    const { getByTestId, baseElement } = render(<App />);
-    const body = baseElement as HTMLBodyElement;
-    const routeContainer = getByTestId("routeContainer");
-
-    // doesn't take focus initially
-    expectToHaveFocus(body);
-
-    act(() => {
-      pushUnsafe("/profile/zoontek");
-    });
-
-    // takes focus after a route change
-    expectToHaveFocus(routeContainer);
-
-    act(() => {
-      // doesn't switch focus if route remains the same
-      body.setAttribute("tabIndex", "-1");
-      body.focus();
-    });
-
-    expectToHaveFocus(body);
-
-    act(() => {
-      pushUnsafe("/profile/zoontek");
-    });
-
-    expectToHaveFocus(body);
-
-    act(() => {
-      pushUnsafe("/profile/bloodyowl");
-    });
-
-    // takes focus when only a param changes
-    expectToHaveFocus(routeContainer);
+  act(() => {
+    pushUnsafe("/unknown");
   });
+
+  rerender(<App />);
+  expect(container.textContent).toContain("Not found");
+});
+
+test("useFocusReset: should focus the correct element", () => {
+  const App = () => {
+    const route = useRoute(routesToMatch);
+    const containerRef = React.useRef(null);
+
+    useFocusReset({ route, containerRef });
+
+    if (route === undefined) {
+      return <div> Not found </div>;
+    }
+
+    return (
+      <div ref={containerRef} data-testid="routeContainer">
+        {route.name === "Home" ? (
+          <div> Home </div>
+        ) : route.name === "Profile" ? (
+          <div> Profile {route.params.username} </div>
+        ) : null}
+      </div>
+    );
+  };
+
+  const { getByTestId, baseElement } = render(<App />);
+  const body = baseElement as HTMLBodyElement;
+  const routeContainer = getByTestId("routeContainer");
+
+  // doesn't take focus initially
+  expectToHaveFocus(body);
+
+  act(() => {
+    pushUnsafe("/profile/zoontek");
+  });
+
+  // takes focus after a route change
+  expectToHaveFocus(routeContainer);
+
+  act(() => {
+    // doesn't switch focus if route remains the same
+    body.setAttribute("tabIndex", "-1");
+    body.focus();
+  });
+
+  expectToHaveFocus(body);
+
+  act(() => {
+    pushUnsafe("/profile/zoontek");
+  });
+
+  expectToHaveFocus(body);
+
+  act(() => {
+    pushUnsafe("/profile/bloodyowl");
+  });
+
+  // takes focus when only a param changes
+  expectToHaveFocus(routeContainer);
 });

@@ -1,30 +1,40 @@
-import { Path as HistoryPath, parsePath } from "history";
-import { isMultipleParam, isNonEmpty, isParam } from "./helpers";
-import { encodeSearch } from "./search";
+import {
+  extractParamNameUnion,
+  getRouteKey,
+  isNonEmpty,
+  isParam,
+} from "./helpers";
+import { parseRoute } from "./history";
+import { decodeUnprefixedSearch, encodeSearch } from "./search";
 import { Location, Matcher, Params, Search } from "./types";
 
 // Kudos to https://reach.tech/router/ranking
-const extractFromPathname = (pathname: string) => {
-  const parts = pathname.split("/").filter(isNonEmpty);
-  const path: Matcher["path"] = [];
+const extractFromPath = (path: string) => {
+  const parts = path.split("/").filter(isNonEmpty);
+  const output: Matcher["path"] = [];
 
-  let ranking = parts.length > 0 ? parts.length * 4 : 5;
+  let ranking = parts.length > 0 ? parts.length * 5 : 6;
 
   for (const part of parts) {
-    const param = isParam(part);
-    ranking += param ? 2 : 3;
-    path.push(param ? { name: part.substring(1) } : encodeURIComponent(part));
+    if (isParam(part)) {
+      const param = extractParamNameUnion(part.substring(1));
+      ranking += param.union == null ? 2 : 3;
+      output.push(param);
+    } else {
+      ranking += 4;
+      output.push(encodeURIComponent(part));
+    }
   }
 
-  return { ranking, path };
+  return { ranking, path: output };
 };
 
 export const getMatcher = (name: string, route: string): Matcher => {
-  const { pathname = "/", search, hash } = parsePath(route);
-  const isArea = pathname.endsWith("/*");
+  const parsed = parseRoute(route);
+  const isArea = parsed.path.endsWith("/*");
 
-  const { ranking, path } = extractFromPathname(
-    isArea ? pathname.slice(0, -2) : pathname,
+  const { ranking, path } = extractFromPath(
+    isArea ? parsed.path.slice(0, -2) : parsed.path,
   );
 
   const matcher: Matcher = {
@@ -34,33 +44,33 @@ export const getMatcher = (name: string, route: string): Matcher => {
     ranking: isArea ? ranking - 1 : ranking,
     path,
     search: undefined,
-    hash: undefined,
   };
 
-  if (search != null) {
+  if (parsed.search !== "") {
     matcher.search = {};
-    const params = new URLSearchParams(search.substring(1));
+    const params = decodeUnprefixedSearch(parsed.search);
 
-    for (const [key] of params) {
-      if (isMultipleParam(key)) {
-        matcher.search[key.substring(1, key.length - 2)] = "multiple";
-      } else if (isParam(key)) {
-        matcher.search[key.substring(1, key.length)] = "unique";
+    for (const key in params) {
+      if (isParam(key)) {
+        const multiple = key.endsWith("[]");
+
+        const { name, union } = extractParamNameUnion(
+          key.substring(1, key.length - (multiple ? 2 : 0)),
+        );
+
+        matcher.search[name] =
+          union == null ? { multiple } : { multiple, union };
       }
     }
-  }
-
-  if (hash != null && isParam(hash.substring(1))) {
-    matcher.hash = hash.substring(2);
   }
 
   return matcher;
 };
 
-export const extractLocationParams = (
+export const getMatchResult = (
   location: Location,
   matcher: Matcher,
-): Params | undefined => {
+): { key: string; name: string; params: Params } | undefined => {
   const { path: locationPath } = location;
   const { isArea, path: matcherPath } = matcher;
 
@@ -71,7 +81,7 @@ export const extractLocationParams = (
     return;
   }
 
-  const params: Params = {};
+  const pathParams: Params = {};
 
   for (let index = 0; index < matcherPath.length; index++) {
     const locationPart = locationPath[index];
@@ -81,50 +91,66 @@ export const extractLocationParams = (
       continue;
     }
 
-    if (typeof matcherPart !== "string") {
-      if (locationPart == null) {
-        return;
-      } else {
-        params[matcherPart.name] = locationPart;
-        continue;
-      }
-    } else {
-      if (matcherPart === locationPart) {
+    if (typeof matcherPart === "string") {
+      if (locationPart === matcherPart) {
         continue;
       } else {
         return;
       }
     }
+
+    if (locationPart == null) {
+      return;
+    }
+
+    const { name, union } = matcherPart;
+
+    if (union == null || union.includes(locationPart)) {
+      pathParams[name] = locationPart;
+    } else {
+      return;
+    }
   }
+
+  const searchParams: Params = {};
 
   for (const key in matcher.search) {
     if (Object.prototype.hasOwnProperty.call(matcher.search, key)) {
-      const matcherValue = matcher.search[key];
-      const locationValue = location.search[key];
+      const matcherPart = matcher.search[key];
+      const locationPart = location.search[key];
 
-      if (matcherValue == null || locationValue == null) {
+      if (matcherPart == null || locationPart == null) {
         continue;
       }
 
-      if (matcherValue === "multiple") {
-        params[key] =
-          typeof locationValue === "string" ? [locationValue] : locationValue;
+      const { multiple, union } = matcherPart;
+
+      const locationParts =
+        typeof locationPart === "string" ? [locationPart] : locationPart;
+
+      const values =
+        union == null
+          ? locationParts
+          : locationParts.filter((item) => union.includes(item));
+
+      if (multiple) {
+        searchParams[key] = values;
         continue;
       }
 
-      if (typeof locationValue === "string") {
-        params[key] = locationValue;
-      } else if (locationValue[0] != null) {
-        params[key] = locationValue[0];
+      const value = values[0];
+
+      if (value != null && (union == null || union.includes(value))) {
+        searchParams[key] = value;
       }
     }
   }
 
-  if (matcher.hash != null && location.hash != null) {
-    params[matcher.hash] = location.hash;
-  }
-
-  return params;
+  return {
+    key: getRouteKey(matcher.name, pathParams, searchParams),
+    name: matcher.name,
+    params: { ...pathParams, ...searchParams },
+  };
 };
 
 export const match = (
@@ -132,19 +158,16 @@ export const match = (
   matchers: Matcher[],
 ): { key: string; name: string; params: Params } | undefined => {
   for (const matcher of matchers) {
-    const params = extractLocationParams(location, matcher);
+    const result = getMatchResult(location, matcher);
 
-    if (params != null) {
-      return { key: location.key, name: matcher.name, params };
+    if (result != null) {
+      return result;
     }
   }
 };
 
-export const matchToHistoryPath = (
-  matcher: Matcher,
-  params: Params = {},
-): HistoryPath => {
-  const pathname =
+export const matchToUrl = (matcher: Matcher, params: Params = {}): string => {
+  const path =
     "/" +
     matcher.path
       .map((part) =>
@@ -154,35 +177,33 @@ export const matchToHistoryPath = (
       )
       .join("/");
 
-  // https://github.com/remix-run/history/issues/859
   let search = "";
-  let hash = "";
 
   if (matcher.search != null) {
     const object: Search = {};
 
     for (const key in params) {
-      const value = params[key];
+      const matcherPart = matcher.search[key];
+      const param = params[key];
 
-      if (
-        Object.prototype.hasOwnProperty.call(params, key) &&
-        Object.prototype.hasOwnProperty.call(matcher.search, key) &&
-        value != null
-      ) {
-        object[key] = value;
+      if (matcherPart != null && param != null) {
+        const { union } = matcherPart;
+
+        if (typeof param === "string") {
+          if (union == null || union.includes(param)) {
+            object[key] = param;
+          }
+        } else {
+          object[key] =
+            union == null
+              ? param
+              : param.filter((item) => union.includes(item));
+        }
       }
     }
 
     search = encodeSearch(object);
   }
 
-  if (matcher.hash != null) {
-    const value = params[matcher.hash];
-
-    if (typeof value === "string") {
-      hash = "#" + encodeURIComponent(value);
-    }
-  }
-
-  return { pathname, search, hash };
+  return path + search;
 };

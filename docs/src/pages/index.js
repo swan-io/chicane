@@ -4,7 +4,6 @@ import HomepageFeatures from "@site/src/components/HomepageFeatures";
 import CodeBlock from "@theme/CodeBlock";
 import Layout from "@theme/Layout";
 import clsx from "clsx";
-import React from "react";
 
 import styles from "./index.module.css";
 
@@ -68,7 +67,6 @@ const App = () => {
 
 export default function Home() {
   const { siteConfig } = useDocusaurusContext();
-
   return (
     <Layout
       title={`Chicane: ${siteConfig.tagline}`}
