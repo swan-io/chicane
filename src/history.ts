@@ -79,7 +79,11 @@ export const createBrowserHistory = () => {
     globalLocation.pathname + globalLocation.search,
   );
 
-  const maybeUpdateLocation = (nextLocation: Location) => {
+  const maybeUpdateLocation = () => {
+    const nextLocation = decodeLocation(
+      globalLocation.pathname + globalLocation.search,
+    );
+
     if (nextLocation.toString() === currentLocation.toString()) {
       return; // As the `encodeSearch` function guarantees a stable sorting, we can rely on a simple URL comparison
     }
@@ -132,9 +136,7 @@ export const createBrowserHistory = () => {
   };
 
   window.addEventListener("popstate", () => {
-    maybeUpdateLocation(
-      decodeLocation(globalLocation.pathname + globalLocation.search),
-    );
+    maybeUpdateLocation();
   });
 
   return {
@@ -154,17 +156,14 @@ export const createBrowserHistory = () => {
       const blocker = last(blockers);
 
       if (blocker == null || window.confirm(blocker.message)) {
-        const nextLocation = decodeLocation(url);
-        const nextUrl = nextLocation.toString();
-
         try {
           // iOS has a limit of 100 pushState calls / 30 secs
-          globalHistory.pushState(null, "", nextUrl);
+          globalHistory.pushState(null, "", url);
         } catch {
-          globalLocation.assign(nextUrl);
+          globalLocation.assign(url);
         }
 
-        maybeUpdateLocation(nextLocation);
+        maybeUpdateLocation();
       }
     },
 
@@ -172,11 +171,8 @@ export const createBrowserHistory = () => {
       const blocker = last(blockers);
 
       if (blocker == null || window.confirm(blocker.message)) {
-        const nextLocation = decodeLocation(url);
-        const nextUrl = nextLocation.toString();
-
-        globalHistory.replaceState(null, "", nextUrl);
-        maybeUpdateLocation(nextLocation);
+        globalHistory.replaceState(null, "", url);
+        maybeUpdateLocation();
       }
     },
 
