@@ -42,7 +42,6 @@
     "not dead"
   ],
   "prettier": {
-    "trailingComma": "all",
     "plugins": [
       "prettier-plugin-organize-imports"
     ]
