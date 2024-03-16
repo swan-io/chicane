@@ -1,15 +1,10 @@
-import { isNonEmpty } from "./helpers";
 import { Search } from "./types";
 
-export const decodeUnprefixedSearch = (search: string): Search => {
-  const params = search.split("&").filter(isNonEmpty);
+export const decodeSearch = (search: string): Search => {
+  const params = new URLSearchParams(search);
   const output: Search = {};
 
-  for (const param of params) {
-    const [head = "", tail = ""] = param.split("=");
-    const key = decodeURIComponent(head);
-    const value = decodeURIComponent(tail);
-
+  for (const [key, value] of params) {
     const existing = output[key];
 
     if (existing != null) {
@@ -24,9 +19,6 @@ export const decodeUnprefixedSearch = (search: string): Search => {
 
   return output;
 };
-
-export const decodeSearch = (search: string): Search =>
-  decodeUnprefixedSearch(search[0] === "?" ? search.substring(1) : search);
 
 export const appendParam = (
   acc: string,

@@ -6,7 +6,7 @@ import {
   last,
   noop,
 } from "./helpers";
-import { decodeUnprefixedSearch, encodeSearch } from "./search";
+import { decodeSearch, encodeSearch } from "./search";
 import { Blocker, Listener, Location, RouteObject, Search } from "./types";
 
 let initialLocationHasChanged = false;
@@ -42,7 +42,7 @@ export const decodeLocation = (url: string): Location => {
       : [];
 
   const parsedSearch =
-    route.search !== "" ? decodeUnprefixedSearch(route.search) : {};
+    route.search !== "" ? decodeSearch("?" + route.search) : {};
 
   const rawPath = "/" + parsedPath.map(encodeURIComponent).join("/");
   const rawSearch = encodeSearch(parsedSearch);
