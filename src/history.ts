@@ -26,7 +26,7 @@ export const parseRoute = (route: string): RouteObject => {
 
   return {
     path: cleanRoute.substring(0, searchIndex),
-    search: cleanRoute.substring(searchIndex + 1),
+    search: cleanRoute.substring(searchIndex),
   };
 };
 
@@ -41,8 +41,7 @@ export const decodeLocation = (url: string): Location => {
         : path.split("/").filter(isNonEmpty).map(decodeURIComponent)
       : [];
 
-  const parsedSearch =
-    route.search !== "" ? decodeSearch("?" + route.search) : {};
+  const parsedSearch = route.search !== "" ? decodeSearch(route.search) : {};
 
   const rawPath = "/" + parsedPath.map(encodeURIComponent).join("/");
   const rawSearch = encodeSearch(parsedSearch);
