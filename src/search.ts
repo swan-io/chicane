@@ -20,14 +20,8 @@ export const decodeSearch = (search: string): Search => {
   return output;
 };
 
-export const appendParam = (
-  acc: string,
-  key: string,
-  value: string,
-): string => {
-  const output = acc + (acc !== "" ? "&" : "") + encodeURIComponent(key);
-  return value !== "" ? output + "=" + encodeURIComponent(value) : output;
-};
+const NO_VALUE_PARAM_REGEXP = /=&/g;
+const FINISH_BY_EQUAL_REGEXP = /=$/g;
 
 export const encodeSearch = (search: Search): string => {
   const keys = Object.keys(search);
@@ -36,7 +30,7 @@ export const encodeSearch = (search: Search): string => {
     return "";
   }
 
-  let output = "";
+  const params = new URLSearchParams();
   keys.sort(); // keys are sorted in place
 
   for (const key of keys) {
@@ -47,16 +41,21 @@ export const encodeSearch = (search: Search): string => {
     }
 
     if (typeof value === "string") {
-      output = appendParam(output, key, value);
+      params.append(key, value);
     } else {
       for (const item of value) {
-        output = appendParam(output, key, item);
+        params.append(key, item);
       }
     }
   }
 
+  const output = params
+    .toString()
+    .replace(NO_VALUE_PARAM_REGEXP, "&")
+    .replace(FINISH_BY_EQUAL_REGEXP, "");
+
   if (output === "") {
-    return ""; // params are empty arrays
+    return "";
   }
 
   return "?" + output;
