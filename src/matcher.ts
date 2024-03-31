@@ -71,67 +71,59 @@ export const getMatchResult = (
   location: Location,
   matcher: Matcher,
 ): { key: string; name: string; params: Params } | undefined => {
-  const { path: locationPath } = location;
-  const { isArea, path: matcherPath } = matcher;
-
   if (
-    (!isArea && locationPath.length !== matcherPath.length) ||
-    (isArea && locationPath.length < matcherPath.length)
+    (!matcher.isArea && location.path.length !== matcher.path.length) ||
+    (matcher.isArea && location.path.length < matcher.path.length)
   ) {
     return;
   }
 
   const pathParams: Params = {};
+  const searchParams: Params = {};
 
-  for (let index = 0; index < matcherPath.length; index++) {
-    const locationPart = locationPath[index];
-    const matcherPart = matcherPath[index];
+  for (let index = 0; index < matcher.path.length; index++) {
+    const part = location.path[index];
+    const test = matcher.path[index];
 
-    if (matcherPart == null) {
+    if (test == null) {
       continue;
     }
 
-    if (typeof matcherPart === "string") {
-      if (locationPart === matcherPart) {
+    if (typeof test === "string") {
+      if (part === test) {
         continue;
       } else {
         return;
       }
     }
 
-    if (locationPart == null) {
+    if (part == null) {
       return;
     }
 
-    const { name, union } = matcherPart;
+    const { name, union } = test;
 
-    if (union == null || union.includes(locationPart)) {
-      pathParams[name] = locationPart;
+    if (union == null || union.includes(part)) {
+      pathParams[name] = part;
     } else {
       return;
     }
   }
 
-  const searchParams: Params = {};
-
   for (const key in matcher.search) {
     if (Object.prototype.hasOwnProperty.call(matcher.search, key)) {
-      const matcherPart = matcher.search[key];
-      const locationPart = location.search[key];
+      const part = location.search[key];
+      const test = matcher.search[key];
 
-      if (matcherPart == null || locationPart == null) {
+      if (part == null || test == null) {
         continue;
       }
 
-      const { multiple, union } = matcherPart;
-
-      const locationParts =
-        typeof locationPart === "string" ? [locationPart] : locationPart;
+      const { multiple, union } = test;
+      const parts = typeof part === "string" ? [part] : part;
 
       const values =
-        union == null
-          ? locationParts
-          : locationParts.filter((item) => union.includes(item));
+        union == null ? parts : parts.filter((item) => union.includes(item));
 
       if (multiple) {
         searchParams[key] = values;
@@ -140,7 +132,7 @@ export const getMatchResult = (
 
       const value = values[0];
 
-      if (value != null && (union == null || union.includes(value))) {
+      if (value != null) {
         searchParams[key] = value;
       }
     }
@@ -183,22 +175,22 @@ export const matchToUrl = (matcher: Matcher, params: Params = {}): string => {
     const object: Search = {};
 
     for (const key in params) {
-      const matcherPart = matcher.search[key];
       const param = params[key];
+      const test = matcher.search[key];
 
-      if (matcherPart != null && param != null) {
-        const { union } = matcherPart;
+      if (param == null || test == null) {
+        continue;
+      }
 
-        if (typeof param === "string") {
-          if (union == null || union.includes(param)) {
-            object[key] = param;
-          }
-        } else {
-          object[key] =
-            union == null
-              ? param
-              : param.filter((item) => union.includes(item));
+      const { union } = test;
+
+      if (typeof param === "string") {
+        if (union == null || union.includes(param)) {
+          object[key] = param;
         }
+      } else {
+        object[key] =
+          union == null ? param : param.filter((item) => union.includes(item));
       }
     }
 
