@@ -4,5 +4,6 @@ example/
 docs/
 
 vite.config.mts
+tsup.config.ts
 vitest-setup.ts
 .eslintrc.js
