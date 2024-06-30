@@ -7,7 +7,7 @@ The following cover the API exposed by a **Router** ([check out how to create on
 
 ## Router.\{RouteName\}
 
-The Router has one per route. Takes the route params (if it has some), and returns a build URL.
+The Router has one per route. Takes the route params (if it has some), and returns a built URL.
 
 - `params`: Required params for the route.
 
