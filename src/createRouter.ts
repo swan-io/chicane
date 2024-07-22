@@ -22,6 +22,7 @@ import {
   ParseRoutes,
   PrependBasePath,
   RouteObject,
+  UnionToIntersection,
 } from "./types";
 
 export const createRouter = <
@@ -138,12 +139,12 @@ export const createRouter = <
 
   const push = <RouteName extends keyof FiniteRoutes>(
     routeName: RouteName,
-    ...params: ParamsArg<FiniteRoutesParams[RouteName]>
+    ...params: ParamsArg<UnionToIntersection<FiniteRoutesParams[RouteName]>>
   ): void => pushUnsafe(matchToUrl(matchers[routeName], first(params)));
 
   const replace = <RouteName extends keyof FiniteRoutes>(
     routeName: RouteName,
-    ...params: ParamsArg<FiniteRoutesParams[RouteName]>
+    ...params: ParamsArg<UnionToIntersection<FiniteRoutesParams[RouteName]>>
   ): void => replaceUnsafe(matchToUrl(matchers[routeName], first(params)));
 
   return {

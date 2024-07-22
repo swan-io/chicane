@@ -171,6 +171,13 @@ type NonOptionalProperties<T> = Exclude<
   undefined
 >;
 
+// https://github.com/microsoft/TypeScript/issues/13298#issuecomment-1610361208
+export type UnionToIntersection<U> = (
+  U extends never ? never : (arg: U) => never
+) extends (arg: infer I) => void
+  ? I
+  : never;
+
 export type ParamsArg<Params> =
   Params extends Record<PropertyKey, never>
     ? []
@@ -180,6 +187,6 @@ export type ParamsArg<Params> =
 
 export type GetCreateURLFns<RoutesParams extends Record<string, Params>> = {
   [RouteName in keyof RoutesParams]: (
-    ...params: ParamsArg<RoutesParams[RouteName]>
+    ...params: ParamsArg<UnionToIntersection<RoutesParams[RouteName]>>
   ) => string;
 };
