@@ -13,7 +13,7 @@ export const Router = createRouter({
   UserDetail: "/users/:userId",
 });
 
-// A map of RouteName and its associated RouteParams
+// A map of route names and their associated params
 type Routes = InferRoutes<typeof Router>;
 
 export type RouteName = keyof Routes;
