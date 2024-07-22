@@ -27,8 +27,8 @@ const sidebars = {
         "route-pattern-syntax",
         "matching-some-routes",
         "linking-to-a-route",
-        "utility-types",
         "server-side-rendering",
+        "utility-types",
       ],
     },
     {
