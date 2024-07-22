@@ -172,10 +172,10 @@ type NonOptionalProperties<T> = Exclude<
 >;
 
 // https://github.com/microsoft/TypeScript/issues/13298#issuecomment-1610361208
-export type UnionToIntersection<U> = (
-  U extends never ? never : (arg: U) => never
-) extends (arg: infer I) => void
-  ? I
+export type UnionToIntersection<Union> = (
+  Union extends never ? never : (_: Union) => never
+) extends (_: infer Intersection) => void
+  ? Intersection
   : never;
 
 export type ParamsArg<Params> =
