@@ -1,4 +1,3 @@
-export { Link } from "./Link";
 export { createGroup } from "./createGroup";
 export { createRouter } from "./createRouter";
 export {
@@ -8,6 +7,7 @@ export {
   subscribeToLocation,
   useLocation,
 } from "./history";
+export { Link } from "./Link";
 export { decodeSearch, encodeSearch } from "./search";
 export { ServerUrlProvider } from "./server";
 export type { InferRoutes, Location, Search } from "./types";
