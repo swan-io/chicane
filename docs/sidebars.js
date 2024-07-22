@@ -28,6 +28,7 @@ const sidebars = {
         "matching-some-routes",
         "linking-to-a-route",
         "server-side-rendering",
+        "utility-types",
       ],
     },
     {
