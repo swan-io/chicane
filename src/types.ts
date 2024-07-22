@@ -190,3 +190,23 @@ export type GetCreateURLFns<RoutesParams extends Record<string, Params>> = {
     ...params: ParamsArg<UnionToIntersection<RoutesParams[RouteName]>>
   ) => string;
 };
+
+// User land helpers
+
+type RouteLike = {
+  name: string;
+  params: Params;
+};
+
+type RouterLike = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  getRoute: (...args: any[]) => RouteLike | undefined;
+};
+
+type RemapRoute<Route extends RouteLike> = {
+  [N in Route["name"]]: Extract<Route, { name: N }>["params"];
+};
+
+export type InferRoutes<Router extends RouterLike> = RemapRoute<
+  NonNullable<ReturnType<Router["getRoute"]>>
+>;
