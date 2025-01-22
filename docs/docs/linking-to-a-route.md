@@ -38,7 +38,7 @@ We provide a default `Link` component, but you can also create yours if needed u
 import { useLinkProps } from "@swan-io/chicane";
 import cx from "classnames";
 
-const Link = ({ className, activeClassName, to, ...props }) => {
+const Link = ({ to, replace, className, activeClassName, ...props }) => {
   const { active, onClick } = useLinkProps({ href: to, replace });
 
   return (
