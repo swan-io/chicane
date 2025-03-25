@@ -37,6 +37,7 @@ const route = Router.useRoute(["Home", "UserArea"]);
 Takes an array of routes (a subset of the router), and returns the route and its params if one matches.
 
 - `routes` (**required**): `RouteName[]`
+- `location` (optional): `string` (defaults to the current browser location)
 
 Returns a route match (or `undefined` if nothing matches):
 
@@ -44,7 +45,8 @@ Returns a route match (or `undefined` if nothing matches):
 - `params`: its associated params
 
 ```ts
-const route = Router.getRoute(["Home", "UserArea"]);
+const routeA = Router.getRoute(["Home", "UserArea"]);
+const routeB = Router.getRoute(["User"], "/users/1");
 ```
 
 ## Router.push
