@@ -96,6 +96,18 @@ test("getRoute: should match the correct route", () => {
   expect(container.textContent).toContain("Not found");
 });
 
+test("getRoute: should match the correct route for given location", () => {
+  const route = getRoute(routesToMatch, "/profile/zoontek");
+
+  expect(route).toStrictEqual({
+    key: "1pkttpl-0",
+    name: "Profile",
+    params: {
+      username: "zoontek",
+    },
+  });
+});
+
 test("useFocusReset: should focus the correct element", () => {
   const App = () => {
     const route = useRoute(routesToMatch);

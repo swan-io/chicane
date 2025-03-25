@@ -30,8 +30,8 @@ export const parseRoute = (route: string): RouteObject => {
   };
 };
 
-export const decodeLocation = (url: string): Location => {
-  const route = parseRoute(url);
+export const decodeLocation = (input: string): Location => {
+  const route = parseRoute(input);
   const path = route.path.substring(1);
 
   const parsedPath =

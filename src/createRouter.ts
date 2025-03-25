@@ -3,6 +3,7 @@ import { useSyncExternalStoreWithSelector } from "use-sync-external-store/shim/w
 import { concatRoutes } from "./concatRoutes";
 import { areRouteEqual, first, identity } from "./helpers";
 import {
+  decodeLocation,
   getLocation,
   parseRoute,
   pushUnsafe,
@@ -123,18 +124,21 @@ export const createRouter = <
 
   const getRoute = <RouteName extends keyof FiniteRoutes | keyof AreaRoutes>(
     routeNames: ReadonlyArray<RouteName>,
+    location?: string,
   ): RouteName extends string
     ?
         | { key: string; name: RouteName; params: RoutesParams[RouteName] }
         | undefined
     : never => {
-    const location = getLocation();
+    const locationObject =
+      location != null ? decodeLocation(location) : getLocation();
+
     const matchers = rankedMatchers.filter(({ name }) =>
       routeNames.includes(name as RouteName),
     );
 
     // @ts-expect-error
-    return match(location, matchers);
+    return match(locationObject, matchers);
   };
 
   const push = <RouteName extends keyof FiniteRoutes>(
