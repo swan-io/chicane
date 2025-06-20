@@ -2,6 +2,7 @@
   "name": "@swan-io/chicane",
   "version": "2.2.0",
   "license": "MIT",
+  "packageManager": "pnpm@10.12.1",
   "description": "A simple and safe router for React and TypeScript",
   "author": "Mathieu Acthernoene <mathieu.acthernoene@swan.io>",
   "homepage": "https://swan-io.github.io/chicane",
@@ -34,7 +35,7 @@
     "test:watch": "vitest --watch",
     "typecheck": "tsc --noEmit",
     "build": "tsup && tsc -p tsconfig.build.json --emitDeclarationOnly",
-    "prepack": "yarn typecheck && yarn lint && yarn test && yarn build"
+    "prepack": "pnpm typecheck && pnpm lint && pnpm test && pnpm build"
   },
   "prettier": {
     "plugins": [

@@ -15,14 +15,15 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: yarn
+          node-version: lts/*
 
-      - run: yarn install --pure-lockfile
-      - run: yarn prepack
+      - uses: pnpm/action-setup@v4
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm prepack
 
       - name: Build docs
-        run: cd docs && yarn && yarn build
+        run: cd docs && pnpm install && pnpm build
 
       - name: Deploy
         if: "contains('refs/heads/main', github.ref)"
