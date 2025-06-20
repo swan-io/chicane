@@ -7,7 +7,7 @@
     "serve": "vite preview"
   },
   "dependencies": {
-    "@swan-io/chicane": "link:../",
+    "@swan-io/chicane": "workspace:*",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "ts-pattern": "^5.2.0"
