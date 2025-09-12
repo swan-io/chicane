@@ -27,7 +27,7 @@ import { Link } from "@swan-io/chicane";
 const App = () => (
   <>
     <Link to={Router.Home()}>Home</Link>
-    <Link to={Router.UseDetail({ userId: "123" })}>User</Link>
+    <Link to={Router.UserDetail({ userId: "123" })}>User</Link>
   </>
 );
 ```
