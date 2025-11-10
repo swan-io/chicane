@@ -10,13 +10,13 @@
     "@swan-io/chicane": "workspace:*",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "ts-pattern": "^5.2.0"
+    "ts-pattern": "^5.9.0"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react-swc": "^3.7.0",
-    "typescript": "^5.5.3",
-    "vite": "^5.3.4"
+    "@vitejs/plugin-react-swc": "^4.2.1",
+    "typescript": "^5.9.3",
+    "vite": "^7.2.2"
   }
 }
