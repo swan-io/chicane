@@ -1,5 +1,5 @@
 import { ensureSlashPrefix } from "./helpers";
-import { RouteObject } from "./types";
+import type { RouteObject } from "./types";
 
 export const addPrefixOnNonEmpty = (value: string, prefix: string) =>
   value === "" ? value : prefix + value;

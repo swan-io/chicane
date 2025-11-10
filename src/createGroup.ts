@@ -1,6 +1,6 @@
 import { concatRoutes } from "./concatRoutes";
 import { parseRoute } from "./history";
-import { ConcatRoutes } from "./types";
+import type { ConcatRoutes } from "./types";
 
 export const createGroup = <
   GroupName extends string,

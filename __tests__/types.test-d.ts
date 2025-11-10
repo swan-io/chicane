@@ -1,5 +1,5 @@
 import { expectTypeOf, test } from "vitest";
-import {
+import type {
   ConcatPaths,
   ConcatSearchs,
   GetAreaRoutes,

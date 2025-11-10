@@ -1,4 +1,4 @@
-import { Search } from "./types";
+import type { Search } from "./types";
 
 export const decodeSearch = (search: string): Search => {
   const params = new URLSearchParams(search);

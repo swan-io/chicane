@@ -7,7 +7,7 @@ import {
   noop,
 } from "./helpers";
 import { decodeSearch, encodeSearch } from "./search";
-import { Blocker, Listener, Location, RouteObject, Search } from "./types";
+import type { Blocker, Listener, Location, RouteObject, Search } from "./types";
 
 let initialLocationHasChanged = false;
 
