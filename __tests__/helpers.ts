@@ -48,16 +48,16 @@ test("extractParamNameUnion", () => {
 
   expect(extractParamNameUnion("foo{}")).toStrictEqual({
     name: "foo",
-    union: [],
+    union: new Set([]),
   });
 
   expect(extractParamNameUnion("foo{a}")).toStrictEqual({
     name: "foo",
-    union: ["a"],
+    union: new Set(["a"]),
   });
 
   expect(extractParamNameUnion("foo{a|b}")).toStrictEqual({
     name: "foo",
-    union: ["a", "b"],
+    union: new Set(["a", "b"]),
   });
 });

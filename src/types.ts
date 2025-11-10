@@ -9,8 +9,10 @@ export type Matcher = {
   name: string;
   ranking: number;
 
-  path: (string | { name: string; union?: string[] })[];
-  search: Record<string, { multiple: boolean; union?: string[] }> | undefined;
+  path: (string | { name: string; union?: Set<string> })[];
+  search:
+    | Record<string, { multiple: boolean; union?: Set<string> }>
+    | undefined;
 };
 
 export type RouteObject = Readonly<{

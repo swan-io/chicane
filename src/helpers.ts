@@ -40,16 +40,18 @@ export const areRouteEqual = (
 
 export const extractParamNameUnion = (
   paramName: string,
-): { name: string; union?: string[] } => {
+): { name: string; union?: Set<string> } => {
   const bracketIndex = paramName.indexOf("{");
 
   if (bracketIndex > -1 && paramName.endsWith("}")) {
     return {
       name: paramName.substring(0, bracketIndex),
-      union: paramName
-        .substring(bracketIndex + 1, paramName.length - 1)
-        .split("|")
-        .filter(isNonEmpty),
+      union: new Set(
+        paramName
+          .substring(bracketIndex + 1, paramName.length - 1)
+          .split("|")
+          .filter(isNonEmpty),
+      ),
     };
   } else {
     return { name: paramName };
