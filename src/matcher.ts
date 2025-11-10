@@ -103,7 +103,7 @@ export const getMatchResult = (
 
     const { name, union } = test;
 
-    if (union == null || union.includes(part)) {
+    if (union == null || union.has(part)) {
       pathParams[name] = part;
     } else {
       return;
@@ -123,7 +123,7 @@ export const getMatchResult = (
       const parts = typeof part === "string" ? [part] : part;
 
       const values =
-        union == null ? parts : parts.filter((item) => union.includes(item));
+        union == null ? parts : parts.filter((item) => union.has(item));
 
       if (multiple) {
         searchParams[key] = values;
@@ -185,12 +185,12 @@ export const matchToUrl = (matcher: Matcher, params: Params = {}): string => {
       const { union } = test;
 
       if (typeof param === "string") {
-        if (union == null || union.includes(param)) {
+        if (union == null || union.has(param)) {
           object[key] = param;
         }
       } else {
         object[key] =
-          union == null ? param : param.filter((item) => union.includes(item));
+          union == null ? param : param.filter((item) => union.has(item));
       }
     }
 

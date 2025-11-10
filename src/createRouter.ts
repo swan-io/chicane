@@ -102,10 +102,13 @@ export const createRouter = <
     const matchersKey = JSON.stringify(routeNames);
 
     const matchers = useMemo(
-      () =>
-        rankedMatchers.filter(({ name }) =>
-          routeNames.includes(name as RouteName),
-        ),
+      () => {
+        const routeNamesSet = new Set(routeNames);
+
+        return rankedMatchers.filter(({ name }) =>
+          routeNamesSet.has(name as RouteName),
+        );
+      },
       [matchersKey], // eslint-disable-line react-hooks/exhaustive-deps
     );
 
@@ -133,8 +136,10 @@ export const createRouter = <
     const locationObject =
       location != null ? decodeLocation(location) : getLocation();
 
+    const routeNamesSet = new Set(routeNames);
+
     const matchers = rankedMatchers.filter(({ name }) =>
-      routeNames.includes(name as RouteName),
+      routeNamesSet.has(name as RouteName),
     );
 
     // @ts-expect-error
