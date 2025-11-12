@@ -15,6 +15,7 @@
     "strict": true,
     "skipLibCheck": true,
     "stripInternal": true,
+    "verbatimModuleSyntax": true,
 
     // https://www.typescriptlang.org/tsconfig#Type_Checking_6248
     "allowUnreachableCode": false,

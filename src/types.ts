@@ -74,7 +74,7 @@ export type GetPathParams<
   ? Head extends `:${infer Name}`
     ? ExtractRequiredParam<Name> & GetPathParams<Path, Tail>
     : GetPathParams<Path, Tail>
-  : {}; // eslint-disable-line @typescript-eslint/ban-types
+  : {}; // eslint-disable-line @typescript-eslint/no-empty-object-type
 
 export type GetSearchParams<
   Search extends string,
@@ -85,7 +85,7 @@ export type GetSearchParams<
     : Head extends `:${infer Name}`
       ? ExtractOptionalParam<Name> & GetSearchParams<Search, Tail>
       : GetSearchParams<Search, Tail>
-  : {}; // eslint-disable-line @typescript-eslint/ban-types
+  : {}; // eslint-disable-line @typescript-eslint/no-empty-object-type
 
 type EnsureSlashPrefix<Value extends string> = Value extends `/${string}`
   ? Value
@@ -159,7 +159,7 @@ export type GetAreaRoutes<Routes extends Record<string, RouteObject>> = {
 
 type SimplifyParams<T> =
   T extends Record<PropertyKey, never>
-    ? {} // eslint-disable-line @typescript-eslint/ban-types
+    ? {} // eslint-disable-line @typescript-eslint/no-empty-object-type
     : { [K in keyof T]: T[K] };
 
 export type GetRoutesParams<Routes extends Record<string, RouteObject>> = {

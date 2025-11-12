@@ -19,10 +19,10 @@
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.08);
 
   --ifm-navbar-link-hover-color: #8166c4;
-  --ifm-font-family-base: Inter, system-ui, -apple-system, Segoe UI, Roboto,
-    Ubuntu, Cantarell, Noto Sans, sans-serif, BlinkMacSystemFont, "Segoe UI",
-    Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
-    "Segoe UI Symbol";
+  --ifm-font-family-base:
+    Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell,
+    Noto Sans, sans-serif, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
+    sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */

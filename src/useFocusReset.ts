@@ -1,6 +1,6 @@
-import { RefObject, useEffect } from "react";
+import { type RefObject, useEffect } from "react";
 import { hasInitialLocationChanged } from "./history";
-import { Params } from "./types";
+import type { Params } from "./types";
 
 const focusableElements: Record<string, true> = {
   A: true,

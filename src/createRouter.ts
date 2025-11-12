@@ -12,7 +12,7 @@ import {
   useGetUniversalLocation,
 } from "./history";
 import { getMatcher, match, matchToUrl } from "./matcher";
-import {
+import type {
   GetAreaRoutes,
   GetCreateURLFns,
   GetRoutesParams,

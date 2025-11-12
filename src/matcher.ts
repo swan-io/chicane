@@ -6,7 +6,7 @@ import {
 } from "./helpers";
 import { parseRoute } from "./history";
 import { encodeSearch } from "./search";
-import { Location, Matcher, Params, Search } from "./types";
+import type { Location, Matcher, Params, Search } from "./types";
 
 // Kudos to https://reach.tech/router/ranking
 const extractFromPath = (path: string) => {
