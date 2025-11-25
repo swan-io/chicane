@@ -99,18 +99,15 @@ export const createRouter = <
         | { key: string; name: RouteName; params: RoutesParams[RouteName] }
         | undefined
     : never => {
-    const matchersKey = JSON.stringify(routeNames);
+    const routeNamesKey = routeNames.join(":");
 
-    const matchers = useMemo(
-      () => {
-        const routeNamesSet = new Set(routeNames);
+    const matchers = useMemo(() => {
+      const routeNamesSet = new Set(routeNames);
 
-        return rankedMatchers.filter(({ name }) =>
-          routeNamesSet.has(name as RouteName),
-        );
-      },
-      [matchersKey], // eslint-disable-line react-hooks/exhaustive-deps
-    );
+      return rankedMatchers.filter(({ name }) =>
+        routeNamesSet.has(name as RouteName),
+      );
+    }, [routeNamesKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const getUniversalLocation = useGetUniversalLocation();
 
