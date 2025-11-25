@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useSyncExternalStoreWithSelector } from "use-sync-external-store/shim/with-selector";
 import { concatRoutes } from "./concatRoutes";
 import { areRouteEqual, first, identity } from "./helpers";
@@ -93,7 +93,7 @@ export const createRouter = <
   }
 
   const useRoute = <RouteName extends keyof FiniteRoutes | keyof AreaRoutes>(
-    routeNames: ReadonlyArray<RouteName>,
+    routeNames: readonly RouteName[],
   ): RouteName extends string
     ?
         | { key: string; name: RouteName; params: RoutesParams[RouteName] }
@@ -113,7 +113,11 @@ export const createRouter = <
     );
 
     const getUniversalLocation = useGetUniversalLocation();
-    const getMatch = () => match(getUniversalLocation(), matchers);
+
+    const getMatch = useCallback(
+      () => match(getUniversalLocation(), matchers),
+      [getUniversalLocation, matchers],
+    );
 
     // @ts-expect-error
     return useSyncExternalStoreWithSelector(
@@ -126,7 +130,7 @@ export const createRouter = <
   };
 
   const getRoute = <RouteName extends keyof FiniteRoutes | keyof AreaRoutes>(
-    routeNames: ReadonlyArray<RouteName>,
+    routeNames: readonly RouteName[],
     location?: string,
   ): RouteName extends string
     ?
