@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useSyncExternalStoreWithSelector } from "use-sync-external-store/shim/with-selector.js";
+import { useSyncExternalStoreWithSelector } from "use-sync-external-store/shim/with-selector";
 import { concatRoutes } from "./concatRoutes";
 import { areRouteEqual, first, identity } from "./helpers";
 import {

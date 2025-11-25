@@ -10,10 +10,18 @@
     "type": "git",
     "url": "https://github.com/swan-io/chicane.git"
   },
-  "source": "src/index.ts",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
+  "zshy": "./src/index.ts",
+  "types": "./dist/index.d.ts",
+  "module": "./dist/index.mjs",
+  "main": "./dist/index.js",
+  "source": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
   "files": [
     "dist"
   ],
@@ -34,7 +42,7 @@
     "test": "vitest --run",
     "test:watch": "vitest --watch",
     "typecheck": "tsc --noEmit",
-    "build": "tsup && tsc -p tsconfig.build.json --emitDeclarationOnly",
+    "build": "pnpm clean && zshy && rm -rf dist/*.d.mts",
     "prepack": "pnpm typecheck && pnpm lint && pnpm test && pnpm build"
   },
   "prettier": {
@@ -64,9 +72,9 @@
     "prettier-plugin-organize-imports": "^4.3.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "tsup": "^8.5.1",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.48.0",
-    "vitest": "^4.0.14"
+    "vitest": "^4.0.14",
+    "zshy": "^0.6.0"
   }
 }
