@@ -1,15 +1,15 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useContext, useMemo } from "react";
 import { useSyncExternalStoreWithSelector } from "use-sync-external-store/shim/with-selector";
 import { concatRoutes } from "./concatRoutes";
 import { areRouteEqual, first, identity } from "./helpers";
 import {
   decodeLocation,
   getLocation,
+  GetUniversalLocationContext,
   parseRoute,
   pushUnsafe,
   replaceUnsafe,
   subscribeToLocation,
-  useGetUniversalLocation,
 } from "./history";
 import { getMatcher, match, matchToUrl } from "./matcher";
 import type {
@@ -109,7 +109,7 @@ export const createRouter = <
       );
     }, [routeNamesKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    const getUniversalLocation = useGetUniversalLocation();
+    const getUniversalLocation = useContext(GetUniversalLocationContext);
 
     const getMatch = useCallback(
       () => match(getUniversalLocation(), matchers),

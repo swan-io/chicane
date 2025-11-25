@@ -1,10 +1,10 @@
-import { useCallback, useMemo, useSyncExternalStore } from "react";
+import { useCallback, useContext, useMemo, useSyncExternalStore } from "react";
 import {
+  GetUniversalLocationContext,
   parseRoute,
   pushUnsafe,
   replaceUnsafe,
   subscribeToLocation,
-  useGetUniversalLocation,
 } from "./history";
 
 // Kudos to https://github.com/remix-run/react-router/pull/7998
@@ -18,7 +18,7 @@ export const useLinkProps = ({
   target?: React.HTMLAttributeAnchorTarget | undefined;
 }) => {
   const hrefPath = useMemo(() => parseRoute(href).path, [href]);
-  const getUniversalLocation = useGetUniversalLocation();
+  const getUniversalLocation = useContext(GetUniversalLocationContext);
   const getPath = () => hrefPath === getUniversalLocation().raw.path;
   const active = useSyncExternalStore(subscribeToLocation, getPath, getPath);
 

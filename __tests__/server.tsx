@@ -2,7 +2,6 @@
  * @vitest-environment node
  */
 
-import * as React from "react";
 import { renderToString } from "react-dom/server";
 import { expect, test } from "vitest";
 import { Link, ServerUrlProvider, createRouter } from "../src";

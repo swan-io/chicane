@@ -214,16 +214,11 @@ export const pushUnsafe = history.push;
 export const replaceUnsafe = history.replace;
 export const block = history.block;
 
-const GetUniversalLocationContext = createContext<() => Location>(getLocation);
-
-export const GetUniversalLocationProvider =
-  GetUniversalLocationContext.Provider;
-
-export const useGetUniversalLocation = () =>
-  useContext(GetUniversalLocationContext);
+export const GetUniversalLocationContext =
+  createContext<() => Location>(getLocation);
 
 export const useLocation = (): Location => {
-  const getUniversalLocation = useGetUniversalLocation();
+  const getUniversalLocation = useContext(GetUniversalLocationContext);
 
   return useSyncExternalStore(
     subscribeToLocation,
