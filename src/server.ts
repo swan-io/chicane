@@ -6,7 +6,7 @@ type Props = {
   value: string;
 };
 
-export const ServerUrlProvider = ({ children, value }: Props) => {
+export const UrlProvider = ({ children, value }: Props) => {
   const location = decodeLocation(value);
 
   return createElement(GetUniversalLocationContext, {
