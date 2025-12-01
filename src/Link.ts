@@ -1,7 +1,6 @@
 import {
   createElement,
   type AnchorHTMLAttributes,
-  type MouseEvent,
   type ReactNode,
   type Ref,
 } from "react";
@@ -34,7 +33,7 @@ export const Link = ({
   return createElement("a", {
     ...props,
     href: to,
-    onClick: (event: MouseEvent<HTMLAnchorElement>) => {
+    onClick: (event) => {
       baseOnClick?.(event);
       onClick(event);
     },
