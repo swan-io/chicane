@@ -26,9 +26,13 @@ export const useLinkProps = ({
 }) => {
   const hrefPath = useMemo(() => parseRoute(href).path, [href]);
   const getUniversalLocation = useContext(GetUniversalLocationContext);
-  const getPath = () => hrefPath === getUniversalLocation().raw.path;
-  const active = useSyncExternalStore(subscribeToLocation, getPath, getPath);
 
+  const getPath = useCallback(
+    () => hrefPath === getUniversalLocation().raw.path,
+    [getUniversalLocation, hrefPath],
+  );
+
+  const active = useSyncExternalStore(subscribeToLocation, getPath, getPath);
   const shouldReplace = replace || active;
   const shouldIgnoreTarget = target == null || target === "_self";
 
