@@ -1,8 +1,8 @@
-import { createElement } from "react";
+import { createElement, type ReactNode } from "react";
 import { GetUniversalLocationContext, decodeLocation } from "./history";
 
 type Props = {
-  children: React.ReactNode;
+  children: ReactNode;
   value: string;
 };
 

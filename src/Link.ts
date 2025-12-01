@@ -1,12 +1,18 @@
-import { createElement, type Ref } from "react";
+import {
+  createElement,
+  type AnchorHTMLAttributes,
+  type MouseEvent,
+  type ReactNode,
+  type Ref,
+} from "react";
 import { useLinkProps } from "./useLinkProps";
 
-type BaseProps = Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "href">;
+type BaseProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href">;
 
 type Props = BaseProps & {
   ref?: Ref<HTMLAnchorElement>;
   to: string;
-  children?: React.ReactNode;
+  children?: ReactNode;
   replace?: boolean;
   activeStyle?: BaseProps["style"];
   activeClassName?: BaseProps["className"];
@@ -28,7 +34,7 @@ export const Link = ({
   return createElement("a", {
     ...props,
     href: to,
-    onClick: (event: React.MouseEvent<HTMLAnchorElement>) => {
+    onClick: (event: MouseEvent<HTMLAnchorElement>) => {
       baseOnClick?.(event);
       onClick(event);
     },

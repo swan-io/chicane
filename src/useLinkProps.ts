@@ -1,4 +1,11 @@
-import { useCallback, useContext, useMemo, useSyncExternalStore } from "react";
+import {
+  useCallback,
+  useContext,
+  useMemo,
+  useSyncExternalStore,
+  type HTMLAttributeAnchorTarget,
+  type MouseEvent,
+} from "react";
 import {
   GetUniversalLocationContext,
   parseRoute,
@@ -15,7 +22,7 @@ export const useLinkProps = ({
 }: {
   href: string;
   replace?: boolean | undefined;
-  target?: React.HTMLAttributeAnchorTarget | undefined;
+  target?: HTMLAttributeAnchorTarget | undefined;
 }) => {
   const hrefPath = useMemo(() => parseRoute(href).path, [href]);
   const getUniversalLocation = useContext(GetUniversalLocationContext);
@@ -28,7 +35,7 @@ export const useLinkProps = ({
   return {
     active,
     onClick: useCallback(
-      (event: React.MouseEvent) => {
+      (event: MouseEvent) => {
         if (
           !event.defaultPrevented &&
           shouldIgnoreTarget && // Let browser handle "target=_blank" etc.
