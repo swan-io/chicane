@@ -1,5 +1,5 @@
 import { act, render } from "@testing-library/react";
-import * as React from "react";
+import { useRef } from "react";
 import { beforeEach, expect, test } from "vitest";
 import { createRouter, pushUnsafe, useFocusReset } from "../src";
 import { setInitialHasLocationChanged } from "../src/history";
@@ -111,7 +111,7 @@ test("getRoute: should match the correct route for given location", () => {
 test("useFocusReset: should focus the correct element", () => {
   const App = () => {
     const route = useRoute(routesToMatch);
-    const containerRef = React.useRef(null);
+    const containerRef = useRef(null);
 
     useFocusReset({ route, containerRef });
 

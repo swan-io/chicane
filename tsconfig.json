@@ -1,23 +1,27 @@
 {
   "include": ["src", "__tests__"],
   "compilerOptions": {
-    "module": "ESNext",
-    "target": "ES2019",
+    "module": "esnext",
+    "target": "es2019",
     "lib": ["DOM", "DOM.Iterable", "ES2019"],
-    "jsx": "react",
-    "moduleResolution": "Node",
+    "jsx": "react-jsx",
+    "moduleResolution": "node",
     "outDir": "dist/",
 
     "allowJs": false,
-    "declaration": true,
-    "noEmit": true,
-    "sourceMap": true,
     "strict": true,
+    "noEmit": true,
+    "noEmitOnError": true,
+    "sourceMap": true,
     "skipLibCheck": true,
-    "stripInternal": true,
+    "declaration": true,
+    "incremental": false,
+
+    // Interop constraints
+    "erasableSyntaxOnly": true,
     "verbatimModuleSyntax": true,
 
-    // https://www.typescriptlang.org/tsconfig#Type_Checking_6248
+    // Type checking
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
     "exactOptionalPropertyTypes": true,

@@ -2,10 +2,10 @@
  * @vitest-environment node
  */
 
-import * as React from "react";
 import { renderToString } from "react-dom/server";
 import { expect, test } from "vitest";
-import { Link, ServerUrlProvider, createRouter } from "../src";
+import { Link, createRouter } from "../src";
+import { UrlProvider } from "../src/server";
 
 const Router = createRouter({
   Home: "/",
@@ -51,9 +51,9 @@ const App = () => {
 test("Should render home page correctly", () => {
   expect(
     renderToString(
-      <ServerUrlProvider value="/">
+      <UrlProvider value="/">
         <App />
-      </ServerUrlProvider>,
+      </UrlProvider>,
     ),
   ).toMatchSnapshot();
 });
@@ -61,9 +61,9 @@ test("Should render home page correctly", () => {
 test("Should render users page correctly", () => {
   expect(
     renderToString(
-      <ServerUrlProvider value="/users">
+      <UrlProvider value="/users">
         <App />
-      </ServerUrlProvider>,
+      </UrlProvider>,
     ),
   ).toMatchSnapshot();
 });
@@ -71,9 +71,9 @@ test("Should render users page correctly", () => {
 test("Should render user page correctly", () => {
   expect(
     renderToString(
-      <ServerUrlProvider value="/users/123">
+      <UrlProvider value="/users/123">
         <App />
-      </ServerUrlProvider>,
+      </UrlProvider>,
     ),
   ).toMatchSnapshot();
 });

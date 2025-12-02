@@ -1,15 +1,15 @@
-import { useMemo } from "react";
-import { useSyncExternalStoreWithSelector } from "use-sync-external-store/shim/with-selector.js";
+import { useCallback, useContext, useMemo } from "react";
+import { useSyncExternalStoreWithSelector } from "use-sync-external-store/with-selector";
 import { concatRoutes } from "./concatRoutes";
 import { areRouteEqual, first, identity } from "./helpers";
 import {
   decodeLocation,
   getLocation,
+  GetUniversalLocationContext,
   parseRoute,
   pushUnsafe,
   replaceUnsafe,
   subscribeToLocation,
-  useGetUniversalLocation,
 } from "./history";
 import { getMatcher, match, matchToUrl } from "./matcher";
 import type {
@@ -93,27 +93,28 @@ export const createRouter = <
   }
 
   const useRoute = <RouteName extends keyof FiniteRoutes | keyof AreaRoutes>(
-    routeNames: ReadonlyArray<RouteName>,
+    routeNames: readonly RouteName[],
   ): RouteName extends string
     ?
         | { key: string; name: RouteName; params: RoutesParams[RouteName] }
         | undefined
     : never => {
-    const matchersKey = JSON.stringify(routeNames);
+    const routeNamesKey = routeNames.join(":");
 
-    const matchers = useMemo(
-      () => {
-        const routeNamesSet = new Set(routeNames);
+    const matchers = useMemo(() => {
+      const routeNamesSet = new Set(routeNames);
 
-        return rankedMatchers.filter(({ name }) =>
-          routeNamesSet.has(name as RouteName),
-        );
-      },
-      [matchersKey], // eslint-disable-line react-hooks/exhaustive-deps
+      return rankedMatchers.filter(({ name }) =>
+        routeNamesSet.has(name as RouteName),
+      );
+    }, [routeNamesKey]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    const getUniversalLocation = useContext(GetUniversalLocationContext);
+
+    const getMatch = useCallback(
+      () => match(getUniversalLocation(), matchers),
+      [getUniversalLocation, matchers],
     );
-
-    const getUniversalLocation = useGetUniversalLocation();
-    const getMatch = () => match(getUniversalLocation(), matchers);
 
     // @ts-expect-error
     return useSyncExternalStoreWithSelector(
@@ -126,7 +127,7 @@ export const createRouter = <
   };
 
   const getRoute = <RouteName extends keyof FiniteRoutes | keyof AreaRoutes>(
-    routeNames: ReadonlyArray<RouteName>,
+    routeNames: readonly RouteName[],
     location?: string,
   ): RouteName extends string
     ?

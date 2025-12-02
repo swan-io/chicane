@@ -1,10 +1,17 @@
-import { useCallback, useMemo, useSyncExternalStore } from "react";
 import {
+  useCallback,
+  useContext,
+  useMemo,
+  useSyncExternalStore,
+  type HTMLAttributeAnchorTarget,
+  type MouseEvent,
+} from "react";
+import {
+  GetUniversalLocationContext,
   parseRoute,
   pushUnsafe,
   replaceUnsafe,
   subscribeToLocation,
-  useGetUniversalLocation,
 } from "./history";
 
 // Kudos to https://github.com/remix-run/react-router/pull/7998
@@ -15,20 +22,24 @@ export const useLinkProps = ({
 }: {
   href: string;
   replace?: boolean | undefined;
-  target?: React.HTMLAttributeAnchorTarget | undefined;
+  target?: HTMLAttributeAnchorTarget | undefined;
 }) => {
   const hrefPath = useMemo(() => parseRoute(href).path, [href]);
-  const getUniversalLocation = useGetUniversalLocation();
-  const getPath = () => hrefPath === getUniversalLocation().raw.path;
-  const active = useSyncExternalStore(subscribeToLocation, getPath, getPath);
+  const getUniversalLocation = useContext(GetUniversalLocationContext);
 
+  const getPath = useCallback(
+    () => hrefPath === getUniversalLocation().raw.path,
+    [getUniversalLocation, hrefPath],
+  );
+
+  const active = useSyncExternalStore(subscribeToLocation, getPath, getPath);
   const shouldReplace = replace || active;
   const shouldIgnoreTarget = target == null || target === "_self";
 
   return {
     active,
     onClick: useCallback(
-      (event: React.MouseEvent) => {
+      (event: MouseEvent) => {
         if (
           !event.defaultPrevented &&
           shouldIgnoreTarget && // Let browser handle "target=_blank" etc.
