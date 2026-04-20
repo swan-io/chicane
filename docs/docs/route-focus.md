@@ -8,7 +8,7 @@ In order to improve accessibility for people using **keyboard navigation** and/o
 That makes navigation easier by moving the navigation to the relevant area, thus removing the need to press the `Tab` key to get there after, as there's an intent to navigate.
 
 ```tsx {8}
-import { useFocusReset } from "@swan-io/chicane";
+import { useFocusReset } from "@zoontek/chicane";
 import { useRef } from "react";
 
 export const App = () => {

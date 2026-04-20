@@ -10,7 +10,7 @@ Even though you'll mostly need to consume the location through the [Router](./ro
 Returns the exploded location (a [Location object](#getlocation))
 
 ```ts
-import { getLocation /*, Location */ } from "@swan-io/chicane";
+import { getLocation /*, Location */ } from "@zoontek/chicane";
 
 type Location = {
   path: string[]; // path split on `/`
@@ -28,7 +28,7 @@ console.log(location.path);
 Subscribes to location changes, and passes a [Location object](#getlocation) to the listener.
 
 ```ts
-import { subscribeToLocation } from "@swan-io/chicane";
+import { subscribeToLocation } from "@zoontek/chicane";
 
 subscribeToLocation((location: Location) => {
   console.log("Location changed!");
@@ -41,7 +41,7 @@ subscribeToLocation((location: Location) => {
 Implode and explode search params.
 
 ```ts
-import { encodeSearch, decodeSearch } from "@swan-io/chicane";
+import { encodeSearch, decodeSearch } from "@zoontek/chicane";
 
 encodeSearch({ invitation: "542022247745", users: ["frank", "chris"] });
 // -> "?invitation=542022247745&users=frank&users=chris"
@@ -55,7 +55,7 @@ decodeSearch("?invitation=542022247745&users=frank&users=chris");
 Escape hatch. Similar to `Router.push` and `Router.replace` but accepts a unique string argument.
 
 ```ts
-import { pushUnsafe, replaceUnsafe } from "@swan-io/chicane";
+import { pushUnsafe, replaceUnsafe } from "@zoontek/chicane";
 
 pushUnsafe("/");
 replaceUnsafe("?name=frank");

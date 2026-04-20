@@ -39,7 +39,7 @@ function HomepageHeader() {
       </div>
       <div className={styles.heroCode}>
         <CodeBlock className={styles.heroCodeBlock} language="typescript">
-          {`import { createRouter } from "@swan-io/chicane";
+          {`import { createRouter } from "@zoontek/chicane";
 import { match } from "ts-pattern";
 
 export const Router = createRouter({

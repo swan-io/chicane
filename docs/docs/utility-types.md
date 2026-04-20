@@ -6,7 +6,7 @@ sidebar_label: Utility types
 To easily extract routes types, use `InferRoutes`:
 
 ```tsx {1,9}
-import { createRouter, InferRoutes } from "@swan-io/chicane";
+import { createRouter, InferRoutes } from "@zoontek/chicane";
 
 export const Router = createRouter({
   UserList: "/users",

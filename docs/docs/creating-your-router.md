@@ -8,7 +8,7 @@ The first need you need to do with chicane is to create your **router**. A route
 To do that, let's import `createRouter` and create our first routes:
 
 ```ts title="src/router.ts"
-import { createRouter } from "@swan-io/chicane";
+import { createRouter } from "@zoontek/chicane";
 
 export const Router = createRouter({
   Home: "/",
@@ -61,7 +61,7 @@ The router also provides two functions to navigate programmatically (from your J
 If you want to avoid repetitions when having lots of subroutes, you can use a little helper called `createGroup`:
 
 ```ts title="src/router.ts"
-import { createRouter, createGroup } from "@swan-io/chicane";
+import { createRouter, createGroup } from "@zoontek/chicane";
 
 export const Router = createRouter({
   Home: "/",

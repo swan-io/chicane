@@ -22,7 +22,7 @@ type LinkProps = {
 ### Usage
 
 ```tsx
-import { Link } from "@swan-io/chicane";
+import { Link } from "@zoontek/chicane";
 
 const App = () => (
   <>

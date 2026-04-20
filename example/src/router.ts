@@ -1,4 +1,4 @@
-import { createRouter } from "@swan-io/chicane";
+import { createRouter } from "@zoontek/chicane";
 
 export const Router = createRouter({
   Home: "/",

@@ -17,7 +17,7 @@ sidebar_label: Getting started
 ## Install
 
 ```bash
-$ yarn add @swan-io/chicane
+$ yarn add @zoontek/chicane
 # --- or ---
-$ npm install --save @swan-io/chicane
+$ npm install --save @zoontek/chicane
 ```

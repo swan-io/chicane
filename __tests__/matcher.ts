@@ -207,15 +207,15 @@ test("match extract route params and matches against a matcher", () => {
     params: { status: ["pending"] },
   });
 
-  matchEqual("/projects/swan/live", {
-    key: "13ec1qg-0",
+  matchEqual("/projects/lumon/live", {
+    key: "cleze6-0",
     name: "Project",
-    params: { projectId: "swan", env: "live" },
+    params: { projectId: "lumon", env: "live" },
   });
 });
 
 test("match returns undefined in case of no route match", () => {
   matchEqual("/repositories/:repositoryId", undefined);
   matchEqual("/bills/:billId", undefined);
-  matchEqual("/projects/swan/invalid", undefined);
+  matchEqual("/projects/lumon/invalid", undefined);
 });

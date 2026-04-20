@@ -1,10 +1,10 @@
-<img width="108" alt="@swan-io/chicane logo" src="https://github.com/swan-io/chicane/blob/main/docs/static/img/logo.svg?raw=true">
+<img width="108" alt="@zoontek/chicane logo" src="https://github.com/zoontek/chicane/blob/main/docs/static/img/logo.svg?raw=true">
 
-# @swan-io/chicane
+# @zoontek/chicane
 
-[![mit licence](https://img.shields.io/dub/l/vibe-d.svg?style=for-the-badge)](https://github.com/swan-io/chicane/blob/main/LICENSE)
-[![npm version](https://img.shields.io/npm/v/@swan-io/chicane?style=for-the-badge)](https://www.npmjs.org/package/@swan-io/chicane)
-[![bundlephobia](https://img.shields.io/bundlephobia/minzip/@swan-io/chicane?label=size&style=for-the-badge)](https://bundlephobia.com/result?p=@swan-io/chicane)
+[![mit licence](https://img.shields.io/dub/l/vibe-d.svg?style=for-the-badge)](https://github.com/zoontek/chicane/blob/main/LICENSE)
+[![npm version](https://img.shields.io/npm/v/@zoontek/chicane?style=for-the-badge)](https://www.npmjs.org/package/@zoontek/chicane)
+[![bundlephobia](https://img.shields.io/bundlephobia/minzip/@zoontek/chicane?label=size&style=for-the-badge)](https://bundlephobia.com/result?p=@zoontek/chicane)
 
 A simple and safe router for React and TypeScript.
 
@@ -18,20 +18,20 @@ A simple and safe router for React and TypeScript.
 ## Installation
 
 ```bash
-$ yarn add @swan-io/chicane
+$ yarn add @zoontek/chicane
 # --- or ---
-$ npm install --save @swan-io/chicane
+$ npm install --save @zoontek/chicane
 ```
 
 ## Links
 
-- 📘 [**Documentation**](https://swan-io.github.io/chicane)
+- 📘 [**Documentation**](https://zoontek.github.io/chicane)
 - ⚖️ [**License**](./LICENSE)
 
 ## Quickstart
 
 ```tsx
-import { createRouter } from "@swan-io/chicane";
+import { createRouter } from "@zoontek/chicane";
 import { match } from "ts-pattern";
 
 const Router = createRouter({
@@ -55,7 +55,7 @@ const App = () => {
 ## Run the example app
 
 ```bash
-$ git clone git@github.com:swan-io/chicane.git
+$ git clone git@github.com:zoontek/chicane.git
 $ cd chicane/example
 
 $ yarn install && yarn dev

@@ -8,7 +8,7 @@ sidebar_label: Hooks
 Hook that gives you props for a `<a>` element (useful if you need to make your own [Link component](/components#link)).
 
 ```tsx
-import { useLinkProps } from "@swan-io/chicane";
+import { useLinkProps } from "@zoontek/chicane";
 
 const MyCustomLink = ({ to, className, activeClassName, ...props }) => {
   const { active, onClick } = useLinkProps({ href: to, replace, target });
@@ -28,7 +28,7 @@ const MyCustomLink = ({ to, className, activeClassName, ...props }) => {
 Gives focus to the updated route on screen.
 
 ```tsx
-import { useFocusReset } from "@swan-io/chicane";
+import { useFocusReset } from "@zoontek/chicane";
 import { useRef } from "react";
 
 export const App = () => {
@@ -59,7 +59,7 @@ export const App = () => {
 Returns the current, up-to-date location, and updates when changed.
 
 ```tsx
-import { useLocation } from "@swan-io/chicane";
+import { useLocation } from "@zoontek/chicane";
 
 const App = () => {
   const location = useLocation();
@@ -78,7 +78,7 @@ const App = () => {
 Block the navigation and ask user for confirmation. Useful to avoid loosing a form state.
 
 ```tsx
-import { useBlocker } from "@swan-io/chicane";
+import { useBlocker } from "@zoontek/chicane";
 
 const App = () => {
   const { formStatus } = useForm(/* … */);
