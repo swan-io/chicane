@@ -4,10 +4,10 @@ import {
   getRouteKey,
   isNonEmpty,
   isParam,
-} from "./helpers";
-import { parseRoute } from "./history";
-import { encodeSearch } from "./search";
-import type { Location, Matcher, Params, Search } from "./types";
+} from "./helpers.ts";
+import { parseRoute } from "./history.ts";
+import { encodeSearch } from "./search.ts";
+import type { Location, Matcher, Params, Search } from "./types.ts";
 
 // Kudos to https://reach.tech/router/ranking
 const extractFromPath = (path: string) => {

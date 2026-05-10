@@ -1,4 +1,4 @@
-import type { Search } from "./types";
+import type { Search } from "./types.ts";
 
 export const decodeSearch = (search: string): Search => {
   const params = new URLSearchParams(search);
@@ -20,8 +20,8 @@ export const decodeSearch = (search: string): Search => {
   return output;
 };
 
-const NO_VALUE_PARAM_REGEXP = /=&/g;
-const FINISH_BY_EQUAL_REGEXP = /=$/g;
+const NO_VALUE_PARAM_REGEXP = /[=]&/g;
+const FINISH_BY_EQUAL_REGEXP = /[=]$/g;
 
 export const encodeSearch = (search: Search): string => {
   const keys = Object.keys(search);

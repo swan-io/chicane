@@ -6,9 +6,15 @@ import {
   isNonEmpty,
   last,
   noop,
-} from "./helpers";
-import { decodeSearch, encodeSearch } from "./search";
-import type { Blocker, Listener, Location, RouteObject, Search } from "./types";
+} from "./helpers.ts";
+import { decodeSearch, encodeSearch } from "./search.ts";
+import type {
+  Blocker,
+  Listener,
+  Location,
+  RouteObject,
+  Search,
+} from "./types.ts";
 
 let initialLocationHasChanged = false;
 

@@ -1,5 +1,5 @@
 import { createElement, type ReactNode } from "react";
-import { GetUniversalLocationContext, decodeLocation } from "./history";
+import { GetUniversalLocationContext, decodeLocation } from "./history.ts";
 
 type Props = {
   children: ReactNode;

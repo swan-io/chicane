@@ -1,15 +1,15 @@
-export { createGroup } from "./createGroup";
-export { createRouter } from "./createRouter";
+export { createGroup } from "./createGroup.ts";
+export { createRouter } from "./createRouter.ts";
 export {
   getLocation,
   pushUnsafe,
   replaceUnsafe,
   subscribeToLocation,
   useLocation,
-} from "./history";
-export { Link } from "./Link";
-export { decodeSearch, encodeSearch } from "./search";
-export type { InferRoutes, Location, Search } from "./types";
-export { useBlocker } from "./useBlocker";
-export { useFocusReset } from "./useFocusReset";
-export { useLinkProps } from "./useLinkProps";
+} from "./history.ts";
+export { Link } from "./Link.ts";
+export { decodeSearch, encodeSearch } from "./search.ts";
+export type { InferRoutes, Location, Search } from "./types.ts";
+export { useBlocker } from "./useBlocker.ts";
+export { useFocusReset } from "./useFocusReset.ts";
+export { useLinkProps } from "./useLinkProps.ts";

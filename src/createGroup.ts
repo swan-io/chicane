@@ -1,7 +1,7 @@
-import { concatRoutes } from "./concatRoutes";
-import { forEach } from "./helpers";
-import { parseRoute } from "./history";
-import type { ConcatRoutes } from "./types";
+import { concatRoutes } from "./concatRoutes.ts";
+import { forEach } from "./helpers.ts";
+import { parseRoute } from "./history.ts";
+import type { ConcatRoutes } from "./types.ts";
 
 export const createGroup = <
   GroupName extends string,

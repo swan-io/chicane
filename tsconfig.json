@@ -1,27 +1,8 @@
 {
   "include": ["src", "__tests__"],
   "compilerOptions": {
-    "module": "esnext",
-    "target": "es2019",
-    "lib": ["DOM", "DOM.Iterable", "ES2019"],
-    "jsx": "react-jsx",
-    "moduleResolution": "node",
-    "outDir": "dist/",
-
-    "allowJs": false,
+    // Type Checking
     "strict": true,
-    "noEmit": true,
-    "noEmitOnError": true,
-    "sourceMap": true,
-    "skipLibCheck": true,
-    "declaration": true,
-    "incremental": false,
-
-    // Interop constraints
-    "erasableSyntaxOnly": true,
-    "verbatimModuleSyntax": true,
-
-    // Type checking
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
     "exactOptionalPropertyTypes": true,
@@ -31,6 +12,38 @@
     "noPropertyAccessFromIndexSignature": true,
     "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": true
+    "noUnusedParameters": true,
+
+    // Modules
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "rewriteRelativeImportExtensions": true,
+
+    // Emit
+    "declaration": true,
+    "noEmit": true,
+    "noEmitOnError": true,
+    "outDir": "dist/",
+    "sourceMap": true,
+
+    // JavaScript Support
+    "allowJs": false,
+
+    // Interop Constraints
+    "erasableSyntaxOnly": true,
+    "isolatedDeclarations": false,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+
+    // Language and Environment
+    "jsx": "react-jsx",
+    "lib": ["DOM", "ES2019"],
+    "target": "es2019",
+
+    // Projects
+    "incremental": false,
+
+    // Completeness
+    "skipLibCheck": true
   }
 }

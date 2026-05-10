@@ -12,7 +12,7 @@ import {
   pushUnsafe,
   replaceUnsafe,
   subscribeToLocation,
-} from "./history";
+} from "./history.ts";
 
 // Kudos to https://github.com/remix-run/react-router/pull/7998
 export const useLinkProps = ({

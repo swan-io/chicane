@@ -1,5 +1,5 @@
 import murmurhash from "@emotion/hash";
-import type { Params, ValueOf } from "./types";
+import type { Params, ValueOf } from "./types.ts";
 
 export const first = <T>(value: T[]): T | undefined => value[0];
 export const last = <T>(value: T[]): T | undefined => value[value.length - 1];

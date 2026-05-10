@@ -5,7 +5,7 @@
     "target": "esnext",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "jsx": "react-jsx",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "outDir": "dist/",
 
     "allowJs": false,

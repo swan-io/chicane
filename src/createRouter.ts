@@ -1,7 +1,7 @@
 import { useCallback, useContext, useMemo } from "react";
 import { useSyncExternalStoreWithSelector } from "use-sync-external-store/with-selector";
-import { concatRoutes } from "./concatRoutes";
-import { areRouteEqual, first, forEach, identity } from "./helpers";
+import { concatRoutes } from "./concatRoutes.ts";
+import { areRouteEqual, first, forEach, identity } from "./helpers.ts";
 import {
   decodeLocation,
   getLocation,
@@ -10,8 +10,8 @@ import {
   pushUnsafe,
   replaceUnsafe,
   subscribeToLocation,
-} from "./history";
-import { getMatcher, match, matchToUrl } from "./matcher";
+} from "./history.ts";
+import { getMatcher, match, matchToUrl } from "./matcher.ts";
 import type {
   GetAreaRoutes,
   GetCreateURLFns,
@@ -24,7 +24,7 @@ import type {
   PrependBasePath,
   RouteObject,
   UnionToIntersection,
-} from "./types";
+} from "./types.ts";
 
 export const createRouter = <
   Routes extends Record<string, string>,
@@ -103,7 +103,7 @@ export const createRouter = <
       return rankedMatchers.filter(({ name }) =>
         routeNamesSet.has(name as RouteName),
       );
-    }, [routeNamesKey]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [routeNamesKey]); // oxlint-disable-line react-hooks/exhaustive-deps
 
     const getUniversalLocation = useContext(GetUniversalLocationContext);
 

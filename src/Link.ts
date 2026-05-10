@@ -4,7 +4,7 @@ import {
   type ReactNode,
   type Ref,
 } from "react";
-import { useLinkProps } from "./useLinkProps";
+import { useLinkProps } from "./useLinkProps.ts";
 
 type BaseProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href">;
 

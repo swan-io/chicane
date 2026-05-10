@@ -1,6 +1,6 @@
 import { type RefObject, useEffect } from "react";
-import { hasInitialLocationChanged } from "./history";
-import type { Params } from "./types";
+import { hasInitialLocationChanged } from "./history.ts";
+import type { Params } from "./types.ts";
 
 const focusableElements: Record<string, true> = {
   A: true,
@@ -36,7 +36,7 @@ export const useFocusReset = ({
         }
 
         element.focus();
-      } catch {} // eslint-disable-line no-empty
+      } catch {}
     }
   }, [containerRef, focusKey]);
 };
