@@ -1,6 +1,7 @@
 import { render } from "@testing-library/react";
 import { afterEach, expect, test, vi } from "vitest";
-import { Link, createRouter } from "../src";
+import { Link } from "../src/Link.ts";
+import { createRouter } from "../src/createRouter.ts";
 
 const Router = createRouter({
   Home: "/",

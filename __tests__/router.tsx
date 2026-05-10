@@ -1,8 +1,9 @@
 import { act, render } from "@testing-library/react";
 import { useRef } from "react";
 import { beforeEach, expect, test } from "vitest";
-import { createRouter, pushUnsafe, useFocusReset } from "../src";
-import { setInitialHasLocationChanged } from "../src/history";
+import { createRouter } from "../src/createRouter.ts";
+import { pushUnsafe, setInitialHasLocationChanged } from "../src/history.ts";
+import { useFocusReset } from "../src/useFocusReset.ts";
 
 const expectToHaveFocus = (element: Element) => {
   expect(element.ownerDocument.activeElement).toBe(element);

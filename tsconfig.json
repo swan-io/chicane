@@ -18,6 +18,7 @@
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "rewriteRelativeImportExtensions": true,
+    "types": ["node"],
 
     // Emit
     "declaration": true,

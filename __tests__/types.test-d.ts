@@ -9,7 +9,7 @@ import type {
   ParseRoute,
   ParseRoutes,
   PrependBasePath,
-} from "../src/types";
+} from "../src/types.ts";
 
 test("ParseRoute", () => {
   expectTypeOf<ParseRoute<"/foo?bar#baz">>().toEqualTypeOf<{
@@ -75,21 +75,25 @@ test("GetPathParams", () => {
   expectTypeOf<GetPathParams<"/foo/bar">>().toEqualTypeOf<{}>();
   expectTypeOf<GetPathParams<"/foo/:bar">>().toEqualTypeOf<{ bar: string }>();
 
-  expectTypeOf<GetPathParams<"/:foo/:bar">>().toEqualTypeOf<
-    { foo: string } & { bar: string }
-  >();
+  expectTypeOf<GetPathParams<"/:foo/:bar">>().branded.toEqualTypeOf<{
+    foo: string;
+    bar: string;
+  }>();
 });
 
 test("GetSearchParams", () => {
   expectTypeOf<GetSearchParams<"foo&bar">>().toEqualTypeOf<{}>(); // no params
 
-  expectTypeOf<GetSearchParams<"foo&:bar&:baz">>().toEqualTypeOf<
-    { bar?: string } & { baz?: string }
-  >();
+  expectTypeOf<GetSearchParams<"foo&:bar&:baz">>().branded.toEqualTypeOf<{
+    bar?: string;
+    baz?: string;
+  }>();
 
-  expectTypeOf<GetSearchParams<":foo&:bar&:baz[]">>().toEqualTypeOf<
-    { foo?: string } & { bar?: string } & { baz?: string[] }
-  >();
+  expectTypeOf<GetSearchParams<":foo&:bar&:baz[]">>().branded.toEqualTypeOf<{
+    foo?: string;
+    bar?: string;
+    baz?: string[];
+  }>();
 });
 
 test("ConcatPaths", () => {

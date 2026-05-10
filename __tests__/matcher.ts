@@ -1,7 +1,7 @@
-import { randomUUID } from "crypto";
+import { randomUUID } from "node:crypto";
 import { expect, test } from "vitest";
-import { decodeLocation } from "../src/history";
-import { getMatcher, match } from "../src/matcher";
+import { decodeLocation } from "../src/history.ts";
+import { getMatcher, match } from "../src/matcher.ts";
 
 const getMatcherEqual = <E>(route: string, expected: E) => {
   const name = randomUUID();

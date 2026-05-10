@@ -1,5 +1,8 @@
 import { expect, test } from "vitest";
-import { decodeLocation, setInitialHasLocationChanged } from "../src/history";
+import {
+  decodeLocation,
+  setInitialHasLocationChanged,
+} from "../src/history.ts";
 
 const expectLocation = <E>(path: string, sanitized: string, location: E) => {
   const { toString, ...value } = decodeLocation(path);

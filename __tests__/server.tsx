@@ -4,8 +4,9 @@
 
 import { renderToString } from "react-dom/server";
 import { expect, test } from "vitest";
-import { Link, createRouter } from "../src";
-import { UrlProvider } from "../src/server";
+import { Link } from "../src/Link.ts";
+import { createRouter } from "../src/createRouter.ts";
+import { UrlProvider } from "../src/server.ts";
 
 const Router = createRouter({
   Home: "/",

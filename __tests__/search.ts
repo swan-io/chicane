@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { decodeSearch } from "../src";
+import { decodeSearch } from "../src/search.ts";
 
 test("decodeSearch parses params starting with a `?`", () => {
   expect(decodeSearch("?foo=bar")).toStrictEqual({ foo: "bar" });

@@ -5,7 +5,7 @@ import {
   first,
   isNonEmpty,
   isParam,
-} from "../src/helpers";
+} from "../src/helpers.ts";
 
 test("first", () => {
   expect(first(["a", "b", "c"])).toBe("a");

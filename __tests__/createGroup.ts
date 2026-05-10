@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { createGroup } from "../src";
+import { createGroup } from "../src/createGroup.ts";
 
 test("createGroup prefix routes keys / paths", () => {
   const routes = {
