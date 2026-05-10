@@ -1,3 +1,5 @@
+export type ValueOf<T> = T[keyof T];
+
 export type Params = Record<string, string | string[] | undefined>;
 export type Search = Record<string, string | string[]>;
 

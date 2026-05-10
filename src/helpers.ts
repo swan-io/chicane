@@ -1,5 +1,5 @@
 import murmurhash from "@emotion/hash";
-import type { Params } from "./types";
+import type { Params, ValueOf } from "./types";
 
 export const first = <T>(value: T[]): T | undefined => value[0];
 export const last = <T>(value: T[]): T | undefined => value[value.length - 1];
@@ -7,6 +7,19 @@ export const identity = <T>(value: T): T => value;
 export const noop = () => {};
 export const isNonEmpty = (value: string): boolean => value !== "";
 export const isParam = (value: string): boolean => value.startsWith(":");
+
+export const forEach = <T extends Record<string, unknown>>(
+  object: T,
+  callback: (key: keyof T & string, value: NonNullable<ValueOf<T>>) => void,
+) => {
+  for (const key of Object.keys(object)) {
+    const value = object[key];
+
+    if (value != null) {
+      callback(key, value as NonNullable<ValueOf<T>>);
+    }
+  }
+};
 
 export const ensureSlashPrefix = (value: string): string =>
   value[0] === "/" ? value : "/" + value;

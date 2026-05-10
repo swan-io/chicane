@@ -1,4 +1,5 @@
 import { concatRoutes } from "./concatRoutes";
+import { forEach } from "./helpers";
 import { parseRoute } from "./history";
 import type { ConcatRoutes } from "./types";
 
@@ -14,14 +15,9 @@ export const createGroup = <
   const baseRouteObject = parseRoute(baseRoute);
   const output: Record<string, string> = {};
 
-  for (const key in routes) {
-    if (Object.prototype.hasOwnProperty.call(routes, key)) {
-      output[name + key] = concatRoutes(
-        baseRouteObject,
-        parseRoute(routes[key]),
-      );
-    }
-  }
+  forEach(routes, (key, route) => {
+    output[name + key] = concatRoutes(baseRouteObject, parseRoute(route));
+  });
 
   return output as {
     [K in keyof Routes as K extends string

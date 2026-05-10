@@ -2,6 +2,7 @@ import { createContext, useContext, useSyncExternalStore } from "react";
 import {
   areParamsArrayEqual,
   ensureSlashPrefix,
+  forEach,
   isNonEmpty,
   last,
   noop,
@@ -95,29 +96,21 @@ export const createBrowserHistory = () => {
     const search: Search = searchHasChanged ? {} : currentLocation.search;
 
     if (searchHasChanged) {
-      for (const key in nextLocation.search) {
-        if (Object.prototype.hasOwnProperty.call(nextLocation.search, key)) {
-          const value = nextLocation.search[key];
+      forEach(nextLocation.search, (key, value) => {
+        const prevValue = currentLocation.search[key];
 
-          if (value == null) {
-            continue;
-          }
-
-          const prevValue = currentLocation.search[key];
-
-          if (
-            prevValue == null ||
-            typeof prevValue === "string" ||
-            typeof value === "string" ||
-            !areParamsArrayEqual(value, prevValue)
-          ) {
-            search[key] = value;
-          } else {
-            // Reuse array instance if the new content is similar
-            search[key] = prevValue;
-          }
+        if (
+          prevValue == null ||
+          typeof prevValue === "string" ||
+          typeof value === "string" ||
+          !areParamsArrayEqual(value, prevValue)
+        ) {
+          search[key] = value;
+        } else {
+          // Reuse array instance if the new content is similar
+          search[key] = prevValue;
         }
-      }
+      });
     }
 
     // Create a new location object instance

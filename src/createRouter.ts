@@ -1,7 +1,7 @@
 import { useCallback, useContext, useMemo } from "react";
 import { useSyncExternalStoreWithSelector } from "use-sync-external-store/with-selector";
 import { concatRoutes } from "./concatRoutes";
-import { areRouteEqual, first, identity } from "./helpers";
+import { areRouteEqual, first, forEach, identity } from "./helpers";
 import {
   decodeLocation,
   getLocation,
@@ -53,19 +53,15 @@ export const createRouter = <
   const matchers = {} as Record<keyof Routes, Matcher>;
   const rankedMatchers: Matcher[] = []; // higher to lower
 
-  for (const routeName in routes) {
-    if (Object.prototype.hasOwnProperty.call(routes, routeName)) {
-      const matcher = getMatcher(
-        routeName,
-        basePath !== ""
-          ? concatRoutes(basePathObject, parseRoute(routes[routeName]))
-          : routes[routeName],
-      );
+  forEach(routes, (routeName, route) => {
+    const matcher = getMatcher(
+      routeName,
+      basePath !== "" ? concatRoutes(basePathObject, parseRoute(route)) : route,
+    );
 
-      matchers[routeName] = matcher;
-      rankedMatchers.push(matcher);
-    }
-  }
+    matchers[routeName] = matcher;
+    rankedMatchers.push(matcher);
+  });
 
   rankedMatchers.sort(
     (matcherA, matcherB) => matcherB.ranking - matcherA.ranking,

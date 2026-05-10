@@ -1,5 +1,6 @@
 import {
   extractParamNameUnion,
+  forEach,
   getRouteKey,
   isNonEmpty,
   isParam,
@@ -68,12 +69,12 @@ export const getMatcher = (name: string, route: string): Matcher => {
 };
 
 export const getMatchResult = (
-  location: Location,
-  matcher: Matcher,
+  { path: locationPath, search: locationSearch }: Location,
+  { name, isArea, path: matcherPath, search: matcherSearch }: Matcher,
 ): { key: string; name: string; params: Params } | undefined => {
   if (
-    (!matcher.isArea && location.path.length !== matcher.path.length) ||
-    (matcher.isArea && location.path.length < matcher.path.length)
+    (!isArea && locationPath.length !== matcherPath.length) ||
+    (isArea && locationPath.length < matcherPath.length)
   ) {
     return;
   }
@@ -81,9 +82,9 @@ export const getMatchResult = (
   const pathParams: Params = {};
   const searchParams: Params = {};
 
-  for (let index = 0; index < matcher.path.length; index++) {
-    const part = location.path[index];
-    const test = matcher.path[index];
+  for (let index = 0; index < matcherPath.length; index++) {
+    const part = locationPath[index];
+    const test = matcherPath[index];
 
     if (test == null) {
       continue;
@@ -110,38 +111,36 @@ export const getMatchResult = (
     }
   }
 
-  for (const key in matcher.search) {
-    if (Object.prototype.hasOwnProperty.call(matcher.search, key)) {
-      const part = location.search[key];
-      const test = matcher.search[key];
+  if (matcherSearch != null) {
+    forEach(matcherSearch, (key, { multiple, union }) => {
+      const part = locationSearch[key];
 
-      if (part == null || test == null) {
-        continue;
+      if (part != null) {
+        const parts = typeof part === "string" ? [part] : part;
+
+        const values =
+          union == null ? parts : parts.filter((item) => union.has(item));
+
+        if (multiple) {
+          searchParams[key] = values;
+        } else {
+          const value = values[0];
+
+          if (value != null) {
+            searchParams[key] = value;
+          }
+        }
       }
-
-      const { multiple, union } = test;
-      const parts = typeof part === "string" ? [part] : part;
-
-      const values =
-        union == null ? parts : parts.filter((item) => union.has(item));
-
-      if (multiple) {
-        searchParams[key] = values;
-        continue;
-      }
-
-      const value = values[0];
-
-      if (value != null) {
-        searchParams[key] = value;
-      }
-    }
+    });
   }
 
   return {
-    key: getRouteKey(matcher.name, pathParams, searchParams),
-    name: matcher.name,
-    params: { ...pathParams, ...searchParams },
+    key: getRouteKey(name, pathParams, searchParams),
+    name,
+    params: {
+      ...pathParams,
+      ...searchParams,
+    },
   };
 };
 
@@ -158,10 +157,13 @@ export const match = (
   }
 };
 
-export const matchToUrl = (matcher: Matcher, params: Params = {}): string => {
+export const matchToUrl = (
+  { path: matcherPath, search: matcherSearch }: Matcher,
+  params: Params = {},
+): string => {
   const path =
     "/" +
-    matcher.path
+    matcherPath
       .map((part) =>
         encodeURIComponent(
           typeof part === "string" ? part : String(params[part.name]),
@@ -171,28 +173,25 @@ export const matchToUrl = (matcher: Matcher, params: Params = {}): string => {
 
   let search = "";
 
-  if (matcher.search != null) {
+  if (matcherSearch != null) {
     const object: Search = {};
 
-    for (const key in params) {
-      const param = params[key];
-      const test = matcher.search[key];
+    forEach(params, (key, param) => {
+      const test = matcherSearch[key];
 
-      if (param == null || test == null) {
-        continue;
-      }
+      if (test != null) {
+        const { union } = test;
 
-      const { union } = test;
-
-      if (typeof param === "string") {
-        if (union == null || union.has(param)) {
-          object[key] = param;
+        if (typeof param === "string") {
+          if (union == null || union.has(param)) {
+            object[key] = param;
+          }
+        } else {
+          object[key] =
+            union == null ? param : param.filter((item) => union.has(item));
         }
-      } else {
-        object[key] =
-          union == null ? param : param.filter((item) => union.has(item));
       }
-    }
+    });
 
     search = encodeSearch(object);
   }
